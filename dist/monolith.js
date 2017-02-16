@@ -3,9 +3,9 @@
 (function () {
     'use strict';
 
-    angular.module('akabuskModule', []);
+    angular.module('akabuskAppModule', []);
 
-    angular.module('akabuskModule').config(['$interpolateProvider', '$compileProvider', function ($interpolateProvider, $compileProvider) {
+    angular.module('akabuskAppModule').config(['$interpolateProvider', '$compileProvider', function ($interpolateProvider, $compileProvider) {
         // unfortunately we can't use "{{ symbols }}" because Jekyll uses them
         $interpolateProvider.startSymbol('[[');
         $interpolateProvider.endSymbol(']]');
@@ -17,14 +17,15 @@
         $compileProvider.cssClassDirectivesEnabled(false);
     }]);
 
-    // angular.module('akabuskModule').config(['$sceProvider', ($sceProvider) => {
+    // angular.module('akabuskAppModule').config(['$sceProvider', ($sceProvider) => {
     //     $sceProvider.enabled(false);
     // }]);
 
-    // angular.module('akabuskModule').run([
-    //     'fooBar',
-    //     angular.noop
-    // ]);
+    angular.module('akabuskAppModule').run([
+    // 'fooBar',
+    function () {
+        console.debug('app initialized');
+    }]);
 })();
 ;
 

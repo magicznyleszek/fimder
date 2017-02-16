@@ -1,6 +1,6 @@
-angular.module('akabuskModule', []);
+angular.module('akabuskAppModule', []);
 
-angular.module('akabuskModule').config([
+angular.module('akabuskAppModule').config([
     '$interpolateProvider',
     '$compileProvider',
     (
@@ -19,11 +19,13 @@ angular.module('akabuskModule').config([
     }
 ]);
 
-// angular.module('akabuskModule').config(['$sceProvider', ($sceProvider) => {
+// angular.module('akabuskAppModule').config(['$sceProvider', ($sceProvider) => {
 //     $sceProvider.enabled(false);
 // }]);
 
-// angular.module('akabuskModule').run([
-//     'fooBar',
-//     angular.noop
-// ]);
+angular.module('akabuskAppModule').run([
+    // 'fooBar',
+    () => {
+        console.debug('app initialized');
+    }
+]);
