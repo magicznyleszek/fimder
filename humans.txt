@@ -1,0 +1,24 @@
+## TEAM
+
+Everything: Leszek Pietrzak
+Site: smutnyleszek.com
+Email: smutnyleszek@gmail.com
+Location: Warsaw, Poland
+
+
+## THANKS
+
+Tom Preston-Werner, Nick Quaranto: jekyllrb.com
+Chris Armstrong: goldilocksapproach.com
+Brandon Mathis: hslpicker.com
+Chirag Mehta: chir.ag/projects/name-that-color
+Glen Maddern: amcss.github.io
+Cole Peters: github.com/colepeters/gemma
+Maxime Thirouin: cssnext.io
+
+
+## SITE
+
+Last update: 18/05/2014
+Language: English
+Software: Atom

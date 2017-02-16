@@ -1,0 +1,32 @@
+# description
+name: "akabusk"
+description: "Movie info displayer"
+keywords: "movies"
+author: "Leszek Pietrzak"
+
+# address settings
+baseurl: "http://akabusk.smutnyleszek.com"
+rootSiteUrl: "http://smutnyleszek.com"
+
+# urls
+googleFontsCode: family=Source+Sans+Pro:400,700,400italic,700italic&subset=latin,latin-ext
+
+# site configuration
+safe: true
+quiet: false
+future: true
+encoding: utf-8
+markdown: kramdown
+kramdown:
+    auto_ids: false
+timezone: Europe/Warsaw
+
+# excludes
+exclude:
+    - src
+    - test
+    - node_modules
+    - _symbols
+    - LICENSE
+    - README.md
+    - package.json
