@@ -1,0 +1,88 @@
+{
+  "name": "akabusk",
+  "private": true,
+  "description": "Movie info displayer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smutnyleszek/akabusk.git"
+  },
+  "author": "Leszek Pietrzak",
+  "license": "CC-BY-4.0",
+  "bugs": {
+    "url": "https://github.com/smutnyleszek/akabusk/issues",
+    "email": "smutnyleszek@gmail.com"
+  },
+  "homepage": "https://akabusk.smutnyleszek.com",
+  "scripts": {
+    "build": "npm-run-all test dist:rebuild svg:build styles:build scripts:build scripts:uglify scripts:copydeps",
+    "watch": "npm-watch",
+    "test": "npm-run-all scripts:test",
+    "lint": "npm-run-all scripts:lint styles:lint",
+    "dist:rebuild": "rm -rf dist && mkdir dist",
+    "styles:build": "postcss --config .postcss.config.json",
+    "scripts:copydeps": "npm-run-all copy:angular",
+    "scripts:build": "babel src --out-file dist/monolith.js",
+    "scripts:uglify": "uglifyjs dist/monolith.js --output dist/monolith.min.js --compress --keep-fnames --mangle-props 0",
+    "scripts:test": "karma start .karma.conf.js",
+    "copy:angular": "cp node_modules/angular/angular.min.js dist/angular.min.js",
+    "svg:build": "svgo -f _symbols/ && svgshelf -p symbol- _symbols/\\*.svg _includes/symbols.svg",
+    "jekyll:build": "jekyll build",
+    "jekyll:serve": "jekyll serve --watch --baseurl ''"
+  },
+  "watch": {
+    "styles:build": {
+      "patterns": [
+        "src/styles"
+      ],
+      "extensions": "css",
+      "quiet": false
+    },
+    "scripts:build": {
+      "patterns": [
+        "src/scripts"
+      ],
+      "extensions": "js",
+      "quiet": false
+    },
+    "scripts:test": {
+      "patterns": [
+        "test/scripts"
+      ],
+      "extensions": "js",
+      "quiet": false
+    }
+  },
+  "devDependencies": {
+    "angular-mocks": "^1.5.7",
+    "autoprefixer": "^6.7.2",
+    "babel": "^6.5.2",
+    "babel-cli": "^6.22.2",
+    "babel-polyfill": "^6.22.0",
+    "babel-preset-es2015": "^6.22.0",
+    "eslint": "^3.6.1",
+    "jasmine": "^2.5.3",
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.4.1",
+    "karma-babel-preprocessor": "^6.0.1",
+    "karma-cli": "^1.0.1",
+    "karma-coverage": "^1.1.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-spec-reporter": "0.0.26",
+    "npm-run-all": "^4.0.1",
+    "npm-watch": "^0.1.5",
+    "phantomjs-polyfill": "0.0.2",
+    "phantomjs-prebuilt": "^2.1.14",
+    "postcss": "^5.2.12",
+    "postcss-cli": "^2.6.0",
+    "postcss-cssnext": "^2.9.0",
+    "postcss-import": "^9.1.0",
+    "stylelint": "^7.8.0",
+    "svgo": "^0.7.2",
+    "svgshelf": "^1.0.3",
+    "uglify-js": "^2.7.0"
+  },
+  "dependencies": {
+    "angular": "^1.6.1"
+  }
+}

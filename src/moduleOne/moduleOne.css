@@ -1,0 +1,11 @@
+:root {
+    --c-red: rgb(128, 0, 0);
+}
+
+[i-moduleOne] {
+    filter: grayscale(50%);
+    object-fit: fill;
+    color: var(--c-red);
+    font-feature-settings: "liga", "dlig";
+    hyphens: auto;
+}
