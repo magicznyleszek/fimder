@@ -1,9 +1,21 @@
-'use strict';
+;
 
-console.log('app.js');
-'use strict';
+(function () {
+  'use strict';
 
-console.log('moduleOne');
-'use strict';
+  console.log('app.js');
+})();
+;
 
-console.log('moduleTwo');
+(function () {
+  'use strict';
+
+  console.log('moduleOne');
+})();
+;
+
+(function () {
+  'use strict';
+
+  console.log('moduleTwo');
+})();

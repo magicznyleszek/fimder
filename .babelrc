@@ -1,6 +1,6 @@
 {
     "presets": ["es2015"],
-    "plugins": [],
+    "plugins": ["iife-wrap"],
     "ignore": [],
     "sourceMaps": false
 }
