@@ -32,21 +32,27 @@
   "watch": {
     "styles:build": {
       "patterns": [
-        "src/styles"
+        "src"
       ],
       "extensions": "css",
       "quiet": false
     },
     "scripts:build": {
       "patterns": [
-        "src/scripts"
+        "src"
       ],
       "extensions": "js",
       "quiet": false
     },
+    "scripts:uglify": {
+      "patterns": [
+        "dist/monolith.js"
+      ],
+      "quiet": false
+    },
     "scripts:test": {
       "patterns": [
-        "test/scripts"
+        "test"
       ],
       "extensions": "js",
       "quiet": false

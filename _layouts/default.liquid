@@ -5,12 +5,12 @@
 <html id="pterosaurDestroyedAlgorithms" lang="en">
 
 <head>
-    {% comment %} stuff {% endcomment %}
+    <!-- stuff -->
     <meta charset="utf-8">
     <meta http-equiv="cleartype" content="on">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    {% comment %} info {% endcomment %}
+    <!-- info -->
     <title>{{ metaTitle }}</title>
     <meta name="keywords" content="{{ site.keywords }}">
     <meta name="description" content="{{ metaDescription }}">
@@ -18,7 +18,7 @@
     <link rel="author" href="humans.txt">
     <link rel="home" href="{{ site.baseurl }}">
 
-    {% comment %} open graph {% endcomment %}
+    <!-- open graph -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ site.name }}">
     <meta property="og:title" content="{{ metaTitle }}">
@@ -26,27 +26,27 @@
     <meta property="og:url" content="{{ site.baseurl }}{{ page.url }}">
     <meta property="og:image" content="{{ site.baseurl }}/favicon.png">
 
-    {% comment %} style & viewport {% endcomment %}
+    <!-- style & viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/dist/monolith.css?{{ versionCache }}" media="all" rel="stylesheet">
 
-    {% comment %} icons {% endcomment %}
+    <!-- icons -->
     <link rel="icon" href="/favicon.ico?{{ versionCache }}">
     <link rel="apple-touch-icon" href="{{ site.baseurl }}/favicon.png">
 
-    {% comment %} google fonts {% endcomment %}
+    <!-- google fonts -->
     <link href="http://fonts.googleapis.com/css?{{ site.googleFontsCode }}" rel="stylesheet">
 </head>
 
 <body>
-    {% comment %} SVG symbols for <use> tags {% endcomment %}
+    <!-- SVG symbols for <use> tags -->
     <div style="display:none;">{% include symbols.svg %}</div>
 
     <section role="main">{{ content }}</section>
 
-    {% comment %} javascripts {% endcomment %}
-    <script src="/dist/monolith.min.js"></script>
+    <!-- javascripts, please make sure angular is first :-* -->
     <script src="/dist/angular.min.js"></script>
+    <script src="/dist/monolith.min.js"></script>
 </body>
 
 </html>
