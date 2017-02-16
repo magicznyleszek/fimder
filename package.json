@@ -16,6 +16,7 @@
   "scripts": {
     "build": "npm-run-all test dist:rebuild svg:build styles:build scripts:build scripts:uglify scripts:copydeps",
     "watch": "npm-watch",
+    "serve": "npm-run-all build jekyll:serve",
     "test": "npm-run-all scripts:test",
     "lint": "npm-run-all scripts:lint styles:lint",
     "dist:rebuild": "rm -rf dist && mkdir dist",
