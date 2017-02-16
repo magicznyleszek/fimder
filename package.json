@@ -24,8 +24,8 @@
     "scripts:build": "babel src --out-file dist/monolith.js",
     "scripts:uglify": "uglifyjs dist/monolith.js --output dist/monolith.min.js --compress --keep-fnames --mangle-props 0",
     "scripts:test": "karma start .karma.conf.js",
-    "copy:angular": "cp node_modules/angular/angular.min.js dist/angular.min.js",
-    "svg:build": "svgo -f _symbols/ && svgshelf -p symbol- _symbols/\\*.svg _includes/symbols.svg",
+    "copy:angular": "cp node_modules/angular/angular.min.js dist/angular.min.js && cp node_modules/angular/angular.min.js.map dist/angular.min.js.map",
+    "svg:build": "svgo -f _symbols/ && svgshelf -p symbol- _symbols/\\*.svg src/symbols.svg",
     "jekyll:build": "jekyll build",
     "jekyll:serve": "jekyll serve --watch --baseurl ''"
   },

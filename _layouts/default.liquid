@@ -1,3 +1,52 @@
-{% include htmlBegin.liquid %}
-<section role="main">{{ content }}</section>
-{% include htmlEnd.liquid %}
+{% assign versionCache = site.time|date: "%Y-%m-%d_%H-%M-%S" %}
+{% capture metaDescription %}{% if page.description %}{{ page.description }}{% elsif site.description %}{{ site.description }}{% endif %}{% endcapture %}
+{% capture metaTitle %}{% if page.title %}{{ page.title }} &ndash; {% endif %}{{ site.name }}{% endcapture %}
+<!DOCTYPE html>
+<html id="pterosaurDestroyedAlgorithms" lang="en">
+
+<head>
+    {% comment %} stuff {% endcomment %}
+    <meta charset="utf-8">
+    <meta http-equiv="cleartype" content="on">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    {% comment %} info {% endcomment %}
+    <title>{{ metaTitle }}</title>
+    <meta name="keywords" content="{{ site.keywords }}">
+    <meta name="description" content="{{ metaDescription }}">
+    <meta name="author" content="{{ site.author }}">
+    <link rel="author" href="humans.txt">
+    <link rel="home" href="{{ site.baseurl }}">
+
+    {% comment %} open graph {% endcomment %}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ site.name }}">
+    <meta property="og:title" content="{{ metaTitle }}">
+    <meta property="og:description" content="{{ metaDescription }}">
+    <meta property="og:url" content="{{ site.baseurl }}{{ page.url }}">
+    <meta property="og:image" content="{{ site.baseurl }}/favicon.png">
+
+    {% comment %} style & viewport {% endcomment %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/dist/monolith.css?{{ versionCache }}" media="all" rel="stylesheet">
+
+    {% comment %} icons {% endcomment %}
+    <link rel="icon" href="/favicon.ico?{{ versionCache }}">
+    <link rel="apple-touch-icon" href="{{ site.baseurl }}/favicon.png">
+
+    {% comment %} google fonts {% endcomment %}
+    <link href="http://fonts.googleapis.com/css?{{ site.googleFontsCode }}" rel="stylesheet">
+</head>
+
+<body>
+    {% comment %} SVG symbols for <use> tags {% endcomment %}
+    <div style="display:none;">{% include symbols.svg %}</div>
+
+    <section role="main">{{ content }}</section>
+
+    {% comment %} javascripts {% endcomment %}
+    <script src="/dist/monolith.min.js"></script>
+    <script src="/dist/angular.min.js"></script>
+</body>
+
+</html>

@@ -30,3 +30,6 @@ exclude:
     - LICENSE
     - README.md
     - package.json
+
+# pull includes from other directory
+includes_dir: src
