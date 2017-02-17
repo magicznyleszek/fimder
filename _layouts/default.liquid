@@ -44,9 +44,15 @@
 
     <section role="main">{{ content }}</section>
 
-    <!-- javascripts, please make sure angular is first :-* -->
+    <!-- javascripts -->
+    <script src="/dist/lodash.min.js"></script>
     <script src="/dist/angular.min.js"></script>
-    <script src="/dist/monolith.min.js"></script>
+    <!-- please make sure all dependencies are defined first :-* -->
+    {% if jekyll.environment == 'production' %}
+        <script src="/dist/monolith.min.js"></script>
+    {% else %}
+        <script src="/dist/monolith.js"></script>
+    {% endif %}
 </body>
 
 </html>

@@ -17,13 +17,18 @@ module.exports = function (config) {
         browsers: ['PhantomJS'],
 
         files: [
+            // vendors
+            './node_modules/lodash/lodash.min.js',
             './node_modules/angular/angular.min.js',
             './node_modules/angular-mocks/angular-mocks.js',
-            'src/**/*.js',
-
+            // test vendors
             './node_modules/phantomjs-polyfill/bind-polyfill.js',
             './node_modules/babel-polyfill/dist/polyfill.min.js',
-            'test/mockApp.js',
+            // source code
+            'src/**/*.js',
+            // test environment preparations
+            'test/testApp.js',
+            // test code
             'test/**/*Test.js'
         ],
         exclude: [
@@ -34,7 +39,7 @@ module.exports = function (config) {
         // https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             'src/**/*.js': ['coverage', 'babel'],
-            'test/**/*Test.js': ['babel']
+            'test/**/*.js': ['babel']
         },
 
         coverageReporter: {

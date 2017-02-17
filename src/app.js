@@ -1,4 +1,6 @@
-angular.module('akabuskAppModule', []);
+angular.module('akabuskAppModule', [
+    'assertModule'
+]);
 
 angular.module('akabuskAppModule').config([
     '$interpolateProvider',
