@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('akabuskAppModule', ['assertModule']);
+angular.module('akabuskAppModule', ['assertModule', 'httpRetrierModule']);
 
 angular.module('akabuskAppModule').config(['$interpolateProvider', '$compileProvider', function ($interpolateProvider, $compileProvider) {
     // unfortunately we can't use "{{ symbols }}" because Jekyll uses them
@@ -143,6 +143,147 @@ var AssertService = function () {
 }();
 
 angular.module('assertModule').service('assert', AssertService);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// httpRetrier is a service that does http request until first success, up
+// to 10 times with some time (incrementing) between each retry -- and it is
+// silent, i.e. it doesn't throw anything by itself
+// -----------------------------------------------------------------------------
+
+angular.module('httpRetrierModule', []);
+
+var HttpRetrierService = function () {
+    _createClass(HttpRetrierService, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            HttpRetrierService.intervalTime = 2000;
+            HttpRetrierService.limit = 10;
+
+            HttpRetrierService.$inject = ['$q', '$http', '$timeout'];
+        }
+    }]);
+
+    function HttpRetrierService($q, $http, $timeout) {
+        _classCallCheck(this, HttpRetrierService);
+
+        this._$q = $q;
+        this._$http = $http;
+        this._$timeout = $timeout;
+        this._retriers = {};
+        this.rejectReasons = Object.freeze({
+            cancel: 0,
+            overLimit: 1
+        });
+    }
+
+    _createClass(HttpRetrierService, [{
+        key: 'runGet',
+        value: function runGet(url) {
+            return this._run('get', url);
+        }
+    }, {
+        key: '_run',
+        value: function _run(method, url) {
+            var retrier = this._createRetrier({ method: method, url: url });
+            this._retry(retrier);
+            return {
+                promise: retrier.deferred.promise,
+                cancel: this._cancelRetrier.bind(this, retrier.id)
+            };
+        }
+
+        // -------------------------------------------------------------------------
+        // managing retriers
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: '_destroyRetrier',
+        value: function _destroyRetrier(retrierId) {
+            delete this._retriers[retrierId];
+        }
+
+        // @param {object} httpConfig - a http config object:
+        // https://docs.angularjs.org/api/ng/service/$http#usage
+
+    }, {
+        key: '_createRetrier',
+        value: function _createRetrier(httpConfig) {
+            var retrierId = Math.floor(Math.random() * 0x1000000).toString(16);
+            this._retriers[retrierId] = {
+                id: retrierId,
+                httpConfig: httpConfig,
+                count: 0,
+                deferred: this._$q.defer(),
+                timeoutId: null
+            };
+            return this._retriers[retrierId];
+        }
+    }, {
+        key: '_cancelRetrier',
+        value: function _cancelRetrier(retrierId) {
+            if (this._retriers[retrierId]) {
+                this._retriers[retrierId].deferred.reject(this.rejectReasons.cancel);
+                this._destroyRetrier(retrierId);
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // managing http request and retrying
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: '_retry',
+        value: function _retry(retrier) {
+            retrier.timeoutId = this._$timeout(this._doHttpRequest.bind(this, retrier), HttpRetrierService.intervalTime * retrier.count, false);
+            // we start with 0, as we want the first call to be immediate
+            retrier.count++;
+        }
+    }, {
+        key: '_doHttpRequest',
+        value: function _doHttpRequest(retrier) {
+            this._$http(retrier.httpConfig).then(this._onHttpRequestSuccess.bind(this, retrier), this._onHttpRequestError.bind(this, retrier));
+        }
+    }, {
+        key: '_onHttpRequestSuccess',
+        value: function _onHttpRequestSuccess(retrier, response) {
+            retrier.deferred.resolve(response);
+            this._destroyRetrier(retrier.id);
+        }
+    }, {
+        key: '_onHttpRequestError',
+        value: function _onHttpRequestError(retrier, response) {
+            // if someone canceled retrier, we no longer care about anything
+            if (typeof this._retriers[retrier.id] === 'undefined') {
+                return;
+            }
+
+            // inform about this error
+            retrier.deferred.notify({
+                response: response,
+                count: retrier.count
+            });
+
+            // do not try too many times, just give up
+            if (retrier.count > HttpRetrierService.limit) {
+                retrier.deferred.reject(this.rejectReasons.overLimit);
+                this._destroyRetrier(retrier.id);
+            } else {
+                this._retry(retrier);
+            }
+        }
+    }]);
+
+    return HttpRetrierService;
+}();
+
+HttpRetrierService.initClass();
+
+angular.module('httpRetrierModule').service('httpRetrier', HttpRetrierService);
 'use strict';
 
 console.log('moduleOne');

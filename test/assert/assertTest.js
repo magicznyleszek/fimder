@@ -3,6 +3,7 @@ describe('assert', () => {
 
     beforeEach(() => {
         module('testApp');
+        module('assertModule');
         inject(($injector) => {
             assert = $injector.get('assert');
         });

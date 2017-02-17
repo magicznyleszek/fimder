@@ -1,5 +1,6 @@
 angular.module('akabuskAppModule', [
-    'assertModule'
+    'assertModule',
+    'httpRetrierModule'
 ]);
 
 angular.module('akabuskAppModule').config([
