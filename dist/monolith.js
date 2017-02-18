@@ -1,6 +1,97 @@
 'use strict';
 
-angular.module('akabuskAppModule', ['assertModule', 'httpRetrierModule']);
+// -----------------------------------------------------------------------------
+// addressBarModule -- reads location parameters on load and allows setting them
+// during application lifetime (so user can always copy it)
+// -----------------------------------------------------------------------------
+
+angular.module('addressBarModule', ['ngRoute', 'assertModule']);
+
+angular.module('addressBarModule').config(['$routeProvider', '$locationProvider', 'addressBarConfig', function ($routeProvider, $locationProvider, addressBarConfig) {
+    $routeProvider.when('/' + addressBarConfig.routes.movies + '/:movieId', {
+        resolve: {
+            viewId: [function () {
+                return addressBarConfig.routes.movies;
+            }]
+        }
+    }).when('/' + addressBarConfig.routes.search + '/:searchPhrase?', {
+        resolve: {
+            viewId: [function () {
+                return addressBarConfig.routes.search;
+            }]
+        }
+    }).otherwise({
+        redirectTo: '/' + addressBarConfig.routes.search + '/'
+    });
+
+    $locationProvider.html5Mode(false);
+}]);
+'use strict';
+
+angular.module('addressBarModule').constant('addressBarConfig', {
+    routes: {
+        movies: 'movies',
+        search: 'search'
+    }
+});
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AddressBarInterfaceService = function () {
+    _createClass(AddressBarInterfaceService, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            AddressBarInterfaceService.$inject = ['$rootScope', '$location', 'assert', 'addressBarConfig'];
+        }
+    }]);
+
+    function AddressBarInterfaceService($rootScope, $location, assert, addressBarConfig) {
+        _classCallCheck(this, AddressBarInterfaceService);
+
+        this._$rootScope = $rootScope;
+        this._$location = $location;
+        this._assert = assert;
+        this._addressBarConfig = addressBarConfig;
+    }
+
+    _createClass(AddressBarInterfaceService, [{
+        key: 'setMovies',
+        value: function setMovies(movieId) {
+            this._assert.isString(movieId);
+            this._$location.path(this._addressBarConfig.routes.movies + '/' + movieId);
+            this._$rootScope.$apply();
+        }
+    }, {
+        key: 'setSearch',
+        value: function setSearch() {
+            var searchPhrase = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+            this._assert.isString(searchPhrase);
+            this._$location.path(this._addressBarConfig.routes.search + '/' + searchPhrase);
+            this._$rootScope.$apply();
+        }
+    }]);
+
+    return AddressBarInterfaceService;
+}();
+
+AddressBarInterfaceService.initClass();
+
+angular.module('addressBarModule').service('addressBarInterface', AddressBarInterfaceService);
+'use strict';
+
+// -----------------------------------------------------------------------------
+// akabuskAppModule is our single ngApp module for whole web application
+// -----------------------------------------------------------------------------
+
+angular.module('akabuskAppModule', ['assertModule', 'httpRetrierModule', 'addressBarModule']);
+
+// -----------------------------------------------------------------------------
+// tweak default angular configuration
+// -----------------------------------------------------------------------------
 
 angular.module('akabuskAppModule').config(['$interpolateProvider', '$compileProvider', function ($interpolateProvider, $compileProvider) {
     // unfortunately we can't use "{{ symbols }}" because Jekyll uses them
@@ -18,9 +109,7 @@ angular.module('akabuskAppModule').config(['$interpolateProvider', '$compileProv
 //     $sceProvider.enabled(false);
 // }]);
 
-angular.module('akabuskAppModule').run([
-// 'fooBar',
-function () {
+angular.module('akabuskAppModule').run(['addressBarInterface', function (addressBarInterface) {
     console.debug('app initialized');
 }]);
 'use strict';
@@ -284,9 +373,6 @@ var HttpRetrierService = function () {
 HttpRetrierService.initClass();
 
 angular.module('httpRetrierModule').service('httpRetrier', HttpRetrierService);
-'use strict';
-
-console.log('moduleOne');
 'use strict';
 
 console.log('moduleTwo');
