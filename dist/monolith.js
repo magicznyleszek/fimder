@@ -395,4 +395,191 @@ HttpRetrierService.initClass();
 angular.module('httpRetrierModule').service('httpRetrier', HttpRetrierService);
 'use strict';
 
-console.log('moduleTwo');
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// listenersManager -- a factory that creates new instance of listeners manager.
+// A listener manager object is an implementation of logic pattern that manages
+// list of listeners. It handles adding listeners, running them and removing.
+// Any service that would like to keep list of listeners of some kind, can
+// easily use this object for handling common logic of keeping and controlling
+// sets of callback (listeners) functions.
+// -----------------------------------------------------------------------------
+
+angular.module('listenersManagerModule', []);
+
+var ListenerManager = function () {
+    function ListenerManager() {
+        _classCallCheck(this, ListenerManager);
+
+        this._listeners = [];
+        this._amountOfListeners = 0;
+        this._listenersToRemove = [];
+        this._amountToRemove = 0;
+        this._stateListeners = [];
+        this._isActive = false;
+    }
+
+    _createClass(ListenerManager, [{
+        key: '_createCancelFunction',
+        value: function _createCancelFunction(listenerToCancel, afterCancelCallback) {
+            return function () {
+                afterCancelCallback(listenerToCancel);
+                listenerToCancel = null;
+                afterCancelCallback = null;
+            };
+        }
+    }, {
+        key: '_afterCancel',
+        value: function _afterCancel(listenerToRemove) {
+            this._amountToRemove = this._listenersToRemove.push(listenerToRemove);
+        }
+    }, {
+        key: '_cleanRemovedListeners',
+        value: function _cleanRemovedListeners() {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this._listenersToRemove[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var listenerToRemove = _step.value;
+
+                    var indexOf = this._listeners.indexOf(listenerToRemove);
+                    if (indexOf !== -1) {
+                        this._listeners.splice(indexOf, 1);
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            this._amountOfListeners = this._listeners.length;
+            this._amountToRemove = 0;
+            this._listenersToRemove.length = 0;
+            this._updateState(this._amountOfListeners > 0);
+        }
+    }, {
+        key: '_updateState',
+        value: function _updateState(newActiveState) {
+            if (this._isActive === newActiveState) {
+                return;
+            }
+
+            this._isActive = newActiveState;
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = this._stateListeners[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var stateListener = _step2.value;
+
+                    stateListener(this._isActive);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
+    }, {
+        key: 'addListener',
+        value: function addListener(newListener) {
+            this._amountOfListeners = this._listeners.push(newListener);
+            this._updateState(true);
+            return this._createCancelFunction(newListener, this._afterCancel.bind(this));
+        }
+    }, {
+        key: 'callListeners',
+        value: function callListeners() {
+            if (this._amountToRemove !== 0) {
+                this._cleanRemovedListeners();
+            }
+
+            if (!this._isActive) {
+                return;
+            }
+
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+            }
+
+            if (this._amountOfListeners === 1) {
+                this._listeners[0].apply(null, args);
+                return;
+            }
+
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = this._listeners[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var listener = _step3.value;
+
+                    listener.apply(null, args);
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+        }
+    }, {
+        key: 'onStateChange',
+        value: function onStateChange(stateListener) {
+            return this._stateListeners.push(stateListener);
+        }
+    }]);
+
+    return ListenerManager;
+}();
+
+angular.module('listenersManagerModule').factory('listenersManager', function () {
+    return {
+        getManager: function getManager() {
+            return new ListenerManager();
+        }
+    };
+});
+'use strict';
+
+// -----------------------------------------------------------------------------
+// searchBoxModule -- displays a search box input and has a service for
+// listening to searchphrase changes
+// -----------------------------------------------------------------------------
+
+angular.module('searchBoxModule', ['listenersManagerModule']);
