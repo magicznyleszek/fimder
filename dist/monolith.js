@@ -2,31 +2,16 @@
 
 // -----------------------------------------------------------------------------
 // addressBarModule -- reads location parameters on load and allows setting them
-// during application lifetime (so user can always copy it)
+// during application lifetime (so user actions will reflect in url)
 // -----------------------------------------------------------------------------
 
 angular.module('addressBarModule', ['ngRoute', 'assertModule']);
-
-angular.module('addressBarModule').config(['$routeProvider', '$locationProvider', 'addressBarConfig', function ($routeProvider, $locationProvider, addressBarConfig) {
-    $routeProvider.when('/' + addressBarConfig.routes.movies + '/:movieId', {
-        resolve: {
-            viewId: [function () {
-                return addressBarConfig.routes.movies;
-            }]
-        }
-    }).when('/' + addressBarConfig.routes.search + '/:searchPhrase?', {
-        resolve: {
-            viewId: [function () {
-                return addressBarConfig.routes.search;
-            }]
-        }
-    }).otherwise({
-        redirectTo: '/' + addressBarConfig.routes.search + '/'
-    });
-
-    $locationProvider.html5Mode(false);
-}]);
 'use strict';
+
+// -----------------------------------------------------------------------------
+// addressBarConfig -- has names of all routes to make sure all scripts use
+// the proper ones
+// -----------------------------------------------------------------------------
 
 angular.module('addressBarModule').constant('addressBarConfig', {
     routes: {
@@ -40,17 +25,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// -----------------------------------------------------------------------------
+// addressBarInterface -- a service that allows for updating current url without
+// reloading application
+// -----------------------------------------------------------------------------
+
 var AddressBarInterfaceService = function () {
     _createClass(AddressBarInterfaceService, null, [{
         key: 'initClass',
         value: function initClass() {
-            AddressBarInterfaceService.$inject = ['$rootScope', '$location', 'assert', 'addressBarConfig'];
+            AddressBarInterfaceService.$inject = ['$route', '$rootScope', '$location', 'assert', 'addressBarConfig'];
         }
     }]);
 
-    function AddressBarInterfaceService($rootScope, $location, assert, addressBarConfig) {
+    function AddressBarInterfaceService($route, $rootScope, $location, assert, addressBarConfig) {
         _classCallCheck(this, AddressBarInterfaceService);
 
+        this._$route = $route;
         this._$rootScope = $rootScope;
         this._$location = $location;
         this._assert = assert;
@@ -58,6 +49,14 @@ var AddressBarInterfaceService = function () {
     }
 
     _createClass(AddressBarInterfaceService, [{
+        key: 'getCurrent',
+        value: function getCurrent() {
+            return {
+                routeId: this._$route.current.locals.routeId,
+                params: this._$route.current.params
+            };
+        }
+    }, {
         key: 'setMovies',
         value: function setMovies(movieId) {
             this._assert.isString(movieId);
@@ -81,6 +80,27 @@ var AddressBarInterfaceService = function () {
 AddressBarInterfaceService.initClass();
 
 angular.module('addressBarModule').service('addressBarInterface', AddressBarInterfaceService);
+'use strict';
+
+angular.module('addressBarModule').config(['$routeProvider', '$locationProvider', 'addressBarConfig', function ($routeProvider, $locationProvider, addressBarConfig) {
+    $routeProvider.when('/' + addressBarConfig.routes.movies + '/:movieId', {
+        resolve: {
+            routeId: [function () {
+                return addressBarConfig.routes.movies;
+            }]
+        }
+    }).when('/' + addressBarConfig.routes.search + '/:searchPhrase?', {
+        resolve: {
+            routeId: [function () {
+                return addressBarConfig.routes.search;
+            }]
+        }
+    }).otherwise({
+        redirectTo: '/' + addressBarConfig.routes.search + '/'
+    });
+
+    $locationProvider.html5Mode(false);
+}]);
 'use strict';
 
 // -----------------------------------------------------------------------------
