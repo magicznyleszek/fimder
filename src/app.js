@@ -5,7 +5,8 @@
 angular.module('akabuskAppModule', [
     'assertModule',
     'httpRetrierModule',
-    'addressBarModule'
+    'addressBarModule',
+    'searchBoxModule'
 ]);
 
 // -----------------------------------------------------------------------------

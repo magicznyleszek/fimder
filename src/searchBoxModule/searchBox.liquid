@@ -1,3 +1,12 @@
-<div i-moduleTwo>
-    Hi, I'm module two!
-</div>
+<input
+    ng-controller="searchBoxCtrl as searchBox"
+    i-sidebarSearchBox-input
+    type="text"
+    placeholder="Search movie titles…"
+    ng-model="searchBox.phrase"
+    ng-change="searchBox.onSearchPhraseChanged()"
+    ng-focus="searchBox.onFocus()"
+    ng-blur="searchBox.onBlur()"
+>
+
+<svg><use xlink:href="#symbol-eye"></svg>
