@@ -32,10 +32,6 @@ angular.module('akabuskAppModule').config([
     }
 ]);
 
-// angular.module('akabuskAppModule').config(['$sceProvider', ($sceProvider) => {
-//     $sceProvider.enabled(false);
-// }]);
-
 angular.module('akabuskAppModule').run([
     'addressBarInterface',
     (addressBarInterface) => {

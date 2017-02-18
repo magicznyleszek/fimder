@@ -1,12 +1,12 @@
 <input
     ng-controller="searchBoxCtrl as searchBox"
-    i-sidebarSearchBox-input
     type="text"
     placeholder="Search movie titles…"
-    ng-model="searchBox.phrase"
-    ng-change="searchBox.onSearchPhraseChanged()"
-    ng-focus="searchBox.onFocus()"
-    ng-blur="searchBox.onBlur()"
+    ng-model="searchBox.inputValue"
+    ng-change="searchBox.onInputValueChange()"
+    ng-keypress="searchBox.onInputKeypress($event)"
+    ng-focus="searchBox.onInputFocus()"
+    ng-blur="searchBox.onInputBlur()"
 >
 
 <svg><use xlink:href="#symbol-eye"></svg>
