@@ -6,7 +6,7 @@ _site
 node_modules
 npm-debug.log
 
-test/coverage
+test-coverage
 
 # OS generated
 .DS_Store

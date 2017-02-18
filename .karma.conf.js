@@ -43,7 +43,7 @@ module.exports = function (config) {
         },
 
         coverageReporter: {
-            dir: 'test/coverage',
+            dir: 'test-coverage',
             reporters: [
                 {
                     type: 'html',

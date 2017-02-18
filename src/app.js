@@ -1,7 +1,15 @@
+// -----------------------------------------------------------------------------
+// akabuskAppModule is our single ngApp module for whole web application
+// -----------------------------------------------------------------------------
+
 angular.module('akabuskAppModule', [
     'assertModule',
     'httpRetrierModule'
 ]);
+
+// -----------------------------------------------------------------------------
+// tweak default angular configuration
+// -----------------------------------------------------------------------------
 
 angular.module('akabuskAppModule').config([
     '$interpolateProvider',
