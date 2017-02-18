@@ -1,3 +1,5 @@
+// TODO: test nested promises somehow: $q -> $timeout -> $http
+
 describe('httpRetrier', () => {
     let httpRetrier = null;
     let $httpBackend = null;
