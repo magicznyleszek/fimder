@@ -5,7 +5,7 @@
 // during application lifetime (so user actions will reflect in url)
 // -----------------------------------------------------------------------------
 
-angular.module('addressBarModule', ['ngRoute', 'assertModule']);
+angular.module('addressBarModule', ['ngRoute', 'assertModule', 'listenersManagerModule']);
 'use strict';
 
 // -----------------------------------------------------------------------------
@@ -19,73 +19,6 @@ angular.module('addressBarModule').constant('addressBarConfig', {
         search: 'search'
     }
 });
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// -----------------------------------------------------------------------------
-// addressBarInterface -- a service that allows for updating current url without
-// reloading application
-// -----------------------------------------------------------------------------
-
-var AddressBarInterfaceService = function () {
-    _createClass(AddressBarInterfaceService, null, [{
-        key: 'initClass',
-        value: function initClass() {
-            AddressBarInterfaceService.$inject = ['$route', '$location', 'assert', 'addressBarConfig'];
-        }
-    }]);
-
-    function AddressBarInterfaceService($route, $location, assert, addressBarConfig) {
-        _classCallCheck(this, AddressBarInterfaceService);
-
-        this._$route = $route;
-        this._$location = $location;
-        this._assert = assert;
-        this._addressBarConfig = addressBarConfig;
-    }
-
-    _createClass(AddressBarInterfaceService, [{
-        key: 'getCurrent',
-        value: function getCurrent() {
-            var currentRoute = this._$route.current;
-            if (typeof currentRoute === 'undefined') {
-                console.warn('Tried to get current route before it was set!');
-                return {
-                    routeId: null,
-                    params: null
-                };
-            } else {
-                return {
-                    routeId: currentRoute.locals.routeId,
-                    params: currentRoute.params
-                };
-            }
-        }
-    }, {
-        key: 'setMovies',
-        value: function setMovies(movieId) {
-            this._assert.isString(movieId);
-            this._$location.path(this._addressBarConfig.routes.movies + '/' + movieId);
-        }
-    }, {
-        key: 'setSearch',
-        value: function setSearch() {
-            var searchPhrase = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
-            this._assert.isString(searchPhrase);
-            this._$location.path(this._addressBarConfig.routes.search + '/' + searchPhrase);
-        }
-    }]);
-
-    return AddressBarInterfaceService;
-}();
-
-AddressBarInterfaceService.initClass();
-
-angular.module('addressBarModule').service('addressBarInterface', AddressBarInterfaceService);
 'use strict';
 
 // -----------------------------------------------------------------------------
@@ -111,6 +44,84 @@ angular.module('addressBarModule').config(['$routeProvider', '$locationProvider'
 
     $locationProvider.html5Mode(false);
 }]);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// currentRoute -- a service that allows for getting and setting current route
+// -----------------------------------------------------------------------------
+
+var CurrentRouteService = function () {
+    _createClass(CurrentRouteService, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            CurrentRouteService.$inject = ['$rootScope', '$route', '$location', 'assert', 'addressBarConfig', 'listenersManager'];
+        }
+    }]);
+
+    function CurrentRouteService($rootScope, $route, $location, assert, addressBarConfig, listenersManager) {
+        _classCallCheck(this, CurrentRouteService);
+
+        this._$route = $route;
+        this._$location = $location;
+        this._assert = assert;
+        this._addressBarConfig = addressBarConfig;
+        this._currentRouteListenersManager = listenersManager.getManager();
+        $rootScope.$on('$routeChangeStart', this._onRouteChange.bind(this));
+    }
+
+    _createClass(CurrentRouteService, [{
+        key: '_onRouteChange',
+        value: function _onRouteChange() {
+            this._currentRouteListenersManager.callListeners();
+        }
+    }, {
+        key: 'registerChangeListener',
+        value: function registerChangeListener(listener) {
+            return this._currentRouteListenersManager.addListener(listener);
+        }
+    }, {
+        key: 'get',
+        value: function get() {
+            var currentRoute = this._$route.current;
+            if (typeof currentRoute === 'undefined') {
+                console.warn('Tried to get current route before it was set!');
+                return {
+                    routeId: null,
+                    params: null
+                };
+            } else {
+                return {
+                    routeId: currentRoute.locals.routeId,
+                    params: currentRoute.params
+                };
+            }
+        }
+    }, {
+        key: 'setToMovies',
+        value: function setToMovies(movieId) {
+            this._assert.isString(movieId);
+            this._$location.path(this._addressBarConfig.routes.movies + '/' + movieId);
+        }
+    }, {
+        key: 'setToSearch',
+        value: function setToSearch() {
+            var searchPhrase = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+            this._assert.isString(searchPhrase);
+            this._$location.path(this._addressBarConfig.routes.search + '/' + searchPhrase);
+        }
+    }]);
+
+    return CurrentRouteService;
+}();
+
+CurrentRouteService.initClass();
+
+angular.module('addressBarModule').service('currentRoute', CurrentRouteService);
 'use strict';
 
 // -----------------------------------------------------------------------------
@@ -586,107 +597,11 @@ angular.module('listenersManagerModule').factory('listenersManager', function ()
 'use strict';
 
 // -----------------------------------------------------------------------------
-// searchBoxModule -- displays a search box input and has a service for
-// listening to searchphrase changes
+// searchBoxModule -- displays a search box input and applies search phrase to
+// address bar
 // -----------------------------------------------------------------------------
 
 angular.module('searchBoxModule', ['listenersManagerModule', 'addressBarModule']);
-
-angular.module('searchBoxModule').run([
-// we want to initialize addressBarHandler
-'addressBarHandler', angular.noop]);
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// -----------------------------------------------------------------------------
-// addressBarHandler is a service gluing together search box and address bar
-// -----------------------------------------------------------------------------
-
-var AddressBarHandlerService = function () {
-    _createClass(AddressBarHandlerService, null, [{
-        key: 'initClass',
-        value: function initClass() {
-            AddressBarHandlerService.$inject = ['currentSearch', 'addressBarInterface', 'addressBarConfig'];
-        }
-    }]);
-
-    function AddressBarHandlerService(currentSearch, addressBarInterface, addressBarConfig) {
-        _classCallCheck(this, AddressBarHandlerService);
-
-        this._addressBarInterface = addressBarInterface;
-        this._addressBarConfig = addressBarConfig;
-        currentSearch.registerSearchPhraseListener(this._onSearchPhraseChange.bind(this));
-    }
-
-    _createClass(AddressBarHandlerService, [{
-        key: '_onSearchPhraseChange',
-        value: function _onSearchPhraseChange(searchPhrase) {
-            var currentRoute = this._addressBarInterface.getCurrent();
-            if (currentRoute.routeId === this._addressBarConfig.routes.search) {
-                this._addressBarInterface.setSearch(searchPhrase);
-            }
-        }
-    }]);
-
-    return AddressBarHandlerService;
-}();
-
-AddressBarHandlerService.initClass();
-
-angular.module('searchBoxModule').service('addressBarHandler', AddressBarHandlerService);
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// -----------------------------------------------------------------------------
-// currentSearch is a service that keeps current value of search phrase from the
-// searchBoxCtrl and allows listening to it being changed
-// -----------------------------------------------------------------------------
-
-var CurrentSearchService = function () {
-    _createClass(CurrentSearchService, null, [{
-        key: 'initClass',
-        value: function initClass() {
-            CurrentSearchService.$inject = ['listenersManager'];
-        }
-    }]);
-
-    function CurrentSearchService(listenersManager) {
-        _classCallCheck(this, CurrentSearchService);
-
-        this._searchPhrase = null;
-        this._searchPhraseListenersManager = listenersManager.getManager();
-    }
-
-    _createClass(CurrentSearchService, [{
-        key: 'registerSearchPhraseListener',
-        value: function registerSearchPhraseListener(listener) {
-            return this._searchPhraseListenersManager.addListener(listener);
-        }
-    }, {
-        key: 'get',
-        value: function get() {
-            return this._searchPhrase;
-        }
-    }, {
-        key: 'set',
-        value: function set(searchPhrase) {
-            this._searchPhrase = searchPhrase;
-            this._searchPhraseListenersManager.callListeners(this._searchPhrase);
-        }
-    }]);
-
-    return CurrentSearchService;
-}();
-
-CurrentSearchService.initClass();
-
-angular.module('searchBoxModule').service('currentSearch', CurrentSearchService);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -705,17 +620,16 @@ var SearchBoxController = function () {
             SearchBoxController.debounceTime = 500;
             SearchBoxController.enterKey = 13;
             SearchBoxController.inputSelector = '[js-searchBox-input]';
-            SearchBoxController.$inject = ['$scope', '$element', '$timeout', 'currentSearch', 'addressBarInterface', 'addressBarConfig'];
+            SearchBoxController.$inject = ['$scope', '$element', '$timeout', 'currentRoute', 'addressBarConfig'];
         }
     }]);
 
-    function SearchBoxController($scope, $element, $timeout, currentSearch, addressBarInterface, addressBarConfig) {
+    function SearchBoxController($scope, $element, $timeout, currentRoute, addressBarConfig) {
         _classCallCheck(this, SearchBoxController);
 
         this._$scope = $scope;
         this._$timeout = $timeout;
-        this._currentSearch = currentSearch;
-        this._addressBarInterface = addressBarInterface;
+        this._currentRoute = currentRoute;
         this._addressBarConfig = addressBarConfig;
         this._inputEl = $element[0].querySelector(SearchBoxController.inputSelector);
         this.inputValue = '';
@@ -723,18 +637,21 @@ var SearchBoxController = function () {
 
         this._applyInputValueDebounced = _.debounce(this._applyInputValue.bind(this), SearchBoxController.debounceTime);
 
-        // we want to start with input focused
-        this._focusOnInput();
         this._$timeout(this._loadInitialValueFromAddressBar.bind(this), 0);
     }
 
     _createClass(SearchBoxController, [{
         key: '_loadInitialValueFromAddressBar',
         value: function _loadInitialValueFromAddressBar() {
-            var currentRoute = this._addressBarInterface.getCurrent();
+            var currentRoute = this._currentRoute.get();
             if (currentRoute.routeId === this._addressBarConfig.routes.search) {
                 this.inputValue = currentRoute.params.searchPhrase;
+            } else {
+                this.inputValue = '';
             }
+
+            // we want to start with input focused
+            this._focusOnInput();
         }
     }, {
         key: '_applyInputValue',
@@ -742,7 +659,7 @@ var SearchBoxController = function () {
             this._applyInputValueDebounced.cancel();
             if (this._lastAppliedInputValue !== this.inputValue) {
                 this._lastAppliedInputValue = this.inputValue;
-                this._$scope.$applyAsync(this._currentSearch.set.bind(this._currentSearch, this.inputValue));
+                this._$scope.$applyAsync(this._currentRoute.setToSearch.bind(this._currentRoute, this.inputValue));
             }
         }
     }, {

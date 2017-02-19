@@ -29,16 +29,3 @@ angular.module('addressBarModule').config([
         $locationProvider.html5Mode(false);
     }
 ]);
-
-angular.module('addressBarModule').run([
-    '$rootScope',
-    'addressBarInterface',
-    (
-        $rootScope,
-        addressBarInterface
-    ) => {
-        $rootScope.$on('$routeChangeStart', (e, nextRoute) => {
-            addressBarInterface.notifyChange(nextRoute);
-        });
-    }
-]);

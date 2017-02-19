@@ -11,8 +11,7 @@ describe('searchBoxCtrl', () => {
                 $scope: $rootScope.$new(),
                 $element: mockEl,
                 $timeout: $injector.get('$timeout'),
-                currentSearch: $injector.get('currentSearch'),
-                addressBarInterface: $injector.get('addressBarInterface'),
+                currentRoute: $injector.get('currentRoute'),
                 addressBarConfig: $injector.get('addressBarConfig')
             });
         });

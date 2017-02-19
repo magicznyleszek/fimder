@@ -12,7 +12,7 @@ class SearchBoxController {
             '$scope',
             '$element',
             '$timeout',
-            'addressBarInterface',
+            'currentRoute',
             'addressBarConfig'
         ];
     }
@@ -21,12 +21,12 @@ class SearchBoxController {
         $scope,
         $element,
         $timeout,
-        addressBarInterface,
+        currentRoute,
         addressBarConfig
     ) {
         this._$scope = $scope;
         this._$timeout = $timeout;
-        this._addressBarInterface = addressBarInterface;
+        this._currentRoute = currentRoute;
         this._addressBarConfig = addressBarConfig;
         this._inputEl = $element[0].querySelector(
             SearchBoxController.inputSelector
@@ -39,16 +39,19 @@ class SearchBoxController {
             SearchBoxController.debounceTime
         );
 
-        // we want to start with input focused
-        this._focusOnInput();
         this._$timeout(this._loadInitialValueFromAddressBar.bind(this), 0);
     }
 
     _loadInitialValueFromAddressBar() {
-        const currentRoute = this._addressBarInterface.getCurrent();
+        const currentRoute = this._currentRoute.get();
         if (currentRoute.routeId === this._addressBarConfig.routes.search) {
             this.inputValue = currentRoute.params.searchPhrase;
+        } else {
+            this.inputValue = '';
         }
+
+        // we want to start with input focused
+        this._focusOnInput();
     }
 
     _applyInputValue() {
@@ -56,8 +59,8 @@ class SearchBoxController {
         if (this._lastAppliedInputValue !== this.inputValue) {
             this._lastAppliedInputValue = this.inputValue;
             this._$scope.$applyAsync(
-                this._addressBarInterface.setSearch.bind(
-                    this._addressBarInterface,
+                this._currentRoute.setToSearch.bind(
+                    this._currentRoute,
                     this.inputValue
                 )
             );

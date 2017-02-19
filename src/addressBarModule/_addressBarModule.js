@@ -5,5 +5,6 @@
 
 angular.module('addressBarModule', [
     'ngRoute',
-    'assertModule'
+    'assertModule',
+    'listenersManagerModule'
 ]);
