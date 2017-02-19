@@ -1,12 +1,16 @@
-<input
-    ng-controller="searchBoxCtrl as searchBox"
-    type="text"
-    placeholder="Search movie titles…"
-    ng-model="searchBox.inputValue"
-    ng-change="searchBox.onInputValueChange()"
-    ng-keypress="searchBox.onInputKeypress($event)"
-    ng-focus="searchBox.onInputFocus()"
-    ng-blur="searchBox.onInputBlur()"
->
+<div ng-controller="searchBoxCtrl as searchBox">
+    <input
+        type="text"
+        js-searchBox-input
+        placeholder="Search movie titles…"
+        ng-model="searchBox.inputValue"
+        ng-change="searchBox.onInputValueChange()"
+        ng-keypress="searchBox.onInputKeypress($event)"
+        ng-focus="searchBox.onInputFocus()"
+        ng-blur="searchBox.onInputBlur()"
+    >
 
-<svg><use xlink:href="#symbol-eye"></svg>
+    <button ng-click="searchBox.clear();">&times;</button>
+
+    <svg><use xlink:href="#symbol-eye"></svg>
+<div>

@@ -596,6 +596,7 @@ var SearchBoxController = function () {
         value: function initClass() {
             SearchBoxController.debounceTime = 500;
             SearchBoxController.enterKey = 13;
+            SearchBoxController.inputSelector = '[js-searchBox-input]';
             SearchBoxController.$inject = ['$scope', '$element'];
         }
     }]);
@@ -604,22 +605,28 @@ var SearchBoxController = function () {
         _classCallCheck(this, SearchBoxController);
 
         this._$scope = $scope;
-        this._$element = $element;
+        this._inputEl = $element[0].querySelector(SearchBoxController.inputSelector);
         this.inputValue = '';
+        this._lastAppliedInputValue = null;
 
         this._applyInputValueDebounced = _.debounce(this._applyInputValue.bind(this), SearchBoxController.debounceTime);
+
+        this._focusOnInput();
     }
 
     _createClass(SearchBoxController, [{
         key: '_applyInputValue',
         value: function _applyInputValue() {
             this._applyInputValueDebounced.cancel();
-            console.log('applying', this.inputValue);
+            if (this._lastAppliedInputValue !== this.inputValue) {
+                console.log('applying', this.inputValue);
+                this._lastAppliedInputValue = this.inputValue;
+            }
         }
     }, {
         key: '_focusOnInput',
         value: function _focusOnInput() {
-            this._$element[0].focus();
+            this._inputEl.focus();
         }
     }, {
         key: 'onInputValueChange',
@@ -632,6 +639,12 @@ var SearchBoxController = function () {
             if (e.which === SearchBoxController.enterKey) {
                 this._applyInputValue();
             }
+        }
+    }, {
+        key: 'clear',
+        value: function clear() {
+            this.inputValue = '';
+            this._applyInputValue();
         }
     }]);
 

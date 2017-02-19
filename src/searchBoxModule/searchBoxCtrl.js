@@ -7,27 +7,36 @@ class SearchBoxController {
     static initClass() {
         SearchBoxController.debounceTime = 500;
         SearchBoxController.enterKey = 13;
+        SearchBoxController.inputSelector = '[js-searchBox-input]';
         SearchBoxController.$inject = ['$scope', '$element'];
     }
 
     constructor($scope, $element) {
         this._$scope = $scope;
-        this._$element = $element;
+        this._inputEl = $element[0].querySelector(
+            SearchBoxController.inputSelector
+        );
         this.inputValue = '';
+        this._lastAppliedInputValue = null;
 
         this._applyInputValueDebounced = _.debounce(
             this._applyInputValue.bind(this),
             SearchBoxController.debounceTime
         )
+
+        this._focusOnInput();
     }
 
     _applyInputValue() {
         this._applyInputValueDebounced.cancel();
-        console.log('applying', this.inputValue);
+        if (this._lastAppliedInputValue !== this.inputValue) {
+            console.log('applying', this.inputValue);
+            this._lastAppliedInputValue = this.inputValue;
+        }
     }
 
     _focusOnInput() {
-        this._$element[0].focus();
+        this._inputEl.focus();
     }
 
     onInputValueChange() {
@@ -38,6 +47,11 @@ class SearchBoxController {
         if (e.which === SearchBoxController.enterKey) {
             this._applyInputValue();
         }
+    }
+
+    clear() {
+        this.inputValue = '';
+        this._applyInputValue();
     }
 }
 
