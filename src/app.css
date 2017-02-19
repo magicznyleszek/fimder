@@ -1,3 +1,7 @@
 /* all import rules */
 
 @import "searchBoxModule/searchBox.css";
+
+[ng-cloak] {
+    display: none !important;
+}

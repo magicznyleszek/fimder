@@ -1,5 +1,5 @@
 <div ng-app="akabuskAppModule">
-    <div ng-controller="viewsCtrl as views">
+    <div ng-controller="viewsCtrl as views" ng-cloak>
         <section ng-show="views.isSearchViewVisible">
             {% include searchBoxModule/searchBox.liquid %}
             search list
