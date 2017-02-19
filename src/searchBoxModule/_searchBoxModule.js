@@ -4,5 +4,12 @@
 // -----------------------------------------------------------------------------
 
 angular.module('searchBoxModule', [
-    'listenersManagerModule'
+    'listenersManagerModule',
+    'addressBarModule'
+]);
+
+angular.module('searchBoxModule').run([
+    // we want to initialize addressBarHandler
+    'addressBarHandler',
+    angular.noop
 ]);

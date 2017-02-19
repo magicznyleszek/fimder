@@ -7,7 +7,6 @@ class AddressBarInterfaceService {
     static initClass() {
         AddressBarInterfaceService.$inject = [
             '$route',
-            '$rootScope',
             '$location',
             'assert',
             'addressBarConfig'
@@ -16,35 +15,40 @@ class AddressBarInterfaceService {
 
     constructor(
         $route,
-        $rootScope,
         $location,
         assert,
         addressBarConfig
     ) {
         this._$route = $route;
-        this._$rootScope = $rootScope;
         this._$location = $location;
         this._assert = assert;
         this._addressBarConfig = addressBarConfig;
     }
 
     getCurrent() {
-        return {
-            routeId: this._$route.current.locals.routeId,
-            params: this._$route.current.params
-        };
+        const currentRoute = this._$route.current;
+        if (typeof currentRoute === 'undefined') {
+            console.warn('Tried to get current route before it was set!');
+            return {
+                routeId: null,
+                params: null
+            };
+        } else {
+            return {
+                routeId: currentRoute.locals.routeId,
+                params: currentRoute.params
+            };
+        }
     }
 
     setMovies(movieId) {
         this._assert.isString(movieId);
         this._$location.path(`${this._addressBarConfig.routes.movies}/${movieId}`);
-        this._$rootScope.$apply();
     }
 
     setSearch(searchPhrase = '') {
         this._assert.isString(searchPhrase);
         this._$location.path(`${this._addressBarConfig.routes.search}/${searchPhrase}`);
-        this._$rootScope.$apply();
     }
 }
 

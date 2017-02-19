@@ -8,11 +8,29 @@ class SearchBoxController {
         SearchBoxController.debounceTime = 500;
         SearchBoxController.enterKey = 13;
         SearchBoxController.inputSelector = '[js-searchBox-input]';
-        SearchBoxController.$inject = ['$scope', '$element'];
+        SearchBoxController.$inject = [
+            '$scope',
+            '$element',
+            '$timeout',
+            'currentSearch',
+            'addressBarInterface',
+            'addressBarConfig'
+        ];
     }
 
-    constructor($scope, $element) {
+    constructor(
+        $scope,
+        $element,
+        $timeout,
+        currentSearch,
+        addressBarInterface,
+        addressBarConfig
+    ) {
         this._$scope = $scope;
+        this._$timeout = $timeout;
+        this._currentSearch = currentSearch;
+        this._addressBarInterface = addressBarInterface;
+        this._addressBarConfig = addressBarConfig;
         this._inputEl = $element[0].querySelector(
             SearchBoxController.inputSelector
         );
@@ -22,17 +40,30 @@ class SearchBoxController {
         this._applyInputValueDebounced = _.debounce(
             this._applyInputValue.bind(this),
             SearchBoxController.debounceTime
-        )
+        );
 
         // we want to start with input focused
         this._focusOnInput();
+        this._$timeout(this._loadInitialValueFromAddressBar.bind(this), 0);
+    }
+
+    _loadInitialValueFromAddressBar() {
+        const currentRoute = this._addressBarInterface.getCurrent();
+        if (currentRoute.routeId === this._addressBarConfig.routes.search) {
+            this.inputValue = currentRoute.params.searchPhrase;
+        }
     }
 
     _applyInputValue() {
         this._applyInputValueDebounced.cancel();
         if (this._lastAppliedInputValue !== this.inputValue) {
-            console.log('applying', this.inputValue);
             this._lastAppliedInputValue = this.inputValue;
+            this._$scope.$applyAsync(
+                this._currentSearch.set.bind(
+                    this._currentSearch,
+                    this.inputValue
+                )
+            );
         }
     }
 
