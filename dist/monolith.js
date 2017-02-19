@@ -9,37 +9,24 @@ angular.module('addressBarModule', ['ngRoute', 'assertModule', 'listenersManager
 'use strict';
 
 // -----------------------------------------------------------------------------
-// addressBarConfig -- has names of all routes to make sure all scripts use
-// the proper ones
-// -----------------------------------------------------------------------------
-
-angular.module('addressBarModule').constant('addressBarConfig', {
-    routes: {
-        movies: 'movies',
-        search: 'search'
-    }
-});
-'use strict';
-
-// -----------------------------------------------------------------------------
 // addressBarModule routes configuration
 // -----------------------------------------------------------------------------
 
-angular.module('addressBarModule').config(['$routeProvider', '$locationProvider', 'addressBarConfig', function ($routeProvider, $locationProvider, addressBarConfig) {
-    $routeProvider.when('/' + addressBarConfig.routes.movies + '/:movieId', {
+angular.module('addressBarModule').config(['$routeProvider', '$locationProvider', 'routesConfig', function ($routeProvider, $locationProvider, routesConfig) {
+    $routeProvider.when('/' + routesConfig.routes.movies + '/:movieId', {
         resolve: {
             routeId: [function () {
-                return addressBarConfig.routes.movies;
+                return routesConfig.routes.movies;
             }]
         }
-    }).when('/' + addressBarConfig.routes.search + '/:searchPhrase?', {
+    }).when('/' + routesConfig.routes.search + '/:searchPhrase?', {
         resolve: {
             routeId: [function () {
-                return addressBarConfig.routes.search;
+                return routesConfig.routes.search;
             }]
         }
     }).otherwise({
-        redirectTo: '/' + addressBarConfig.routes.search + '/'
+        redirectTo: '/' + routesConfig.routes.search + '/'
     });
 
     $locationProvider.html5Mode(false);
@@ -58,19 +45,19 @@ var CurrentRouteService = function () {
     _createClass(CurrentRouteService, null, [{
         key: 'initClass',
         value: function initClass() {
-            CurrentRouteService.$inject = ['$rootScope', '$route', '$location', 'assert', 'addressBarConfig', 'listenersManager'];
+            CurrentRouteService.$inject = ['$rootScope', '$route', '$location', 'assert', 'routesConfig', 'listenersManager'];
         }
     }]);
 
-    function CurrentRouteService($rootScope, $route, $location, assert, addressBarConfig, listenersManager) {
+    function CurrentRouteService($rootScope, $route, $location, assert, routesConfig, listenersManager) {
         _classCallCheck(this, CurrentRouteService);
 
         this._$route = $route;
         this._$location = $location;
         this._assert = assert;
-        this._addressBarConfig = addressBarConfig;
+        this._routesConfig = routesConfig;
         this._currentRouteListenersManager = listenersManager.getManager();
-        $rootScope.$on('$routeChangeStart', this._onRouteChange.bind(this));
+        $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
     }
 
     _createClass(CurrentRouteService, [{
@@ -79,32 +66,36 @@ var CurrentRouteService = function () {
             this._currentRouteListenersManager.callListeners();
         }
     }, {
-        key: 'registerChangeListener',
-        value: function registerChangeListener(listener) {
+        key: 'registerRouteChangeListener',
+        value: function registerRouteChangeListener(listener) {
             return this._currentRouteListenersManager.addListener(listener);
         }
     }, {
-        key: 'get',
-        value: function get() {
-            var currentRoute = this._$route.current;
-            if (typeof currentRoute === 'undefined') {
-                console.warn('Tried to get current route before it was set!');
+        key: '_getRouteFromRouteData',
+        value: function _getRouteFromRouteData(routeData) {
+            if (typeof routeData === 'undefined') {
+                console.warn('Tried to get route before it was set!');
                 return {
                     routeId: null,
                     params: null
                 };
             } else {
                 return {
-                    routeId: currentRoute.locals.routeId,
-                    params: currentRoute.params
+                    routeId: routeData.locals.routeId,
+                    params: routeData.params
                 };
             }
+        }
+    }, {
+        key: 'get',
+        value: function get() {
+            return this._getRouteFromRouteData(this._$route.current);
         }
     }, {
         key: 'setToMovies',
         value: function setToMovies(movieId) {
             this._assert.isString(movieId);
-            this._$location.path(this._addressBarConfig.routes.movies + '/' + movieId);
+            this._$location.path(this._routesConfig.routes.movies + '/' + movieId);
         }
     }, {
         key: 'setToSearch',
@@ -112,7 +103,7 @@ var CurrentRouteService = function () {
             var searchPhrase = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
             this._assert.isString(searchPhrase);
-            this._$location.path(this._addressBarConfig.routes.search + '/' + searchPhrase);
+            this._$location.path(this._routesConfig.routes.search + '/' + searchPhrase);
         }
     }]);
 
@@ -125,10 +116,23 @@ angular.module('addressBarModule').service('currentRoute', CurrentRouteService);
 'use strict';
 
 // -----------------------------------------------------------------------------
+// routesConfig -- has names of all routes to make sure all scripts use
+// the proper ones
+// -----------------------------------------------------------------------------
+
+angular.module('addressBarModule').constant('routesConfig', {
+    routes: {
+        movies: 'movies',
+        search: 'search'
+    }
+});
+'use strict';
+
+// -----------------------------------------------------------------------------
 // akabuskAppModule is our single ngApp module for whole web application
 // -----------------------------------------------------------------------------
 
-angular.module('akabuskAppModule', ['assertModule', 'httpRetrierModule', 'searchBoxModule']);
+angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule']);
 
 // -----------------------------------------------------------------------------
 // tweak default angular configuration
@@ -620,17 +624,17 @@ var SearchBoxController = function () {
             SearchBoxController.debounceTime = 500;
             SearchBoxController.enterKey = 13;
             SearchBoxController.inputSelector = '[js-searchBox-input]';
-            SearchBoxController.$inject = ['$scope', '$element', '$timeout', 'currentRoute', 'addressBarConfig'];
+            SearchBoxController.$inject = ['$scope', '$element', '$timeout', 'currentRoute', 'routesConfig'];
         }
     }]);
 
-    function SearchBoxController($scope, $element, $timeout, currentRoute, addressBarConfig) {
+    function SearchBoxController($scope, $element, $timeout, currentRoute, routesConfig) {
         _classCallCheck(this, SearchBoxController);
 
         this._$scope = $scope;
         this._$timeout = $timeout;
         this._currentRoute = currentRoute;
-        this._addressBarConfig = addressBarConfig;
+        this._routesConfig = routesConfig;
         this._inputEl = $element[0].querySelector(SearchBoxController.inputSelector);
         this.inputValue = '';
         this._lastAppliedInputValue = null;
@@ -644,7 +648,7 @@ var SearchBoxController = function () {
         key: '_loadInitialValueFromAddressBar',
         value: function _loadInitialValueFromAddressBar() {
             var currentRoute = this._currentRoute.get();
-            if (currentRoute.routeId === this._addressBarConfig.routes.search) {
+            if (currentRoute.routeId === this._routesConfig.routes.search) {
                 this.inputValue = currentRoute.params.searchPhrase;
             } else {
                 this.inputValue = '';
@@ -693,3 +697,68 @@ var SearchBoxController = function () {
 SearchBoxController.initClass();
 
 angular.module('searchBoxModule').controller('searchBoxCtrl', SearchBoxController);
+'use strict';
+
+// -----------------------------------------------------------------------------
+// viewsModule -- handles switching between different app views
+// -----------------------------------------------------------------------------
+
+angular.module('viewsModule', ['addressBarModule']);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// viewsCtrl -- manages displaying different views depending on route
+// -----------------------------------------------------------------------------
+
+var ViewsController = function () {
+    _createClass(ViewsController, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            ViewsController.$inject = ['currentRoute', 'routesConfig'];
+        }
+    }]);
+
+    function ViewsController(currentRoute, routesConfig) {
+        _classCallCheck(this, ViewsController);
+
+        this._currentRoute = currentRoute;
+        this._routesConfig = routesConfig;
+        this.isSearchViewVisible = false;
+        this.isMoviesViewVisible = false;
+        this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
+    }
+
+    _createClass(ViewsController, [{
+        key: '_onRouteChange',
+        value: function _onRouteChange() {
+            var route = this._currentRoute.get();
+            this._hideAllViews();
+            switch (route.routeId) {
+                case this._routesConfig.routes.search:
+                    this.isSearchViewVisible = true;
+                    break;
+                case this._routesConfig.routes.movies:
+                    this.isMoviesViewVisible = true;
+                    break;
+                default:
+                    console.error('Unknown route: ' + route.routeId);
+            }
+        }
+    }, {
+        key: '_hideAllViews',
+        value: function _hideAllViews() {
+            this.isSearchViewVisible = false;
+            this.isMoviesViewVisible = false;
+        }
+    }]);
+
+    return ViewsController;
+}();
+
+ViewsController.initClass();
+
+angular.module('viewsModule').controller('viewsCtrl', ViewsController);

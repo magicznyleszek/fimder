@@ -5,25 +5,25 @@
 angular.module('addressBarModule').config([
     '$routeProvider',
     '$locationProvider',
-    'addressBarConfig',
+    'routesConfig',
     (
         $routeProvider,
         $locationProvider,
-        addressBarConfig
+        routesConfig
     ) => {
         $routeProvider
-        .when(`/${addressBarConfig.routes.movies}/:movieId`, {
+        .when(`/${routesConfig.routes.movies}/:movieId`, {
             resolve: {
-                routeId: [() => {return addressBarConfig.routes.movies;}]
+                routeId: [() => {return routesConfig.routes.movies;}]
             }
         })
-        .when(`/${addressBarConfig.routes.search}/:searchPhrase?`, {
+        .when(`/${routesConfig.routes.search}/:searchPhrase?`, {
             resolve: {
-                routeId: [() => {return addressBarConfig.routes.search;}]
+                routeId: [() => {return routesConfig.routes.search;}]
             }
         })
         .otherwise({
-            redirectTo: `/${addressBarConfig.routes.search}/`
+            redirectTo: `/${routesConfig.routes.search}/`
         });
 
         $locationProvider.html5Mode(false);

@@ -13,7 +13,7 @@ class SearchBoxController {
             '$element',
             '$timeout',
             'currentRoute',
-            'addressBarConfig'
+            'routesConfig'
         ];
     }
 
@@ -22,12 +22,12 @@ class SearchBoxController {
         $element,
         $timeout,
         currentRoute,
-        addressBarConfig
+        routesConfig
     ) {
         this._$scope = $scope;
         this._$timeout = $timeout;
         this._currentRoute = currentRoute;
-        this._addressBarConfig = addressBarConfig;
+        this._routesConfig = routesConfig;
         this._inputEl = $element[0].querySelector(
             SearchBoxController.inputSelector
         );
@@ -44,7 +44,7 @@ class SearchBoxController {
 
     _loadInitialValueFromAddressBar() {
         const currentRoute = this._currentRoute.get();
-        if (currentRoute.routeId === this._addressBarConfig.routes.search) {
+        if (currentRoute.routeId === this._routesConfig.routes.search) {
             this.inputValue = currentRoute.params.searchPhrase;
         } else {
             this.inputValue = '';

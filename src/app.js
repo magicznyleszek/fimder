@@ -3,8 +3,7 @@
 // -----------------------------------------------------------------------------
 
 angular.module('akabuskAppModule', [
-    'assertModule',
-    'httpRetrierModule',
+    'viewsModule',
     'searchBoxModule'
 ]);
 

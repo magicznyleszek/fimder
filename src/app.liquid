@@ -1,3 +1,12 @@
 <div ng-app="akabuskAppModule">
-    {% include searchBoxModule/searchBox.liquid %}
+    <div ng-controller="viewsCtrl as views">
+        <section ng-show="views.isSearchViewVisible">
+            {% include searchBoxModule/searchBox.liquid %}
+            search list
+        </section>
+
+        <section ng-show="views.isMoviesViewVisible">
+            movie details
+        <section>
+    </div>
 </div>

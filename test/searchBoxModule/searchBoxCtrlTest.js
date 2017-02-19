@@ -12,7 +12,7 @@ describe('searchBoxCtrl', () => {
                 $element: mockEl,
                 $timeout: $injector.get('$timeout'),
                 currentRoute: $injector.get('currentRoute'),
-                addressBarConfig: $injector.get('addressBarConfig')
+                routesConfig: $injector.get('routesConfig')
             });
         });
     });
