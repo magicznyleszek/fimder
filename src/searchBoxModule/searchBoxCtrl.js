@@ -24,6 +24,7 @@ class SearchBoxController {
             SearchBoxController.debounceTime
         )
 
+        // we want to start with input focused
         this._focusOnInput();
     }
 

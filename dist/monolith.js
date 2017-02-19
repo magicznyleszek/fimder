@@ -611,6 +611,7 @@ var SearchBoxController = function () {
 
         this._applyInputValueDebounced = _.debounce(this._applyInputValue.bind(this), SearchBoxController.debounceTime);
 
+        // we want to start with input focused
         this._focusOnInput();
     }
 
