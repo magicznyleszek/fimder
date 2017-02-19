@@ -88,6 +88,10 @@ AddressBarInterfaceService.initClass();
 angular.module('addressBarModule').service('addressBarInterface', AddressBarInterfaceService);
 'use strict';
 
+// -----------------------------------------------------------------------------
+// addressBarModule routes configuration
+// -----------------------------------------------------------------------------
+
 angular.module('addressBarModule').config(['$routeProvider', '$locationProvider', 'addressBarConfig', function ($routeProvider, $locationProvider, addressBarConfig) {
     $routeProvider.when('/' + addressBarConfig.routes.movies + '/:movieId', {
         resolve: {

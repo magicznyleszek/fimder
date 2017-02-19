@@ -1,3 +1,6 @@
+// -----------------------------------------------------------------------------
+// addressBarModule routes configuration
+// -----------------------------------------------------------------------------
 
 angular.module('addressBarModule').config([
     '$routeProvider',
