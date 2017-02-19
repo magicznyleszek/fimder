@@ -25,6 +25,10 @@ class AddressBarInterfaceService {
         this._addressBarConfig = addressBarConfig;
     }
 
+    notifyChange() {
+        console.log('notifyChange');
+    }
+
     getCurrent() {
         const currentRoute = this._$route.current;
         if (typeof currentRoute === 'undefined') {

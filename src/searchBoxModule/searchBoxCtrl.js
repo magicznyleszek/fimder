@@ -12,7 +12,6 @@ class SearchBoxController {
             '$scope',
             '$element',
             '$timeout',
-            'currentSearch',
             'addressBarInterface',
             'addressBarConfig'
         ];
@@ -22,13 +21,11 @@ class SearchBoxController {
         $scope,
         $element,
         $timeout,
-        currentSearch,
         addressBarInterface,
         addressBarConfig
     ) {
         this._$scope = $scope;
         this._$timeout = $timeout;
-        this._currentSearch = currentSearch;
         this._addressBarInterface = addressBarInterface;
         this._addressBarConfig = addressBarConfig;
         this._inputEl = $element[0].querySelector(
@@ -59,8 +56,8 @@ class SearchBoxController {
         if (this._lastAppliedInputValue !== this.inputValue) {
             this._lastAppliedInputValue = this.inputValue;
             this._$scope.$applyAsync(
-                this._currentSearch.set.bind(
-                    this._currentSearch,
+                this._addressBarInterface.setSearch.bind(
+                    this._addressBarInterface,
                     this.inputValue
                 )
             );
