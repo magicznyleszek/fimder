@@ -1,4 +1,6 @@
 <div ng-controller="searchBoxCtrl as searchBox">
+    <svg><use xlink:href="#symbol-eye"></svg>
+
     <input
         type="text"
         js-searchBox-input
@@ -10,7 +12,8 @@
         ng-blur="searchBox.onInputBlur()"
     >
 
-    <button ng-click="searchBox.clear();">&times;</button>
-
-    <svg><use xlink:href="#symbol-eye"></svg>
+    <button
+        ng-click="searchBox.clear();"
+        ng-show="searchBox.inputValue.length > 0"
+    >&times;</button>
 <div>
