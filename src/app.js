@@ -5,7 +5,6 @@
 angular.module('akabuskAppModule', [
     'assertModule',
     'httpRetrierModule',
-    'addressBarModule',
     'searchBoxModule'
 ]);
 
@@ -33,8 +32,8 @@ angular.module('akabuskAppModule').config([
 ]);
 
 angular.module('akabuskAppModule').run([
-    'addressBarInterface',
-    (addressBarInterface) => {
+    // '',
+    () => {
         console.debug('app initialized');
     }
 ]);
