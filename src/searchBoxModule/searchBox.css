@@ -5,3 +5,19 @@
 [i-moduleTwo] {
     color: var(--c-green);
 }
+
+
+[i-searchBox] {}
+
+[i-searchBox-icon] {
+    width: 1rem;
+    height: 1rem;
+}
+
+[i-searchBox-input] {
+
+}
+
+[i-searchBox-clearButton] {
+
+}

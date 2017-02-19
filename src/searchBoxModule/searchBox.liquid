@@ -1,8 +1,9 @@
-<div ng-controller="searchBoxCtrl as searchBox">
-    <svg><use xlink:href="#symbol-eye"></svg>
+<div ng-controller="searchBoxCtrl as searchBox" i-searchBox>
+    <svg i-searchBox-icon><use xlink:href="#symbol-eye"></svg>
 
     <input
         type="text"
+        i-searchBox-input
         js-searchBox-input
         placeholder="Search movie titles…"
         ng-model="searchBox.inputValue"
@@ -13,6 +14,7 @@
     >
 
     <button
+        i-searchBox-clearButton
         ng-click="searchBox.clear();"
         ng-show="searchBox.inputValue.length > 0"
     >&times;</button>
