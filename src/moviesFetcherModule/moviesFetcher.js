@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 // moviesFetcher is a service that promises and fetches data from OMDb API.
 // You can get two types of data here:
-// - fetchMoviesBySearchPhrase() returns a list of movies
+// - fetchMoviesBySearch() returns a list of movies
 // - fetchMovieById() returns a detailed data for a single movie
 // NOTE: all above methods returns a retrier object (see httpRetrierModule)
 // -----------------------------------------------------------------------------
@@ -11,19 +11,20 @@ class MoviesFetcherService {
         MoviesFetcherService.apiUrl = 'http://www.omdbapi.com/?r=json&type=movie';
         MoviesFetcherService.retryLimit = 3;
 
-        MoviesFetcherService.$inject = ['httpRetrier', 'assert'];
+        MoviesFetcherService.$inject = ['httpRetrier', 'assert', '$window'];
     }
 
-    constructor(httpRetrier, assert) {
+    constructor(httpRetrier, assert, $window) {
         this._httpRetrier = httpRetrier;
         this._assert = assert;
+        this._$window = $window;
     }
 
     // -------------------------------------------------------------------------
     // getting a list of movies
     // -------------------------------------------------------------------------
 
-    fetchMoviesBySearchPhrase(searchPhrase) {
+    fetchMoviesBySearch(searchPhrase) {
         this._assert.isString(searchPhrase);
         return this._httpRetrier.runGet(
             this._getSearchUrl(searchPhrase),

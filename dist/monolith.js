@@ -513,7 +513,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // -----------------------------------------------------------------------------
 // moviesFetcher is a service that promises and fetches data from OMDb API.
 // You can get two types of data here:
-// - fetchMoviesBySearchPhrase() returns a list of movies
+// - fetchMoviesBySearch() returns a list of movies
 // - fetchMovieById() returns a detailed data for a single movie
 // NOTE: all above methods returns a retrier object (see httpRetrierModule)
 // -----------------------------------------------------------------------------
@@ -525,15 +525,16 @@ var MoviesFetcherService = function () {
             MoviesFetcherService.apiUrl = 'http://www.omdbapi.com/?r=json&type=movie';
             MoviesFetcherService.retryLimit = 3;
 
-            MoviesFetcherService.$inject = ['httpRetrier', 'assert'];
+            MoviesFetcherService.$inject = ['httpRetrier', 'assert', '$window'];
         }
     }]);
 
-    function MoviesFetcherService(httpRetrier, assert) {
+    function MoviesFetcherService(httpRetrier, assert, $window) {
         _classCallCheck(this, MoviesFetcherService);
 
         this._httpRetrier = httpRetrier;
         this._assert = assert;
+        this._$window = $window;
     }
 
     // -------------------------------------------------------------------------
@@ -541,8 +542,8 @@ var MoviesFetcherService = function () {
     // -------------------------------------------------------------------------
 
     _createClass(MoviesFetcherService, [{
-        key: 'fetchMoviesBySearchPhrase',
-        value: function fetchMoviesBySearchPhrase(searchPhrase) {
+        key: 'fetchMoviesBySearch',
+        value: function fetchMoviesBySearch(searchPhrase) {
             this._assert.isString(searchPhrase);
             return this._httpRetrier.runGet(this._getSearchUrl(searchPhrase), MoviesFetcherService.retryLimit);
         }
@@ -864,16 +865,17 @@ var SearchResultsController = function () {
     _createClass(SearchResultsController, null, [{
         key: 'initClass',
         value: function initClass() {
-            SearchResultsController.$inject = ['SearchResult', 'currentRoute', 'routesConfig'];
+            SearchResultsController.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher'];
         }
     }]);
 
-    function SearchResultsController(SearchResult, currentRoute, routesConfig) {
+    function SearchResultsController(SearchResult, currentRoute, routesConfig, moviesFetcher) {
         _classCallCheck(this, SearchResultsController);
 
         this._SearchResult = SearchResult;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
+        this._moviesFetcher = moviesFetcher;
 
         this.results = [];
         this.isListVisible = false;
@@ -896,6 +898,32 @@ var SearchResultsController = function () {
         key: '_startNewSearch',
         value: function _startNewSearch(searchPhrase) {
             console.log('_startNewSearch', searchPhrase);
+            this._cancelRetrierIfNecessary();
+            this._retrier = this._moviesFetcher.fetchMoviesBySearch(searchPhrase);
+            this._retrier.promise.then(this._fetchMoviesSuccess.bind(this), this._fetchMoviesError.bind(this), this._fetchMoviesNotify.bind(this));
+        }
+    }, {
+        key: '_fetchMoviesSuccess',
+        value: function _fetchMoviesSuccess(responseData) {
+            console.log('_fetchMoviesSuccess', responseData);
+        }
+    }, {
+        key: '_fetchMoviesError',
+        value: function _fetchMoviesError(responseData) {
+            console.log('_fetchMoviesError', responseData);
+        }
+    }, {
+        key: '_fetchMoviesNotify',
+        value: function _fetchMoviesNotify(responseData) {
+            console.log('_fetchMoviesNotify', responseData);
+        }
+    }, {
+        key: '_cancelRetrierIfNecessary',
+        value: function _cancelRetrierIfNecessary() {
+            if (typeof this._retrier !== 'undefined') {
+                this._retrier.cancel();
+                delete this._retrier;
+            }
         }
     }]);
 

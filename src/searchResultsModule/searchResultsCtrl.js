@@ -8,18 +8,21 @@ class SearchResultsController {
         SearchResultsController.$inject = [
             'SearchResult',
             'currentRoute',
-            'routesConfig'
+            'routesConfig',
+            'moviesFetcher'
         ];
     }
 
     constructor(
         SearchResult,
         currentRoute,
-        routesConfig
+        routesConfig,
+        moviesFetcher
     ) {
         this._SearchResult = SearchResult;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
+        this._moviesFetcher = moviesFetcher;
 
         this.results = [];
         this.isListVisible = false;
@@ -41,6 +44,32 @@ class SearchResultsController {
 
     _startNewSearch(searchPhrase) {
         console.log('_startNewSearch', searchPhrase);
+        this._cancelRetrierIfNecessary();
+        this._retrier = this._moviesFetcher.fetchMoviesBySearch(searchPhrase);
+        this._retrier.promise.then(
+            this._fetchMoviesSuccess.bind(this),
+            this._fetchMoviesError.bind(this),
+            this._fetchMoviesNotify.bind(this)
+        );
+    }
+
+    _fetchMoviesSuccess(responseData) {
+        console.log('_fetchMoviesSuccess', responseData);
+    }
+
+    _fetchMoviesError(responseData) {
+        console.log('_fetchMoviesError', responseData);
+    }
+
+    _fetchMoviesNotify(responseData) {
+        console.log('_fetchMoviesNotify', responseData);
+    }
+
+    _cancelRetrierIfNecessary() {
+        if (typeof this._retrier !== 'undefined') {
+            this._retrier.cancel();
+            delete this._retrier;
+        }
     }
 }
 
