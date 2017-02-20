@@ -9,6 +9,7 @@ angular.module('movieDetailsModule').factory('Movie', [
             static initClass() {
                 MovieModel.requiredType = 'movie';
                 MovieModel.requiredProperties = [
+                    'imdbID',
                     'Title',
                     'Released',
                     'Runtime',
@@ -28,6 +29,7 @@ angular.module('movieDetailsModule').factory('Movie', [
 
             constructor(movieData) {
                 this._verifyData(movieData);
+                this.id = movieData.imdbID;
                 this.title = movieData.Title;
                 this.releaseDate = movieData.Released;
                 this.releaseDateFull = new Date(movieData.Released);

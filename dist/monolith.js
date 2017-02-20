@@ -538,7 +538,7 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', function (asser
             key: 'initClass',
             value: function initClass() {
                 MovieModel.requiredType = 'movie';
-                MovieModel.requiredProperties = ['Title', 'Released', 'Runtime', 'Genre', 'Director', 'Writer', 'Actors', 'Plot', 'Awards', 'Language', 'Country', 'Poster', 'imdbRating', 'imdbVotes'];
+                MovieModel.requiredProperties = ['imdbID', 'Title', 'Released', 'Runtime', 'Genre', 'Director', 'Writer', 'Actors', 'Plot', 'Awards', 'Language', 'Country', 'Poster', 'imdbRating', 'imdbVotes'];
             }
         }]);
 
@@ -546,6 +546,7 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', function (asser
             _classCallCheck(this, MovieModel);
 
             this._verifyData(movieData);
+            this.id = movieData.imdbID;
             this.title = movieData.Title;
             this.releaseDate = movieData.Released;
             this.releaseDateFull = new Date(movieData.Released);
@@ -632,6 +633,8 @@ var MovieDetailsController = function () {
         this._moviesFetcherConfig = moviesFetcherConfig;
         this._assert = assert;
 
+        this._lastSearchPhrase = '';
+
         this.movie = {};
         this.message = null;
         this.isDetailsVisible = false;
@@ -648,7 +651,9 @@ var MovieDetailsController = function () {
     _createClass(MovieDetailsController, [{
         key: 'openSearch',
         value: function openSearch() {
-            this._currentRoute.setToSearch();
+            this._clearMovie();
+            this._hideAll();
+            this._currentRoute.setToSearch(this._lastSearchPhrase);
         }
 
         // -------------------------------------------------------------------------
@@ -659,11 +664,22 @@ var MovieDetailsController = function () {
         key: '_onRouteChange',
         value: function _onRouteChange() {
             var route = this._currentRoute.get();
-            if (route.routeId === this._routesConfig.routes.movie) {
-                if (typeof route.params.movieId === 'string') {
-                    this._fetchMovieData(route.params.movieId);
-                }
-                // movieId is required param of movie route so else not needed
+
+            switch (route.routeId) {
+                case this._routesConfig.routes.movie:
+                    if (typeof route.params.movieId === 'string') {
+                        this._fetchMovieData(route.params.movieId);
+                    }
+                    // movieId is required param of movie route so else not needed,
+                    //  as it will redirect itself to default route
+                    break;
+                case this._routesConfig.routes.search:
+                    if (typeof route.params.searchPhrase === 'string') {
+                        this._lastSearchPhrase = route.params.searchPhrase;
+                    }
+                    break;
+                default:
+                    console.warn('Unknown route "' + route.routeId + '"!');
             }
         }
 
@@ -674,10 +690,11 @@ var MovieDetailsController = function () {
     }, {
         key: '_fetchMovieData',
         value: function _fetchMovieData(movieId) {
+            this._clearMovie();
+            this._showSpinner();
             this._cancelRetrierIfNecessary();
             this._retrier = this._moviesFetcher.fetchMovieById(movieId);
             this._retrier.promise.then(this._fetchMoviesSuccess.bind(this), this._fetchMoviesError.bind(this), this._fetchMoviesNotify.bind(this));
-            this._showSpinner();
         }
     }, {
         key: '_fetchMoviesSuccess',
@@ -729,7 +746,7 @@ var MovieDetailsController = function () {
     }, {
         key: '_clearMovie',
         value: function _clearMovie() {
-            this.results = [];
+            this.movie = {};
         }
 
         // -------------------------------------------------------------------------

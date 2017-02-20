@@ -30,6 +30,8 @@ class MovieDetailsController {
         this._moviesFetcherConfig = moviesFetcherConfig;
         this._assert = assert;
 
+        this._lastSearchPhrase = '';
+
         this.movie = {};
         this.message = null;
         this.isDetailsVisible = false;
@@ -46,7 +48,9 @@ class MovieDetailsController {
     // -------------------------------------------------------------------------
 
     openSearch() {
-        this._currentRoute.setToSearch();
+        this._clearMovie();
+        this._hideAll();
+        this._currentRoute.setToSearch(this._lastSearchPhrase);
     }
 
     // -------------------------------------------------------------------------
@@ -55,11 +59,22 @@ class MovieDetailsController {
 
     _onRouteChange() {
         const route = this._currentRoute.get();
-        if (route.routeId === this._routesConfig.routes.movie) {
-            if (typeof route.params.movieId === 'string') {
-                this._fetchMovieData(route.params.movieId);
-            }
-            // movieId is required param of movie route so else not needed
+
+        switch (route.routeId) {
+            case this._routesConfig.routes.movie:
+                if (typeof route.params.movieId === 'string') {
+                    this._fetchMovieData(route.params.movieId);
+                }
+                // movieId is required param of movie route so else not needed,
+                //  as it will redirect itself to default route
+                break;
+            case this._routesConfig.routes.search:
+                if (typeof route.params.searchPhrase === 'string') {
+                    this._lastSearchPhrase = route.params.searchPhrase;
+                }
+                break;
+            default:
+                console.warn(`Unknown route "${route.routeId}"!`);
         }
     }
 
@@ -68,6 +83,8 @@ class MovieDetailsController {
     // -------------------------------------------------------------------------
 
     _fetchMovieData(movieId) {
+        this._clearMovie();
+        this._showSpinner();
         this._cancelRetrierIfNecessary();
         this._retrier = this._moviesFetcher.fetchMovieById(movieId);
         this._retrier.promise.then(
@@ -75,7 +92,6 @@ class MovieDetailsController {
             this._fetchMoviesError.bind(this),
             this._fetchMoviesNotify.bind(this)
         );
-        this._showSpinner();
     }
 
     _fetchMoviesSuccess(response) {
@@ -122,7 +138,7 @@ class MovieDetailsController {
     }
 
     _clearMovie() {
-        this.results = [];
+        this.movie = {};
     }
 
     // -------------------------------------------------------------------------
