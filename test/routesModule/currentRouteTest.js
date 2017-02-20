@@ -7,6 +7,13 @@ describe('currentRoute', () => {
         $rootScope.$apply();
     };
 
+    const setInitialRoute = () => {
+        // I'm not really into using e2e here, so I'll just set starting route
+        // myself
+        currentRoute.setToSearch();
+        makeSureLocationIsUpdated();
+    }
+
     beforeEach(() => {
         module('testApp');
         module('assertModule');
@@ -16,14 +23,10 @@ describe('currentRoute', () => {
             currentRoute = $injector.get('currentRoute');
             $rootScope = $injector.get('$rootScope');
         });
-
-        // I'm not really into using e2e here, so I'll just set starting route
-        // myself
-        currentRoute.setToSearch();
-        makeSureLocationIsUpdated();
     });
 
     it('should allow setting route to movies manually', () => {
+        setInitialRoute();
         const someCoolMovieId = 'phaseiv';
         currentRoute.setToMovies(someCoolMovieId);
         makeSureLocationIsUpdated();
@@ -32,6 +35,7 @@ describe('currentRoute', () => {
     });
 
     it('should allow setting route to search manually', () => {
+        setInitialRoute();
         const partOfTitle = 'Devils';
         currentRoute.setToSearch(partOfTitle);
         makeSureLocationIsUpdated();
@@ -40,6 +44,7 @@ describe('currentRoute', () => {
     });
 
     it('should not lose misc characters in the url', () => {
+        setInitialRoute();
         const partOfTitle = 'Silent Running !@#$%^&*()_+';
         currentRoute.setToSearch(partOfTitle);
         makeSureLocationIsUpdated();
@@ -48,11 +53,18 @@ describe('currentRoute', () => {
     });
 
     it('should return routeId and parameters with get', () => {
+        setInitialRoute();
         const someParam = 'love';
         currentRoute.setToSearch(someParam);
         makeSureLocationIsUpdated();
         const route = currentRoute.get();
         expect(route.routeId).toBeDefined();
         expect(route.params).toBeDefined();
+    });
+
+    it('should return empty route if asked too early', () => {
+        const route = currentRoute.get();
+        expect(route.routeId).toBe(null);
+        expect(route.params).toBe(null);
     });
 });
