@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// routesModule routes initialization
+// routesModule routes initialization.
 // -----------------------------------------------------------------------------
 
 angular.module('routesModule').config([

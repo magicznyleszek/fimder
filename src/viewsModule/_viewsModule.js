@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// viewsModule -- handles switching between different app views
+// viewsModule -- handles switching between different app views.
 // -----------------------------------------------------------------------------
 
 angular.module('viewsModule', [

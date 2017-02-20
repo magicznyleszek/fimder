@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // searchBoxModule -- displays a search box input and applies search phrase to
-// address bar
+// address bar.
 // -----------------------------------------------------------------------------
 
 angular.module('searchBoxModule', [

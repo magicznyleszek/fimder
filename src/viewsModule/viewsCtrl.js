@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// viewsCtrl -- manages displaying different views depending on route
+// viewsCtrl -- manages displaying different views depending on route.
 // -----------------------------------------------------------------------------
 
 class ViewsController {

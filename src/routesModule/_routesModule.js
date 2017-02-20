@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
-// routesModule -- reads location parameters on load and allows setting them
-// during application lifetime (so user actions will reflect in url)
+// routesModule for reading location parameters on load and allowing setting
+// them during application lifetime (so user actions will reflect in url).
 // -----------------------------------------------------------------------------
 
 angular.module('routesModule', [

@@ -1,6 +1,5 @@
 // -----------------------------------------------------------------------------
-// routesConfig -- has names of all routes to make sure all scripts use
-// the proper ones
+// routesConfig has names of all routes to ensure all scripts use proper ones.
 // -----------------------------------------------------------------------------
 
 angular.module('routesModule').constant('routesConfig', {

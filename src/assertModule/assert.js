@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
-// assert -- a service for assertion with all provided functions throwing an
-// error when the assertion fails and returning no value
+// assert is a service for assertion with all provided functions throwing an
+// error when the assertion fails and returning no value.
 // -----------------------------------------------------------------------------
 
 class AssertService {

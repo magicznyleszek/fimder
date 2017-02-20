@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// currentRoute -- a service that allows for getting and setting current route
+// currentRoute is a service that allows for getting and setting current route.
 // -----------------------------------------------------------------------------
 
 class CurrentRouteService {

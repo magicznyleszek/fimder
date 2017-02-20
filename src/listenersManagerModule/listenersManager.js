@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// listenersManager -- a factory that creates new instance of listeners manager.
+// listenersManager is a factory that creates new instance of listeners manager.
 // A listener manager object is an implementation of logic pattern that manages
 // list of listeners. It handles adding listeners, running them and removing.
 // Any service that would like to keep list of listeners of some kind, can

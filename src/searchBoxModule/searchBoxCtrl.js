@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // searchBoxCtrl -- handles input changes with a small debounce or immediate
-// trigger on enter key
+// trigger on enter key.
 // -----------------------------------------------------------------------------
 
 class SearchBoxController {
@@ -45,9 +45,9 @@ class SearchBoxController {
         // cancel listener after initial route is set
         this._cancelRouteListener();
 
-        const currentRoute = this._currentRoute.get();
-        if (currentRoute.routeId === this._routesConfig.routes.search) {
-            this.inputValue = currentRoute.params.searchPhrase;
+        const route = this._currentRoute.get();
+        if (route.routeId === this._routesConfig.routes.search) {
+            this.inputValue = route.params.searchPhrase;
         } else {
             this.inputValue = '';
         }
