@@ -12,7 +12,7 @@ describe('currentRoute', () => {
         // myself
         currentRoute.setToSearch();
         makeSureLocationIsUpdated();
-    }
+    };
 
     beforeEach(() => {
         module('testApp');
