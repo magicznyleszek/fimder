@@ -12,9 +12,9 @@ angular.module('routesModule').config([
         routesConfig
     ) => {
         $routeProvider
-        .when(`/${routesConfig.routes.movies}/:movieId`, {
+        .when(`/${routesConfig.routes.movie}/:movieId`, {
             resolve: {
-                routeId: [() => {return routesConfig.routes.movies;}]
+                routeId: [() => {return routesConfig.routes.movie;}]
             }
         })
         .when(`/${routesConfig.routes.search}/:searchPhrase?`, {

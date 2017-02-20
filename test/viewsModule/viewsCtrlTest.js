@@ -26,9 +26,9 @@ describe('viewsCtrl', () => {
         expect(viewsCtrl.isSearchViewVisible).toBeTruthy();
     });
 
-    it('should show movies view when route is movies', () => {
-        viewsCtrl._currentRoute.setToMovies('123');
+    it('should show movie view when route is movie', () => {
+        viewsCtrl._currentRoute.setToMovie('123');
         resolvePromises();
-        expect(viewsCtrl.isMoviesViewVisible).toBeTruthy();
+        expect(viewsCtrl.isMovieViewVisible).toBeTruthy();
     });
 });

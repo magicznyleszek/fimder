@@ -4,7 +4,7 @@
 
 angular.module('routesModule').constant('routesConfig', {
     routes: {
-        movies: 'movies',
+        movie: 'movie',
         search: 'search'
     }
 });

@@ -17,7 +17,7 @@ class ViewsController {
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this.isSearchViewVisible = false;
-        this.isMoviesViewVisible = false;
+        this.isMovieViewVisible = false;
         this._currentRoute.registerRouteChangeListener(
             this._onRouteChange.bind(this)
         );
@@ -30,8 +30,8 @@ class ViewsController {
             case this._routesConfig.routes.search:
                 this.isSearchViewVisible = true;
                 break;
-            case this._routesConfig.routes.movies:
-                this.isMoviesViewVisible = true;
+            case this._routesConfig.routes.movie:
+                this.isMovieViewVisible = true;
                 break;
             default:
                 console.error(`Unknown route: ${route.routeId}`);
@@ -40,7 +40,7 @@ class ViewsController {
 
     _hideAllViews() {
         this.isSearchViewVisible = false;
-        this.isMoviesViewVisible = false;
+        this.isMovieViewVisible = false;
     }
 }
 

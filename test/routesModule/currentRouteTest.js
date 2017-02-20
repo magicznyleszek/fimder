@@ -25,10 +25,10 @@ describe('currentRoute', () => {
         });
     });
 
-    it('should allow setting route to movies manually', () => {
+    it('should allow setting route to movie manually', () => {
         setInitialRoute();
         const someCoolMovieId = 'phaseiv';
-        currentRoute.setToMovies(someCoolMovieId);
+        currentRoute.setToMovie(someCoolMovieId);
         makeSureLocationIsUpdated();
         const route = currentRoute.get();
         expect(route.params.movieId).toBe(someCoolMovieId);

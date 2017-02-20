@@ -518,6 +518,14 @@ angular.module('listenersManagerModule').factory('listenersManager', function ()
 'use strict';
 
 // -----------------------------------------------------------------------------
+// movieDetailsModule display details of given movie
+// -----------------------------------------------------------------------------
+
+angular.module('movieDetailsModule', []);
+"use strict";
+'use strict';
+
+// -----------------------------------------------------------------------------
 // moviesFetcherModule for getting movies information from internets.
 // -----------------------------------------------------------------------------
 
@@ -669,10 +677,10 @@ var CurrentRouteService = function () {
             return this._getRouteFromRouteData(this._$route.current);
         }
     }, {
-        key: 'setToMovies',
-        value: function setToMovies(movieId) {
+        key: 'setToMovie',
+        value: function setToMovie(movieId) {
             this._assert.isString(movieId);
-            this._$location.path(this._routesConfig.routes.movies + '/' + movieId);
+            this._$location.path(this._routesConfig.routes.movie + '/' + movieId);
         }
     }, {
         key: 'setToSearch',
@@ -698,7 +706,7 @@ angular.module('routesModule').service('currentRoute', CurrentRouteService);
 
 angular.module('routesModule').constant('routesConfig', {
     routes: {
-        movies: 'movies',
+        movie: 'movie',
         search: 'search'
     }
 });
@@ -709,10 +717,10 @@ angular.module('routesModule').constant('routesConfig', {
 // -----------------------------------------------------------------------------
 
 angular.module('routesModule').config(['$routeProvider', '$locationProvider', 'routesConfig', function ($routeProvider, $locationProvider, routesConfig) {
-    $routeProvider.when('/' + routesConfig.routes.movies + '/:movieId', {
+    $routeProvider.when('/' + routesConfig.routes.movie + '/:movieId', {
         resolve: {
             routeId: [function () {
-                return routesConfig.routes.movies;
+                return routesConfig.routes.movie;
             }]
         }
     }).when('/' + routesConfig.routes.search + '/:searchPhrase?', {
@@ -861,7 +869,7 @@ angular.module('searchResultsModule').factory('SearchResult', ['assert', 'curren
         _createClass(SearchResultModel, [{
             key: 'open',
             value: function open() {
-                currentRoute.setToMovies(this.movieId);
+                currentRoute.setToMovie(this.movieId);
             }
         }]);
 
@@ -1120,7 +1128,7 @@ var ViewsController = function () {
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this.isSearchViewVisible = false;
-        this.isMoviesViewVisible = false;
+        this.isMovieViewVisible = false;
         this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
     }
 
@@ -1133,8 +1141,8 @@ var ViewsController = function () {
                 case this._routesConfig.routes.search:
                     this.isSearchViewVisible = true;
                     break;
-                case this._routesConfig.routes.movies:
-                    this.isMoviesViewVisible = true;
+                case this._routesConfig.routes.movie:
+                    this.isMovieViewVisible = true;
                     break;
                 default:
                     console.error('Unknown route: ' + route.routeId);
@@ -1144,7 +1152,7 @@ var ViewsController = function () {
         key: '_hideAllViews',
         value: function _hideAllViews() {
             this.isSearchViewVisible = false;
-            this.isMoviesViewVisible = false;
+            this.isMovieViewVisible = false;
         }
     }]);
 

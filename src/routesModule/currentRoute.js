@@ -57,10 +57,10 @@ class CurrentRouteService {
         return this._getRouteFromRouteData(this._$route.current);
     }
 
-    setToMovies(movieId) {
+    setToMovie(movieId) {
         this._assert.isString(movieId);
         this._$location.path(
-            `${this._routesConfig.routes.movies}/${movieId}`
+            `${this._routesConfig.routes.movie}/${movieId}`
         );
     }
 

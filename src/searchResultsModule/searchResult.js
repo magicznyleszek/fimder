@@ -20,7 +20,7 @@ angular.module('searchResultsModule').factory('SearchResult', [
             }
 
             open() {
-                currentRoute.setToMovies(this.movieId);
+                currentRoute.setToMovie(this.movieId);
             }
         }
 

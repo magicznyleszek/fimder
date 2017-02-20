@@ -23,10 +23,10 @@ What you want is to basically have two terminals:
 
 Mandatory:
     - movieDetailsModule
+    - some global styles for whole app?
     - movieDetails styles
     - styles for searchBox
     - styles for searchResults
-    - some global styles for whole app
 
 Improvements:
     - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
