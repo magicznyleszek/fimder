@@ -1,0 +1,7 @@
+<div
+    i-searchResults-row
+    ng-repeat="result in searchResults.results track by result.movieId"
+    ng-click="searchResults.openMovie(result)"
+>
+    <span>[[ result.title ]]</span>
+</div>

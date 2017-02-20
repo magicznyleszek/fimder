@@ -4,7 +4,7 @@
 // akabuskAppModule is our single ngApp module for whole web application
 // -----------------------------------------------------------------------------
 
-angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule']);
+angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule', 'searchResultsModule']);
 
 // -----------------------------------------------------------------------------
 // tweak default angular configuration
@@ -30,8 +30,7 @@ function () {
 'use strict';
 
 // -----------------------------------------------------------------------------
-// assertModule -- a module with a service that provides functions for common
-// assertions
+// assertModule for common assertions.
 // -----------------------------------------------------------------------------
 
 angular.module('assertModule', []);
@@ -44,8 +43,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // -----------------------------------------------------------------------------
-// assert -- a service for assertion with all provided functions throwing an
-// error when the assertion fails and returning no value
+// assert is a service for assertion with all provided functions throwing an
+// error when the assertion fails and returning no value.
 // -----------------------------------------------------------------------------
 
 var AssertService = function () {
@@ -155,10 +154,10 @@ angular.module('assertModule').service('assert', AssertService);
 'use strict';
 
 // -----------------------------------------------------------------------------
-// httpRetrierModule for auto-retrying http calls
+// httpRetrierModule for auto-retrying http calls.
 // -----------------------------------------------------------------------------
 
-angular.module('httpRetrierModule', []);
+angular.module('httpRetrierModule', ['assertModule']);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -168,7 +167,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // -----------------------------------------------------------------------------
 // httpRetrier is a service that does http request until first success, up
 // to 10 times with some time (incrementing) between each retry -- and it is
-// silent, i.e. it doesn't throw anything by itself
+// silent, i.e. it doesn't throw anything by itself.
 // -----------------------------------------------------------------------------
 
 var HttpRetrierService = function () {
@@ -176,18 +175,19 @@ var HttpRetrierService = function () {
         key: 'initClass',
         value: function initClass() {
             HttpRetrierService.intervalTime = 2000;
-            HttpRetrierService.limit = 10;
+            HttpRetrierService.defaultLimit = 10;
 
-            HttpRetrierService.$inject = ['$q', '$http', '$timeout'];
+            HttpRetrierService.$inject = ['$q', '$http', '$timeout', 'assert'];
         }
     }]);
 
-    function HttpRetrierService($q, $http, $timeout) {
+    function HttpRetrierService($q, $http, $timeout, assert) {
         _classCallCheck(this, HttpRetrierService);
 
         this._$q = $q;
         this._$http = $http;
         this._$timeout = $timeout;
+        this._assert = assert;
         this._retriers = {};
         this.rejectReasons = Object.freeze({
             cancel: 0,
@@ -198,12 +198,23 @@ var HttpRetrierService = function () {
     _createClass(HttpRetrierService, [{
         key: 'runGet',
         value: function runGet(url) {
-            return this._run('get', url);
+            var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : HttpRetrierService.defaultLimit;
+
+            this._assert.isString(url);
+            this._assert.isInteger(limit);
+
+            // we don't want to ddos anyone, so we will keep the limit in sane range
+            if (limit <= 0 || limit >= 16) {
+                console.warn('You want limit to be ' + limit + ', really? Lmftfy.');
+                limit = HttpRetrierService.defaultLimit;
+            }
+
+            return this._run('get', url, limit);
         }
     }, {
         key: '_run',
-        value: function _run(method, url) {
-            var retrier = this._createRetrier({ method: method, url: url });
+        value: function _run(method, url, limit) {
+            var retrier = this._createRetrier({ method: method, url: url }, limit);
             this._retry(retrier);
             return {
                 promise: retrier.deferred.promise,
@@ -226,12 +237,13 @@ var HttpRetrierService = function () {
 
     }, {
         key: '_createRetrier',
-        value: function _createRetrier(httpConfig) {
+        value: function _createRetrier(httpConfig, limit) {
             var retrierId = Math.floor(Math.random() * 0x1000000).toString(16);
             this._retriers[retrierId] = {
                 id: retrierId,
                 httpConfig: httpConfig,
                 count: 0,
+                limit: limit,
                 deferred: this._$q.defer(),
                 timeoutId: null
             };
@@ -283,7 +295,7 @@ var HttpRetrierService = function () {
             });
 
             // do not try too many times, just give up
-            if (retrier.count > HttpRetrierService.limit) {
+            if (retrier.count > HttpRetrierService.defaultLimit) {
                 retrier.deferred.reject(this.rejectReasons.overLimit);
                 this._destroyRetrier(retrier.id);
             } else {
@@ -301,7 +313,7 @@ angular.module('httpRetrierModule').service('httpRetrier', HttpRetrierService);
 'use strict';
 
 // -----------------------------------------------------------------------------
-// listenersManagerModule is for managing a list of listeners
+// listenersManagerModule is for managing a list of listeners.
 // -----------------------------------------------------------------------------
 
 angular.module('listenersManagerModule', []);
@@ -312,7 +324,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // -----------------------------------------------------------------------------
-// listenersManager -- a factory that creates new instance of listeners manager.
+// listenersManager is a factory that creates new instance of listeners manager.
 // A listener manager object is an implementation of logic pattern that manages
 // list of listeners. It handles adding listeners, running them and removing.
 // Any service that would like to keep list of listeners of some kind, can
@@ -488,8 +500,92 @@ angular.module('listenersManagerModule').factory('listenersManager', function ()
 'use strict';
 
 // -----------------------------------------------------------------------------
-// routesModule -- reads location parameters on load and allows setting them
-// during application lifetime (so user actions will reflect in url)
+// moviesFetcherModule for getting movies information from internets.
+// -----------------------------------------------------------------------------
+
+angular.module('moviesFetcherModule', ['httpRetrierModule', 'assertModule']);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// moviesFetcher is a service that promises and fetches data from OMDb API.
+// You can get two types of data here:
+// - fetchMoviesBySearchPhrase() returns a list of movies
+// - fetchMovieById() returns a detailed data for a single movie
+// NOTE: all above methods returns a retrier object (see httpRetrierModule)
+// -----------------------------------------------------------------------------
+
+var MoviesFetcherService = function () {
+    _createClass(MoviesFetcherService, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            MoviesFetcherService.apiUrl = 'http://www.omdbapi.com/?r=json&type=movie';
+            MoviesFetcherService.retryLimit = 3;
+
+            MoviesFetcherService.$inject = ['httpRetrier', 'assert'];
+        }
+    }]);
+
+    function MoviesFetcherService(httpRetrier, assert) {
+        _classCallCheck(this, MoviesFetcherService);
+
+        this._httpRetrier = httpRetrier;
+        this._assert = assert;
+    }
+
+    // -------------------------------------------------------------------------
+    // getting a list of movies
+    // -------------------------------------------------------------------------
+
+    _createClass(MoviesFetcherService, [{
+        key: 'fetchMoviesBySearchPhrase',
+        value: function fetchMoviesBySearchPhrase(searchPhrase) {
+            this._assert.isString(searchPhrase);
+            return this._httpRetrier.runGet(this._getSearchUrl(searchPhrase), MoviesFetcherService.retryLimit);
+        }
+    }, {
+        key: '_getSearchUrl',
+        value: function _getSearchUrl(searchPhrase) {
+            var searchUrl = MoviesFetcherService.apiUrl;
+            searchUrl += '&s=';
+            searchUrl += this._$window.encodeURIComponent(searchPhrase);
+            return searchUrl;
+        }
+
+        // -------------------------------------------------------------------------
+        // getting a single movie
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: 'fetchMovieById',
+        value: function fetchMovieById(movieId) {
+            this._assert.isString(movieId);
+            return this._httpRetrier.runGet(this._getMovieIdUrl(movieId), MoviesFetcherService.retryLimit);
+        }
+    }, {
+        key: '_getMovieIdUrl',
+        value: function _getMovieIdUrl(movieId) {
+            var searchUrl = MoviesFetcherService.apiUrl;
+            searchUrl += '&i=';
+            searchUrl += this._$window.encodeURIComponent(movieId);
+            return searchUrl;
+        }
+    }]);
+
+    return MoviesFetcherService;
+}();
+
+MoviesFetcherService.initClass();
+
+angular.module('moviesFetcherModule').service('moviesFetcher', MoviesFetcherService);
+'use strict';
+
+// -----------------------------------------------------------------------------
+// routesModule for reading location parameters on load and allowing setting
+// them during application lifetime (so user actions will reflect in url).
 // -----------------------------------------------------------------------------
 
 angular.module('routesModule', ['ngRoute', 'assertModule', 'listenersManagerModule']);
@@ -500,7 +596,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // -----------------------------------------------------------------------------
-// currentRoute -- a service that allows for getting and setting current route
+// currentRoute is a service that allows for getting and setting current route.
 // -----------------------------------------------------------------------------
 
 var CurrentRouteService = function () {
@@ -578,8 +674,7 @@ angular.module('routesModule').service('currentRoute', CurrentRouteService);
 'use strict';
 
 // -----------------------------------------------------------------------------
-// routesConfig -- has names of all routes to make sure all scripts use
-// the proper ones
+// routesConfig has names of all routes to ensure all scripts use proper ones.
 // -----------------------------------------------------------------------------
 
 angular.module('routesModule').constant('routesConfig', {
@@ -591,7 +686,7 @@ angular.module('routesModule').constant('routesConfig', {
 'use strict';
 
 // -----------------------------------------------------------------------------
-// routesModule routes initialization
+// routesModule routes initialization.
 // -----------------------------------------------------------------------------
 
 angular.module('routesModule').config(['$routeProvider', '$locationProvider', 'routesConfig', function ($routeProvider, $locationProvider, routesConfig) {
@@ -617,7 +712,7 @@ angular.module('routesModule').config(['$routeProvider', '$locationProvider', 'r
 
 // -----------------------------------------------------------------------------
 // searchBoxModule -- displays a search box input and applies search phrase to
-// address bar
+// address bar.
 // -----------------------------------------------------------------------------
 
 angular.module('searchBoxModule', ['listenersManagerModule', 'routesModule']);
@@ -629,7 +724,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 // -----------------------------------------------------------------------------
 // searchBoxCtrl -- handles input changes with a small debounce or immediate
-// trigger on enter key
+// trigger on enter key.
 // -----------------------------------------------------------------------------
 
 var SearchBoxController = function () {
@@ -664,9 +759,9 @@ var SearchBoxController = function () {
             // cancel listener after initial route is set
             this._cancelRouteListener();
 
-            var currentRoute = this._currentRoute.get();
-            if (currentRoute.routeId === this._routesConfig.routes.search) {
-                this.inputValue = currentRoute.params.searchPhrase;
+            var route = this._currentRoute.get();
+            if (route.routeId === this._routesConfig.routes.search) {
+                this.inputValue = route.params.searchPhrase;
             } else {
                 this.inputValue = '';
             }
@@ -717,7 +812,103 @@ angular.module('searchBoxModule').controller('searchBoxCtrl', SearchBoxControlle
 'use strict';
 
 // -----------------------------------------------------------------------------
-// viewsModule -- handles switching between different app views
+// searchResultsModule for displaying a clickable list of search results.
+// -----------------------------------------------------------------------------
+
+angular.module('searchResultsModule', ['assertModule', 'routesModule', 'moviesFetcherModule']);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// SearchResult model.
+// -----------------------------------------------------------------------------
+
+angular.module('searchResultsModule').factory('SearchResult', ['assert', 'currentRoute', function (assert, currentRoute) {
+    var SearchResultModel = function () {
+        function SearchResultModel(title, movieId) {
+            _classCallCheck(this, SearchResultModel);
+
+            assert.isString(title);
+            assert.isString(movieId);
+            this.title = title;
+            this.movieId = movieId;
+        }
+
+        _createClass(SearchResultModel, [{
+            key: 'open',
+            value: function open() {
+                currentRoute.setToMovies(this.movieId);
+            }
+        }]);
+
+        return SearchResultModel;
+    }();
+
+    return SearchResultModel;
+}]);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// searchResultsCtrl -- displays a list of search results based on current
+// search route searchPhrase param. Also allows for opening movie view.
+// -----------------------------------------------------------------------------
+
+var SearchResultsController = function () {
+    _createClass(SearchResultsController, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            SearchResultsController.$inject = ['SearchResult', 'currentRoute', 'routesConfig'];
+        }
+    }]);
+
+    function SearchResultsController(SearchResult, currentRoute, routesConfig) {
+        _classCallCheck(this, SearchResultsController);
+
+        this._SearchResult = SearchResult;
+        this._currentRoute = currentRoute;
+        this._routesConfig = routesConfig;
+
+        this.results = [];
+        this.isListVisible = false;
+        this.isSpinnerVisible = false;
+        this.isNoFoundMessageVisible = false;
+        this.isTooManyMessageVisible = false;
+
+        this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
+    }
+
+    _createClass(SearchResultsController, [{
+        key: '_onRouteChange',
+        value: function _onRouteChange() {
+            var route = this._currentRoute.get();
+            if (route.routeId === this._routesConfig.routes.search) {
+                this._startNewSearch(route.params.searchPhrase);
+            }
+        }
+    }, {
+        key: '_startNewSearch',
+        value: function _startNewSearch(searchPhrase) {
+            console.log('_startNewSearch', searchPhrase);
+        }
+    }]);
+
+    return SearchResultsController;
+}();
+
+SearchResultsController.initClass();
+
+angular.module('searchResultsModule').controller('searchResultsCtrl', SearchResultsController);
+'use strict';
+
+// -----------------------------------------------------------------------------
+// viewsModule -- handles switching between different app views.
 // -----------------------------------------------------------------------------
 
 angular.module('viewsModule', ['routesModule']);
@@ -728,7 +919,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // -----------------------------------------------------------------------------
-// viewsCtrl -- manages displaying different views depending on route
+// viewsCtrl -- manages displaying different views depending on route.
 // -----------------------------------------------------------------------------
 
 var ViewsController = function () {

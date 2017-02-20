@@ -2,7 +2,7 @@
     <div ng-controller="viewsCtrl as views" ng-cloak>
         <section ng-show="views.isSearchViewVisible">
             {% include searchBoxModule/searchBox.liquid %}
-            search list
+            {% include searchResultsModule/searchResults.liquid %}
         </section>
 
         <section ng-show="views.isMoviesViewVisible">
