@@ -829,13 +829,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 angular.module('searchResultsModule').factory('SearchResult', ['assert', 'currentRoute', function (assert, currentRoute) {
     var SearchResultModel = function () {
-        function SearchResultModel(title, movieId) {
+        function SearchResultModel(movieData) {
             _classCallCheck(this, SearchResultModel);
 
-            assert.isString(title);
-            assert.isString(movieId);
-            this.title = title;
-            this.movieId = movieId;
+            assert.isString(movieData.Title);
+            assert.isString(movieData.Year);
+            assert.isString(movieData.imdbID);
+            this.title = movieData.Title;
+            this.year = movieData.Year;
+            this.movieId = movieData.imdbID;
         }
 
         _createClass(SearchResultModel, [{
@@ -865,57 +867,103 @@ var SearchResultsController = function () {
     _createClass(SearchResultsController, null, [{
         key: 'initClass',
         value: function initClass() {
-            SearchResultsController.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher'];
+            SearchResultsController.minSearchChars = 3;
+            SearchResultsController.messages = {
+                unknownApiResponse: 'Unknown API response, sorry!',
+                overLimit: 'Tried multiple times, but could not connect to API, sorry!',
+                retrying: 'Some problems with getting data, retrying!',
+                welcome: 'Hi! Please type at lest ' + SearchResultsController.minSearchChars + ' characters above :-)'
+            };
+
+            SearchResultsController.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher', 'assert'];
         }
     }]);
 
-    function SearchResultsController(SearchResult, currentRoute, routesConfig, moviesFetcher) {
+    function SearchResultsController(SearchResult, currentRoute, routesConfig, moviesFetcher, assert) {
         _classCallCheck(this, SearchResultsController);
 
         this._SearchResult = SearchResult;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this._moviesFetcher = moviesFetcher;
+        this._assert = assert;
 
         this.results = [];
+        this.message = null;
         this.isListVisible = false;
         this.isSpinnerVisible = false;
-        this.isNoFoundMessageVisible = false;
-        this.isTooManyMessageVisible = false;
+        this.isMessageVisible = false;
 
         this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
     }
 
+    // -------------------------------------------------------------------------
+    // opening movies
+    // -------------------------------------------------------------------------
+
     _createClass(SearchResultsController, [{
+        key: 'openMovie',
+        value: function openMovie(result) {
+            result.open();
+        }
+
+        // -------------------------------------------------------------------------
+        // handle route changes
+        // -------------------------------------------------------------------------
+
+    }, {
         key: '_onRouteChange',
         value: function _onRouteChange() {
             var route = this._currentRoute.get();
             if (route.routeId === this._routesConfig.routes.search) {
-                this._startNewSearch(route.params.searchPhrase);
+                if (this._isSearchPhraseValid(route.params.searchPhrase)) {
+                    this._startNewSearch(route.params.searchPhrase);
+                } else {
+                    this._showMessage(SearchResultsController.messages.welcome);
+                }
             }
         }
     }, {
+        key: '_isSearchPhraseValid',
+        value: function _isSearchPhraseValid(searchPhrase) {
+            if (typeof searchPhrase !== 'string') {
+                return false;
+                // we don't want to star search for small amount of characters
+            } else if (searchPhrase.length >= SearchResultsController.minSearchChars) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // handle fetching data from API
+        // -------------------------------------------------------------------------
+
+    }, {
         key: '_startNewSearch',
         value: function _startNewSearch(searchPhrase) {
-            console.log('_startNewSearch', searchPhrase);
             this._cancelRetrierIfNecessary();
             this._retrier = this._moviesFetcher.fetchMoviesBySearch(searchPhrase);
             this._retrier.promise.then(this._fetchMoviesSuccess.bind(this), this._fetchMoviesError.bind(this), this._fetchMoviesNotify.bind(this));
+            this._showSpinner();
         }
     }, {
         key: '_fetchMoviesSuccess',
-        value: function _fetchMoviesSuccess(responseData) {
-            console.log('_fetchMoviesSuccess', responseData);
+        value: function _fetchMoviesSuccess(response) {
+            this._interpretResults(response.data);
         }
     }, {
         key: '_fetchMoviesError',
-        value: function _fetchMoviesError(responseData) {
-            console.log('_fetchMoviesError', responseData);
+        value: function _fetchMoviesError(errorReason) {
+            if (errorReason === 1) {
+                this._showMessage(SearchResultsController.messages.overLimit);
+            }
         }
     }, {
         key: '_fetchMoviesNotify',
-        value: function _fetchMoviesNotify(responseData) {
-            console.log('_fetchMoviesNotify', responseData);
+        value: function _fetchMoviesNotify() {
+            console.warn(SearchResultsController.messages.retrying);
         }
     }, {
         key: '_cancelRetrierIfNecessary',
@@ -924,6 +972,96 @@ var SearchResultsController = function () {
                 this._retrier.cancel();
                 delete this._retrier;
             }
+        }
+
+        // -------------------------------------------------------------------------
+        // interpreting fetched data
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: '_interpretResults',
+        value: function _interpretResults(resultsData) {
+            switch (resultsData.Response) {
+                // True means we have responses
+                case 'True':
+                    this._buildList(resultsData.Search);
+                    this._showList();
+                    break;
+                // True means that API was not able to return movies
+                case 'False':
+                    this._showMessage(resultsData.Error);
+                    break;
+                default:
+                    this._showMessage(SearchResultsController.messages.unknownApiResponse);
+            }
+        }
+    }, {
+        key: '_clearList',
+        value: function _clearList() {
+            this.results = [];
+        }
+    }, {
+        key: '_buildList',
+        value: function _buildList(moviesArray) {
+            this._assert.isArray(moviesArray);
+            this._clearList();
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = moviesArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var movie = _step.value;
+
+                    this.results.push(new this._SearchResult(movie));
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // displaying partials
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: '_hideAll',
+        value: function _hideAll() {
+            this.isListVisible = false;
+            this.isSpinnerVisible = false;
+            this.isMessageVisible = false;
+            this.message = null;
+        }
+    }, {
+        key: '_showList',
+        value: function _showList() {
+            this._hideAll();
+            this.isListVisible = true;
+        }
+    }, {
+        key: '_showSpinner',
+        value: function _showSpinner() {
+            this._hideAll();
+            this.isSpinnerVisible = true;
+        }
+    }, {
+        key: '_showMessage',
+        value: function _showMessage(message) {
+            this._assert.isString(message);
+            this._hideAll();
+            this.message = message;
+            this.isMessageVisible = true;
         }
     }]);
 

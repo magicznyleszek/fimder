@@ -2,6 +2,8 @@
     i-searchResults-row
     ng-repeat="result in searchResults.results track by result.movieId"
     ng-click="searchResults.openMovie(result)"
+    ng-show="searchResults.isListVisible"
 >
     <span>[[ result.title ]]</span>
+    <span>[[ result.year ]]</span>
 </div>
