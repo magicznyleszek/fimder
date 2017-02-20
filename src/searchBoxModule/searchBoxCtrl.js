@@ -11,7 +11,6 @@ class SearchBoxController {
         SearchBoxController.$inject = [
             '$scope',
             '$element',
-            '$timeout',
             'currentRoute',
             'routesConfig'
         ];
@@ -20,12 +19,10 @@ class SearchBoxController {
     constructor(
         $scope,
         $element,
-        $timeout,
         currentRoute,
         routesConfig
     ) {
         this._$scope = $scope;
-        this._$timeout = $timeout;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this._inputEl = $element[0].querySelector(
@@ -39,10 +36,15 @@ class SearchBoxController {
             SearchBoxController.debounceTime
         );
 
-        this._$timeout(this._loadInitialValueFromAddressBar.bind(this), 0);
+        this._cancelRouteListener = this._currentRoute.registerRouteChangeListener(
+            this._onRouteChange.bind(this)
+        );
     }
 
-    _loadInitialValueFromAddressBar() {
+    _onRouteChange() {
+        // cancel listener after initial route is set
+        this._cancelRouteListener();
+
         const currentRoute = this._currentRoute.get();
         if (currentRoute.routeId === this._routesConfig.routes.search) {
             this.inputValue = currentRoute.params.searchPhrase;

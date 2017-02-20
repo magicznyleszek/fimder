@@ -639,15 +639,14 @@ var SearchBoxController = function () {
             SearchBoxController.debounceTime = 500;
             SearchBoxController.enterKey = 13;
             SearchBoxController.inputSelector = '[js-searchBox-input]';
-            SearchBoxController.$inject = ['$scope', '$element', '$timeout', 'currentRoute', 'routesConfig'];
+            SearchBoxController.$inject = ['$scope', '$element', 'currentRoute', 'routesConfig'];
         }
     }]);
 
-    function SearchBoxController($scope, $element, $timeout, currentRoute, routesConfig) {
+    function SearchBoxController($scope, $element, currentRoute, routesConfig) {
         _classCallCheck(this, SearchBoxController);
 
         this._$scope = $scope;
-        this._$timeout = $timeout;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this._inputEl = $element[0].querySelector(SearchBoxController.inputSelector);
@@ -656,12 +655,15 @@ var SearchBoxController = function () {
 
         this._applyInputValueDebounced = _.debounce(this._applyInputValue.bind(this), SearchBoxController.debounceTime);
 
-        this._$timeout(this._loadInitialValueFromAddressBar.bind(this), 0);
+        this._cancelRouteListener = this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
     }
 
     _createClass(SearchBoxController, [{
-        key: '_loadInitialValueFromAddressBar',
-        value: function _loadInitialValueFromAddressBar() {
+        key: '_onRouteChange',
+        value: function _onRouteChange() {
+            // cancel listener after initial route is set
+            this._cancelRouteListener();
+
             var currentRoute = this._currentRoute.get();
             if (currentRoute.routeId === this._routesConfig.routes.search) {
                 this.inputValue = currentRoute.params.searchPhrase;
