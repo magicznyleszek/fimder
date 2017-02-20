@@ -1,21 +1,22 @@
 // -----------------------------------------------------------------------------
 // httpRetrier is a service that does http request until first success, up
 // to 10 times with some time (incrementing) between each retry -- and it is
-// silent, i.e. it doesn't throw anything by itself
+// silent, i.e. it doesn't throw anything by itself.
 // -----------------------------------------------------------------------------
 
 class HttpRetrierService {
     static initClass() {
         HttpRetrierService.intervalTime = 2000;
-        HttpRetrierService.limit = 10;
+        HttpRetrierService.defaultLimit = 10;
 
-        HttpRetrierService.$inject = ['$q', '$http', '$timeout'];
+        HttpRetrierService.$inject = ['$q', '$http', '$timeout', 'assert'];
     }
 
-    constructor($q, $http, $timeout) {
+    constructor($q, $http, $timeout, assert) {
         this._$q = $q;
         this._$http = $http;
         this._$timeout = $timeout;
+        this._assert = assert;
         this._retriers = {};
         this.rejectReasons = Object.freeze({
             cancel: 0,
@@ -23,12 +24,21 @@ class HttpRetrierService {
         });
     }
 
-    runGet(url) {
-        return this._run('get', url);
+    runGet(url, limit = HttpRetrierService.defaultLimit) {
+        this._assert.isString(url);
+        this._assert.isInteger(limit);
+
+        // we don't want to ddos anyone, so we will keep the limit in sane range
+        if (limit <= 0 || limit >= 16) {
+            console.warn(`You want limit to be ${limit}, really? Lmftfy.`);
+            limit = HttpRetrierService.defaultLimit;
+        }
+
+        return this._run('get', url, limit);
     }
 
-    _run(method, url) {
-        const retrier = this._createRetrier({method, url});
+    _run(method, url, limit) {
+        const retrier = this._createRetrier({method, url}, limit);
         this._retry(retrier);
         return {
             promise: retrier.deferred.promise,
@@ -46,12 +56,13 @@ class HttpRetrierService {
 
     // @param {object} httpConfig - a http config object:
     // https://docs.angularjs.org/api/ng/service/$http#usage
-    _createRetrier(httpConfig) {
+    _createRetrier(httpConfig, limit) {
         const retrierId = Math.floor((Math.random()) * 0x1000000).toString(16);
         this._retriers[retrierId] = {
             id: retrierId,
             httpConfig,
             count: 0,
+            limit,
             deferred: this._$q.defer(),
             timeoutId: null
         };
@@ -106,7 +117,7 @@ class HttpRetrierService {
         });
 
         // do not try too many times, just give up
-        if (retrier.count > HttpRetrierService.limit) {
+        if (retrier.count > HttpRetrierService.defaultLimit) {
             retrier.deferred.reject(this.rejectReasons.overLimit);
             this._destroyRetrier(retrier.id);
         } else {

@@ -1,7 +1,8 @@
 // -----------------------------------------------------------------------------
-// httpRetrierModule for auto-retrying http calls.
+// moviesFetcherModule for getting movies information from internets.
 // -----------------------------------------------------------------------------
 
-angular.module('httpRetrierModule', [
+angular.module('moviesFetcherModule', [
+    'httpRetrierModule',
     'assertModule'
 ]);
