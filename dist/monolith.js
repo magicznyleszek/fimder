@@ -1,134 +1,6 @@
 'use strict';
 
 // -----------------------------------------------------------------------------
-// addressBarModule -- reads location parameters on load and allows setting them
-// during application lifetime (so user actions will reflect in url)
-// -----------------------------------------------------------------------------
-
-angular.module('addressBarModule', ['ngRoute', 'assertModule', 'listenersManagerModule']);
-'use strict';
-
-// -----------------------------------------------------------------------------
-// addressBarModule routes configuration
-// -----------------------------------------------------------------------------
-
-angular.module('addressBarModule').config(['$routeProvider', '$locationProvider', 'routesConfig', function ($routeProvider, $locationProvider, routesConfig) {
-    $routeProvider.when('/' + routesConfig.routes.movies + '/:movieId', {
-        resolve: {
-            routeId: [function () {
-                return routesConfig.routes.movies;
-            }]
-        }
-    }).when('/' + routesConfig.routes.search + '/:searchPhrase?', {
-        resolve: {
-            routeId: [function () {
-                return routesConfig.routes.search;
-            }]
-        }
-    }).otherwise({
-        redirectTo: '/' + routesConfig.routes.search + '/'
-    });
-
-    $locationProvider.html5Mode(false);
-}]);
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// -----------------------------------------------------------------------------
-// currentRoute -- a service that allows for getting and setting current route
-// -----------------------------------------------------------------------------
-
-var CurrentRouteService = function () {
-    _createClass(CurrentRouteService, null, [{
-        key: 'initClass',
-        value: function initClass() {
-            CurrentRouteService.$inject = ['$rootScope', '$route', '$location', 'assert', 'routesConfig', 'listenersManager'];
-        }
-    }]);
-
-    function CurrentRouteService($rootScope, $route, $location, assert, routesConfig, listenersManager) {
-        _classCallCheck(this, CurrentRouteService);
-
-        this._$route = $route;
-        this._$location = $location;
-        this._assert = assert;
-        this._routesConfig = routesConfig;
-        this._currentRouteListenersManager = listenersManager.getManager();
-        $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
-    }
-
-    _createClass(CurrentRouteService, [{
-        key: '_onRouteChange',
-        value: function _onRouteChange() {
-            this._currentRouteListenersManager.callListeners();
-        }
-    }, {
-        key: 'registerRouteChangeListener',
-        value: function registerRouteChangeListener(listener) {
-            return this._currentRouteListenersManager.addListener(listener);
-        }
-    }, {
-        key: '_getRouteFromRouteData',
-        value: function _getRouteFromRouteData(routeData) {
-            if (typeof routeData === 'undefined') {
-                console.warn('Tried to get route before it was set!');
-                return {
-                    routeId: null,
-                    params: null
-                };
-            } else {
-                return {
-                    routeId: routeData.locals.routeId,
-                    params: routeData.params
-                };
-            }
-        }
-    }, {
-        key: 'get',
-        value: function get() {
-            return this._getRouteFromRouteData(this._$route.current);
-        }
-    }, {
-        key: 'setToMovies',
-        value: function setToMovies(movieId) {
-            this._assert.isString(movieId);
-            this._$location.path(this._routesConfig.routes.movies + '/' + movieId);
-        }
-    }, {
-        key: 'setToSearch',
-        value: function setToSearch() {
-            var searchPhrase = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
-            this._assert.isString(searchPhrase);
-            this._$location.path(this._routesConfig.routes.search + '/' + searchPhrase);
-        }
-    }]);
-
-    return CurrentRouteService;
-}();
-
-CurrentRouteService.initClass();
-
-angular.module('addressBarModule').service('currentRoute', CurrentRouteService);
-'use strict';
-
-// -----------------------------------------------------------------------------
-// routesConfig -- has names of all routes to make sure all scripts use
-// the proper ones
-// -----------------------------------------------------------------------------
-
-angular.module('addressBarModule').constant('routesConfig', {
-    routes: {
-        movies: 'movies',
-        search: 'search'
-    }
-});
-'use strict';
-
-// -----------------------------------------------------------------------------
 // akabuskAppModule is our single ngApp module for whole web application
 // -----------------------------------------------------------------------------
 
@@ -157,6 +29,14 @@ function () {
 }]);
 'use strict';
 
+// -----------------------------------------------------------------------------
+// assertModule -- a module with a service that provides functions for common
+// assertions
+// -----------------------------------------------------------------------------
+
+angular.module('assertModule', []);
+'use strict';
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -164,12 +44,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // -----------------------------------------------------------------------------
-// assertModule -- a module with a service that provides functions for common
-// assertions. All provided functions do not return a value, and will throw an
-// error when the assertion fails.
+// assert -- a service for assertion with all provided functions throwing an
+// error when the assertion fails and returning no value
 // -----------------------------------------------------------------------------
-
-angular.module('assertModule', []);
 
 var AssertService = function () {
     function AssertService() {
@@ -277,6 +154,13 @@ var AssertService = function () {
 angular.module('assertModule').service('assert', AssertService);
 'use strict';
 
+// -----------------------------------------------------------------------------
+// httpRetrierModule for auto-retrying http calls
+// -----------------------------------------------------------------------------
+
+angular.module('httpRetrierModule', []);
+'use strict';
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -286,8 +170,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // to 10 times with some time (incrementing) between each retry -- and it is
 // silent, i.e. it doesn't throw anything by itself
 // -----------------------------------------------------------------------------
-
-angular.module('httpRetrierModule', []);
 
 var HttpRetrierService = function () {
     _createClass(HttpRetrierService, null, [{
@@ -418,6 +300,13 @@ HttpRetrierService.initClass();
 angular.module('httpRetrierModule').service('httpRetrier', HttpRetrierService);
 'use strict';
 
+// -----------------------------------------------------------------------------
+// listenersManagerModule is for managing a list of listeners
+// -----------------------------------------------------------------------------
+
+angular.module('listenersManagerModule', []);
+'use strict';
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -430,8 +319,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // easily use this object for handling common logic of keeping and controlling
 // sets of callback (listeners) functions.
 // -----------------------------------------------------------------------------
-
-angular.module('listenersManagerModule', []);
 
 var ListenerManager = function () {
     function ListenerManager() {
@@ -601,11 +488,139 @@ angular.module('listenersManagerModule').factory('listenersManager', function ()
 'use strict';
 
 // -----------------------------------------------------------------------------
+// routesModule -- reads location parameters on load and allows setting them
+// during application lifetime (so user actions will reflect in url)
+// -----------------------------------------------------------------------------
+
+angular.module('routesModule', ['ngRoute', 'assertModule', 'listenersManagerModule']);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// currentRoute -- a service that allows for getting and setting current route
+// -----------------------------------------------------------------------------
+
+var CurrentRouteService = function () {
+    _createClass(CurrentRouteService, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            CurrentRouteService.$inject = ['$rootScope', '$route', '$location', 'assert', 'routesConfig', 'listenersManager'];
+        }
+    }]);
+
+    function CurrentRouteService($rootScope, $route, $location, assert, routesConfig, listenersManager) {
+        _classCallCheck(this, CurrentRouteService);
+
+        this._$route = $route;
+        this._$location = $location;
+        this._assert = assert;
+        this._routesConfig = routesConfig;
+        this._currentRouteListenersManager = listenersManager.getManager();
+        $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
+    }
+
+    _createClass(CurrentRouteService, [{
+        key: '_onRouteChange',
+        value: function _onRouteChange() {
+            this._currentRouteListenersManager.callListeners();
+        }
+    }, {
+        key: 'registerRouteChangeListener',
+        value: function registerRouteChangeListener(listener) {
+            return this._currentRouteListenersManager.addListener(listener);
+        }
+    }, {
+        key: '_getRouteFromRouteData',
+        value: function _getRouteFromRouteData(routeData) {
+            if (typeof routeData === 'undefined') {
+                console.warn('Tried to get route before it was set!');
+                return {
+                    routeId: null,
+                    params: null
+                };
+            } else {
+                return {
+                    routeId: routeData.locals.routeId,
+                    params: routeData.params
+                };
+            }
+        }
+    }, {
+        key: 'get',
+        value: function get() {
+            return this._getRouteFromRouteData(this._$route.current);
+        }
+    }, {
+        key: 'setToMovies',
+        value: function setToMovies(movieId) {
+            this._assert.isString(movieId);
+            this._$location.path(this._routesConfig.routes.movies + '/' + movieId);
+        }
+    }, {
+        key: 'setToSearch',
+        value: function setToSearch() {
+            var searchPhrase = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+            this._assert.isString(searchPhrase);
+            this._$location.path(this._routesConfig.routes.search + '/' + searchPhrase);
+        }
+    }]);
+
+    return CurrentRouteService;
+}();
+
+CurrentRouteService.initClass();
+
+angular.module('routesModule').service('currentRoute', CurrentRouteService);
+'use strict';
+
+// -----------------------------------------------------------------------------
+// routesConfig -- has names of all routes to make sure all scripts use
+// the proper ones
+// -----------------------------------------------------------------------------
+
+angular.module('routesModule').constant('routesConfig', {
+    routes: {
+        movies: 'movies',
+        search: 'search'
+    }
+});
+'use strict';
+
+// -----------------------------------------------------------------------------
+// routesModule routes initialization
+// -----------------------------------------------------------------------------
+
+angular.module('routesModule').config(['$routeProvider', '$locationProvider', 'routesConfig', function ($routeProvider, $locationProvider, routesConfig) {
+    $routeProvider.when('/' + routesConfig.routes.movies + '/:movieId', {
+        resolve: {
+            routeId: [function () {
+                return routesConfig.routes.movies;
+            }]
+        }
+    }).when('/' + routesConfig.routes.search + '/:searchPhrase?', {
+        resolve: {
+            routeId: [function () {
+                return routesConfig.routes.search;
+            }]
+        }
+    }).otherwise({
+        redirectTo: '/' + routesConfig.routes.search + '/'
+    });
+
+    $locationProvider.html5Mode(false);
+}]);
+'use strict';
+
+// -----------------------------------------------------------------------------
 // searchBoxModule -- displays a search box input and applies search phrase to
 // address bar
 // -----------------------------------------------------------------------------
 
-angular.module('searchBoxModule', ['listenersManagerModule', 'addressBarModule']);
+angular.module('searchBoxModule', ['listenersManagerModule', 'routesModule']);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -703,7 +718,7 @@ angular.module('searchBoxModule').controller('searchBoxCtrl', SearchBoxControlle
 // viewsModule -- handles switching between different app views
 // -----------------------------------------------------------------------------
 
-angular.module('viewsModule', ['addressBarModule']);
+angular.module('viewsModule', ['routesModule']);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();

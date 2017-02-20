@@ -1,10 +1,7 @@
 // -----------------------------------------------------------------------------
-// assertModule -- a module with a service that provides functions for common
-// assertions. All provided functions do not return a value, and will throw an
-// error when the assertion fails.
+// assert -- a service for assertion with all provided functions throwing an
+// error when the assertion fails and returning no value
 // -----------------------------------------------------------------------------
-
-angular.module('assertModule', []);
 
 class AssertService {
     isTrue(expression) {

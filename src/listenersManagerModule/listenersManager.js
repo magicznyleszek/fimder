@@ -7,8 +7,6 @@
 // sets of callback (listeners) functions.
 // -----------------------------------------------------------------------------
 
-angular.module('listenersManagerModule', []);
-
 class ListenerManager {
     constructor() {
         this._listeners = [];

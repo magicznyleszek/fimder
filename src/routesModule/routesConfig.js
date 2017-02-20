@@ -3,7 +3,7 @@
 // the proper ones
 // -----------------------------------------------------------------------------
 
-angular.module('addressBarModule').constant('routesConfig', {
+angular.module('routesModule').constant('routesConfig', {
     routes: {
         movies: 'movies',
         search: 'search'

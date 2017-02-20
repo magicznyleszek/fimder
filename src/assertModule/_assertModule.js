@@ -1,7 +1,6 @@
 // -----------------------------------------------------------------------------
-// viewsModule -- handles switching between different app views
+// assertModule -- a module with a service that provides functions for common
+// assertions
 // -----------------------------------------------------------------------------
 
-angular.module('viewsModule', [
-    'routesModule'
-]);
+angular.module('assertModule', []);

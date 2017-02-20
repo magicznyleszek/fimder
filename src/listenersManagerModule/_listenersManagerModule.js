@@ -1,7 +1,5 @@
 // -----------------------------------------------------------------------------
-// viewsModule -- handles switching between different app views
+// listenersManagerModule is for managing a list of listeners
 // -----------------------------------------------------------------------------
 
-angular.module('viewsModule', [
-    'routesModule'
-]);
+angular.module('listenersManagerModule', []);

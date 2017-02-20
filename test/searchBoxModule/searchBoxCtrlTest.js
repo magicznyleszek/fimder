@@ -4,7 +4,7 @@ describe('searchBoxCtrl', () => {
 
     beforeEach(() => {
         module('testApp');
-        module('addressBarModule');
+        module('routesModule');
         module('searchBoxModule');
         inject(($injector, $controller, $rootScope) => {
             searchBoxCtrl = $controller('searchBoxCtrl', {

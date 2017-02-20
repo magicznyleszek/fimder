@@ -1,7 +1,5 @@
 // -----------------------------------------------------------------------------
-// viewsModule -- handles switching between different app views
+// httpRetrierModule for auto-retrying http calls
 // -----------------------------------------------------------------------------
 
-angular.module('viewsModule', [
-    'routesModule'
-]);
+angular.module('httpRetrierModule', []);

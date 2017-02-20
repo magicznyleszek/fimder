@@ -11,7 +11,7 @@ describe('currentRoute', () => {
         module('testApp');
         module('assertModule');
         module('listenersManagerModule');
-        module('addressBarModule');
+        module('routesModule');
         inject(($injector) => {
             currentRoute = $injector.get('currentRoute');
             $rootScope = $injector.get('$rootScope');

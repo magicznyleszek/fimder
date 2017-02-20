@@ -74,4 +74,4 @@ class CurrentRouteService {
 
 CurrentRouteService.initClass();
 
-angular.module('addressBarModule').service('currentRoute', CurrentRouteService);
+angular.module('routesModule').service('currentRoute', CurrentRouteService);

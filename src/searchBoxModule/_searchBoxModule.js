@@ -5,5 +5,5 @@
 
 angular.module('searchBoxModule', [
     'listenersManagerModule',
-    'addressBarModule'
+    'routesModule'
 ]);

@@ -4,8 +4,6 @@
 // silent, i.e. it doesn't throw anything by itself
 // -----------------------------------------------------------------------------
 
-angular.module('httpRetrierModule', []);
-
 class HttpRetrierService {
     static initClass() {
         HttpRetrierService.intervalTime = 2000;

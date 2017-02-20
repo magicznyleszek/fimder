@@ -1,8 +1,8 @@
 // -----------------------------------------------------------------------------
-// addressBarModule routes configuration
+// routesModule routes initialization
 // -----------------------------------------------------------------------------
 
-angular.module('addressBarModule').config([
+angular.module('routesModule').config([
     '$routeProvider',
     '$locationProvider',
     'routesConfig',
