@@ -824,7 +824,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // -----------------------------------------------------------------------------
-// SearchResult model.
+// SearchResult model that expects data to follow omdbapi.com format.
 // -----------------------------------------------------------------------------
 
 angular.module('searchResultsModule').factory('SearchResult', ['assert', 'currentRoute', function (assert, currentRoute) {

@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// SearchResult model.
+// SearchResult model that expects data to follow omdbapi.com format.
 // -----------------------------------------------------------------------------
 
 angular.module('searchResultsModule').factory('SearchResult', [
