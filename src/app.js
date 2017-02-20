@@ -5,7 +5,8 @@
 angular.module('akabuskAppModule', [
     'viewsModule',
     'searchBoxModule',
-    'searchResultsModule'
+    'searchResultsModule',
+    'cachingModule'
 ]);
 
 // -----------------------------------------------------------------------------

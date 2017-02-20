@@ -21,6 +21,7 @@ module.exports = function (config) {
             './node_modules/lodash/lodash.min.js',
             './node_modules/angular/angular.min.js',
             './node_modules/angular-route/angular-route.min.js',
+            './node_modules/angular-cache/dist/angular-cache.min.js',
             './node_modules/angular-mocks/angular-mocks.js',
             // test vendors
             './node_modules/phantomjs-polyfill/bind-polyfill.js',

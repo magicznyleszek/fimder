@@ -4,7 +4,7 @@
 // akabuskAppModule is our single ngApp module for whole web application
 // -----------------------------------------------------------------------------
 
-angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule', 'searchResultsModule']);
+angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule', 'searchResultsModule', 'cachingModule']);
 
 // -----------------------------------------------------------------------------
 // tweak default angular configuration
@@ -154,6 +154,24 @@ angular.module('assertModule').service('assert', AssertService);
 'use strict';
 
 // -----------------------------------------------------------------------------
+// cachingModule makes $http calls be cached in localStorage.
+// -----------------------------------------------------------------------------
+
+angular.module('cachingModule', ['angular-cache']);
+
+angular.module('cachingModule').run(['$http', 'CacheFactory', function ($http, CacheFactory) {
+    // we apply caching to all $http calls with {cache: true} option
+    $http.defaults.cache = CacheFactory('defaultCache', {
+        deleteOnExpire: 'passive',
+        storageMode: 'localStorage',
+        storagePrefix: 'akabusk.',
+        // 1 hour
+        maxAge: 1 * 60 * 60 * 1000
+    });
+}]);
+'use strict';
+
+// -----------------------------------------------------------------------------
 // httpRetrierModule for auto-retrying http calls.
 // -----------------------------------------------------------------------------
 
@@ -214,7 +232,7 @@ var HttpRetrierService = function () {
     }, {
         key: '_run',
         value: function _run(method, url, limit) {
-            var retrier = this._createRetrier({ method: method, url: url }, limit);
+            var retrier = this._createRetrier({ method: method, url: url, cache: true }, limit);
             this._retry(retrier);
             return {
                 promise: retrier.deferred.promise,

@@ -38,7 +38,7 @@ class HttpRetrierService {
     }
 
     _run(method, url, limit) {
-        const retrier = this._createRetrier({method, url}, limit);
+        const retrier = this._createRetrier({method, url, cache: true}, limit);
         this._retry(retrier);
         return {
             promise: retrier.deferred.promise,

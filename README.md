@@ -29,7 +29,6 @@ Mandatory:
     - some global styles for whole app
 
 Improvements:
-    - add caching (1h?) for http requests
     - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
     - write smart tests for httpRetrierModule
     - errorNotifier module?
