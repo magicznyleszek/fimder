@@ -18,3 +18,18 @@ To preview the project, you need to do three things:
 What you want is to basically have two terminals:
 1. `npm run serve` -- this is providing the [127.0.0.1:4000](http://127.0.0.1:4000/) "server" and watching changes on Jekyll
 2. `npm run watch` -- this is watching all source files and producing dist ones
+
+## TODO
+
+Mandatory:
+    - movieDetailsModule
+    - movieDetails styles
+    - styles for searchBox
+    - styles for searchResults
+    - some global styles for whole app
+
+Improvements:
+    - add caching (1h?) for http requests
+    - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
+    - write smart tests for httpRetrierModule
+    - errorNotifier module?
