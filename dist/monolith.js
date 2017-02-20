@@ -4,7 +4,7 @@
 // akabuskAppModule is our single ngApp module for whole web application
 // -----------------------------------------------------------------------------
 
-angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule', 'searchResultsModule', 'cachingModule']);
+angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule', 'searchResultsModule', 'movieDetailsModule', 'cachingModule']);
 
 // -----------------------------------------------------------------------------
 // tweak default angular configuration
@@ -521,8 +521,257 @@ angular.module('listenersManagerModule').factory('listenersManager', function ()
 // movieDetailsModule display details of given movie
 // -----------------------------------------------------------------------------
 
-angular.module('movieDetailsModule', []);
-"use strict";
+angular.module('movieDetailsModule', ['assertModule', 'moviesFetcherModule']);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// Movie model that expects data to follow omdbapi.com format.
+// -----------------------------------------------------------------------------
+
+angular.module('movieDetailsModule').factory('Movie', ['assert', function (assert) {
+    var MovieModel = function () {
+        _createClass(MovieModel, null, [{
+            key: 'initClass',
+            value: function initClass() {
+                MovieModel.requiredType = 'movie';
+                MovieModel.requiredProperties = ['Title', 'Released', 'Runtime', 'Genre', 'Director', 'Writer', 'Actors', 'Plot', 'Awards', 'Language', 'Country', 'Poster', 'imdbRating', 'imdbVotes'];
+            }
+        }]);
+
+        function MovieModel(movieData) {
+            _classCallCheck(this, MovieModel);
+
+            this._verifyData(movieData);
+            this.title = movieData.Title;
+            this.releaseDate = movieData.Released;
+            this.releaseDateFull = new Date(movieData.Released);
+            this.runtime = movieData.Runtime;
+            this.genres = movieData.Genre.split(', ');
+            this.directors = movieData.Director.split(', ');
+            this.writers = movieData.Writer.split(', ');
+            this.actors = movieData.Actors.split(', ');
+            this.plot = movieData.Plot;
+            this.awards = movieData.Awards;
+            this.languages = movieData.Language.split(', ');
+            this.countries = movieData.Country.split(', ');
+            this.poster = movieData.Poster;
+            this.rating = movieData.imdbRating;
+            this.ratingVotes = movieData.imdbVotes;
+        }
+
+        _createClass(MovieModel, [{
+            key: '_verifyData',
+            value: function _verifyData(movieData) {
+                // checks if all the necessary strings are there
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = MovieModel.requiredProperties[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var propertyName = _step.value;
+
+                        assert.isString(movieData[propertyName]);
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+
+                assert.isTrue(movieData.Type === MovieModel.requiredType);
+            }
+        }]);
+
+        return MovieModel;
+    }();
+
+    MovieModel.initClass();
+
+    return MovieModel;
+}]);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// movieDetailsCtrl -- displays a details of given movie. It expects a valid
+// movieId in the route. Also can switch to search.
+// -----------------------------------------------------------------------------
+
+var MovieDetailsController = function () {
+    _createClass(MovieDetailsController, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            MovieDetailsController.$inject = ['Movie', 'currentRoute', 'routesConfig', 'moviesFetcher', 'moviesFetcherConfig', 'assert'];
+        }
+    }]);
+
+    function MovieDetailsController(Movie, currentRoute, routesConfig, moviesFetcher, moviesFetcherConfig, assert) {
+        _classCallCheck(this, MovieDetailsController);
+
+        this._Movie = Movie;
+        this._currentRoute = currentRoute;
+        this._routesConfig = routesConfig;
+        this._moviesFetcher = moviesFetcher;
+        this._moviesFetcherConfig = moviesFetcherConfig;
+        this._assert = assert;
+
+        this.movie = {};
+        this.message = null;
+        this.isDetailsVisible = false;
+        this.isSpinnerVisible = false;
+        this.isMessageVisible = false;
+
+        this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
+    }
+
+    // -------------------------------------------------------------------------
+    // opening search again
+    // -------------------------------------------------------------------------
+
+    _createClass(MovieDetailsController, [{
+        key: 'openSearch',
+        value: function openSearch() {
+            this._currentRoute.setToSearch();
+        }
+
+        // -------------------------------------------------------------------------
+        // handle route changes
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: '_onRouteChange',
+        value: function _onRouteChange() {
+            var route = this._currentRoute.get();
+            if (route.routeId === this._routesConfig.routes.movie) {
+                if (typeof route.params.movieId === 'string') {
+                    this._fetchMovieData(route.params.movieId);
+                }
+                // movieId is required param of movie route so else not needed
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // handle fetching data from API
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: '_fetchMovieData',
+        value: function _fetchMovieData(movieId) {
+            this._cancelRetrierIfNecessary();
+            this._retrier = this._moviesFetcher.fetchMovieById(movieId);
+            this._retrier.promise.then(this._fetchMoviesSuccess.bind(this), this._fetchMoviesError.bind(this), this._fetchMoviesNotify.bind(this));
+            this._showSpinner();
+        }
+    }, {
+        key: '_fetchMoviesSuccess',
+        value: function _fetchMoviesSuccess(response) {
+            this._interpretMovieData(response.data);
+        }
+    }, {
+        key: '_fetchMoviesError',
+        value: function _fetchMoviesError(errorReason) {
+            if (errorReason === 1) {
+                this._showMessage(MovieDetailsController.messages.overLimit);
+            }
+        }
+    }, {
+        key: '_fetchMoviesNotify',
+        value: function _fetchMoviesNotify() {
+            console.warn(MovieDetailsController.messages.retrying);
+        }
+    }, {
+        key: '_cancelRetrierIfNecessary',
+        value: function _cancelRetrierIfNecessary() {
+            if (typeof this._retrier !== 'undefined') {
+                this._retrier.cancel();
+                delete this._retrier;
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // interpreting fetched data
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: '_interpretMovieData',
+        value: function _interpretMovieData(movieData) {
+            switch (movieData.Response) {
+                // True means we have responses
+                case 'True':
+                    this.movie = new this._Movie(movieData);
+                    this._showDetails();
+                    break;
+                // True means that API was not able to return movies
+                case 'False':
+                    this._showMessage(movieData.Error);
+                    break;
+                default:
+                    this._showMessage(MovieDetailsController.messages.unknownApiResponse);
+            }
+        }
+    }, {
+        key: '_clearMovie',
+        value: function _clearMovie() {
+            this.results = [];
+        }
+
+        // -------------------------------------------------------------------------
+        // displaying partials
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: '_hideAll',
+        value: function _hideAll() {
+            this.isDetailsVisible = false;
+            this.isSpinnerVisible = false;
+            this.isMessageVisible = false;
+            this.message = null;
+        }
+    }, {
+        key: '_showDetails',
+        value: function _showDetails() {
+            this._hideAll();
+            this.isDetailsVisible = true;
+        }
+    }, {
+        key: '_showSpinner',
+        value: function _showSpinner() {
+            this._hideAll();
+            this.isSpinnerVisible = true;
+        }
+    }, {
+        key: '_showMessage',
+        value: function _showMessage(message) {
+            this._assert.isString(message);
+            this._hideAll();
+            this.message = message;
+            this.isMessageVisible = true;
+        }
+    }]);
+
+    return MovieDetailsController;
+}();
+
+MovieDetailsController.initClass();
+
+angular.module('movieDetailsModule').controller('movieDetailsCtrl', MovieDetailsController);
 'use strict';
 
 // -----------------------------------------------------------------------------
@@ -596,7 +845,7 @@ var MoviesFetcherService = function () {
         key: '_getMovieIdUrl',
         value: function _getMovieIdUrl(movieId) {
             var searchUrl = MoviesFetcherService.apiUrl;
-            searchUrl += '&i=';
+            searchUrl += '&plot=full&i=';
             searchUrl += this._$window.encodeURIComponent(movieId);
             return searchUrl;
         }
@@ -608,6 +857,19 @@ var MoviesFetcherService = function () {
 MoviesFetcherService.initClass();
 
 angular.module('moviesFetcherModule').service('moviesFetcher', MoviesFetcherService);
+'use strict';
+
+// -----------------------------------------------------------------------------
+// moviesFetcherConfig has some common messages.
+// -----------------------------------------------------------------------------
+
+angular.module('moviesFetcherModule').constant('moviesFetcherConfig', {
+    messages: {
+        unknownApiResponse: 'Unknown API response, sorry!',
+        overLimit: 'Tried multiple times, but could not connect to API, sorry!',
+        retrying: 'Some problems with getting data, retrying!'
+    }
+});
 'use strict';
 
 // -----------------------------------------------------------------------------
@@ -894,24 +1156,20 @@ var SearchResultsController = function () {
         key: 'initClass',
         value: function initClass() {
             SearchResultsController.minSearchChars = 3;
-            SearchResultsController.messages = {
-                unknownApiResponse: 'Unknown API response, sorry!',
-                overLimit: 'Tried multiple times, but could not connect to API, sorry!',
-                retrying: 'Some problems with getting data, retrying!',
-                welcome: 'Hi! Please type at lest ' + SearchResultsController.minSearchChars + ' characters above :-)'
-            };
+            SearchResultsController.welcomeMessage = 'Hi! Please type at lest ' + SearchResultsController.minSearchChars + ' characters above :-)';
 
-            SearchResultsController.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher', 'assert'];
+            SearchResultsController.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher', 'moviesFetcherConfig', 'assert'];
         }
     }]);
 
-    function SearchResultsController(SearchResult, currentRoute, routesConfig, moviesFetcher, assert) {
+    function SearchResultsController(SearchResult, currentRoute, routesConfig, moviesFetcher, moviesFetcherConfig, assert) {
         _classCallCheck(this, SearchResultsController);
 
         this._SearchResult = SearchResult;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this._moviesFetcher = moviesFetcher;
+        this._moviesFetcherConfig = moviesFetcherConfig;
         this._assert = assert;
 
         this.results = [];
@@ -945,7 +1203,7 @@ var SearchResultsController = function () {
                 if (this._isSearchPhraseValid(route.params.searchPhrase)) {
                     this._startNewSearch(route.params.searchPhrase);
                 } else {
-                    this._showMessage(SearchResultsController.messages.welcome);
+                    this._showMessage(SearchResultsController.welcomeMessage);
                 }
             }
         }
@@ -983,13 +1241,13 @@ var SearchResultsController = function () {
         key: '_fetchMoviesError',
         value: function _fetchMoviesError(errorReason) {
             if (errorReason === 1) {
-                this._showMessage(SearchResultsController.messages.overLimit);
+                this._showMessage(this._moviesFetcherConfig.messages.overLimit);
             }
         }
     }, {
         key: '_fetchMoviesNotify',
         value: function _fetchMoviesNotify() {
-            console.warn(SearchResultsController.messages.retrying);
+            console.warn(this._moviesFetcherConfig.messages.retrying);
         }
     }, {
         key: '_cancelRetrierIfNecessary',
@@ -1018,7 +1276,7 @@ var SearchResultsController = function () {
                     this._showMessage(resultsData.Error);
                     break;
                 default:
-                    this._showMessage(SearchResultsController.messages.unknownApiResponse);
+                    this._showMessage(this._moviesFetcherConfig.messages.unknownApiResponse);
             }
         }
     }, {

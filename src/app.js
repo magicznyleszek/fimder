@@ -6,6 +6,7 @@ angular.module('akabuskAppModule', [
     'viewsModule',
     'searchBoxModule',
     'searchResultsModule',
+    'movieDetailsModule',
     'cachingModule'
 ]);
 

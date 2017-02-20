@@ -53,7 +53,7 @@ class MoviesFetcherService {
 
     _getMovieIdUrl(movieId) {
         let searchUrl = MoviesFetcherService.apiUrl;
-        searchUrl += '&i=';
+        searchUrl += '&plot=full&i=';
         searchUrl += this._$window.encodeURIComponent(movieId);
         return searchUrl;
     }

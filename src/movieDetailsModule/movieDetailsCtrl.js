@@ -1,15 +1,12 @@
 // -----------------------------------------------------------------------------
-// searchResultsCtrl -- displays a list of search results based on current
-// search route searchPhrase param. Also allows for opening movie view.
+// movieDetailsCtrl -- displays a details of given movie. It expects a valid
+// movieId in the route. Also can switch to search.
 // -----------------------------------------------------------------------------
 
-class SearchResultsController {
+class MovieDetailsController {
     static initClass() {
-        SearchResultsController.minSearchChars = 3;
-        SearchResultsController.welcomeMessage = `Hi! Please type at lest ${SearchResultsController.minSearchChars} characters above :-)`;
-
-        SearchResultsController.$inject = [
-            'SearchResult',
+        MovieDetailsController.$inject = [
+            'Movie',
             'currentRoute',
             'routesConfig',
             'moviesFetcher',
@@ -19,23 +16,23 @@ class SearchResultsController {
     }
 
     constructor(
-        SearchResult,
+        Movie,
         currentRoute,
         routesConfig,
         moviesFetcher,
         moviesFetcherConfig,
         assert
     ) {
-        this._SearchResult = SearchResult;
+        this._Movie = Movie;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this._moviesFetcher = moviesFetcher;
         this._moviesFetcherConfig = moviesFetcherConfig;
         this._assert = assert;
 
-        this.results = [];
+        this.movie = {};
         this.message = null;
-        this.isListVisible = false;
+        this.isDetailsVisible = false;
         this.isSpinnerVisible = false;
         this.isMessageVisible = false;
 
@@ -45,11 +42,11 @@ class SearchResultsController {
     }
 
     // -------------------------------------------------------------------------
-    // opening movies
+    // opening search again
     // -------------------------------------------------------------------------
 
-    openMovie(result) {
-        result.open();
+    openSearch() {
+        this._currentRoute.setToSearch();
     }
 
     // -------------------------------------------------------------------------
@@ -58,23 +55,11 @@ class SearchResultsController {
 
     _onRouteChange() {
         const route = this._currentRoute.get();
-        if (route.routeId === this._routesConfig.routes.search) {
-            if (this._isSearchPhraseValid(route.params.searchPhrase)) {
-                this._startNewSearch(route.params.searchPhrase);
-            } else {
-                this._showMessage(SearchResultsController.welcomeMessage);
+        if (route.routeId === this._routesConfig.routes.movie) {
+            if (typeof route.params.movieId === 'string') {
+                this._fetchMovieData(route.params.movieId);
             }
-        }
-    }
-
-    _isSearchPhraseValid(searchPhrase) {
-        if (typeof searchPhrase !== 'string') {
-            return false;
-        // we don't want to star search for small amount of characters
-        } else if (searchPhrase.length >= SearchResultsController.minSearchChars) {
-            return true;
-        } else {
-            return false;
+            // movieId is required param of movie route so else not needed
         }
     }
 
@@ -82,9 +67,9 @@ class SearchResultsController {
     // handle fetching data from API
     // -------------------------------------------------------------------------
 
-    _startNewSearch(searchPhrase) {
+    _fetchMovieData(movieId) {
         this._cancelRetrierIfNecessary();
-        this._retrier = this._moviesFetcher.fetchMoviesBySearch(searchPhrase);
+        this._retrier = this._moviesFetcher.fetchMovieById(movieId);
         this._retrier.promise.then(
             this._fetchMoviesSuccess.bind(this),
             this._fetchMoviesError.bind(this),
@@ -94,17 +79,17 @@ class SearchResultsController {
     }
 
     _fetchMoviesSuccess(response) {
-        this._interpretResults(response.data);
+        this._interpretMovieData(response.data);
     }
 
     _fetchMoviesError(errorReason) {
         if (errorReason === 1) {
-            this._showMessage(this._moviesFetcherConfig.messages.overLimit);
+            this._showMessage(MovieDetailsController.messages.overLimit);
         }
     }
 
     _fetchMoviesNotify() {
-        console.warn(this._moviesFetcherConfig.messages.retrying);
+        console.warn(MovieDetailsController.messages.retrying);
     }
 
     _cancelRetrierIfNecessary() {
@@ -118,34 +103,26 @@ class SearchResultsController {
     // interpreting fetched data
     // -------------------------------------------------------------------------
 
-    _interpretResults(resultsData) {
-        switch (resultsData.Response) {
+    _interpretMovieData(movieData) {
+        switch (movieData.Response) {
             // True means we have responses
             case 'True':
-                this._buildList(resultsData.Search);
-                this._showList();
+                this.movie = new this._Movie(movieData);
+                this._showDetails();
                 break;
             // True means that API was not able to return movies
             case 'False':
-                this._showMessage(resultsData.Error);
+                this._showMessage(movieData.Error);
                 break;
             default:
                 this._showMessage(
-                    this._moviesFetcherConfig.messages.unknownApiResponse
+                    MovieDetailsController.messages.unknownApiResponse
                 );
         }
     }
 
-    _clearList() {
+    _clearMovie() {
         this.results = [];
-    }
-
-    _buildList(moviesArray) {
-        this._assert.isArray(moviesArray);
-        this._clearList();
-        for (const movie of moviesArray) {
-            this.results.push(new this._SearchResult(movie));
-        }
     }
 
     // -------------------------------------------------------------------------
@@ -153,15 +130,15 @@ class SearchResultsController {
     // -------------------------------------------------------------------------
 
     _hideAll() {
-        this.isListVisible = false;
+        this.isDetailsVisible = false;
         this.isSpinnerVisible = false;
         this.isMessageVisible = false;
         this.message = null;
     }
 
-    _showList() {
+    _showDetails() {
         this._hideAll();
-        this.isListVisible = true;
+        this.isDetailsVisible = true;
     }
 
     _showSpinner() {
@@ -177,9 +154,9 @@ class SearchResultsController {
     }
 }
 
-SearchResultsController.initClass();
+MovieDetailsController.initClass();
 
-angular.module('searchResultsModule').controller(
-    'searchResultsCtrl',
-    SearchResultsController
+angular.module('movieDetailsModule').controller(
+    'movieDetailsCtrl',
+    MovieDetailsController
 );

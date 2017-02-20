@@ -1,0 +1,25 @@
+<div ng-controller="movieDetailsCtrl as movieDetails" i-movieDetails>
+    <h1 ng-bind="movieDetails.movie.title"></h1>
+
+    <time datetime="[[movieDetails.movie.releaseDateFull]]">
+        [[movieDetails.movie.releaseDate]]
+    </time>
+
+    <div ng-bind="movieDetails.movie.runtime"></div>
+
+    {% include movieDetailsModule/partials/listData.liquid array="movieDetails.movie.genres" %}
+    {% include movieDetailsModule/partials/listData.liquid array="movieDetails.movie.directors" %}
+    {% include movieDetailsModule/partials/listData.liquid array="movieDetails.movie.writers" %}
+    {% include movieDetailsModule/partials/listData.liquid array="movieDetails.movie.actors" %}
+
+    <div ng-bind="movieDetails.movie.plot"></div>
+    <div ng-bind="movieDetails.movie.awards"></div>
+
+    {% include movieDetailsModule/partials/listData.liquid array="movieDetails.movie.languages" %}
+    {% include movieDetailsModule/partials/listData.liquid array="movieDetails.movie.countries" %}
+
+    <img ng-src="[[movieDetails.movie.poster]]"></img>
+
+    <div ng-bind="movieDetails.movie.rating"></div>
+    <div ng-bind="movieDetails.movie.ratingVotes"></div>
+<div>

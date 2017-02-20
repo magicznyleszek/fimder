@@ -27,7 +27,7 @@
     "scripts:copydeps": "npm-run-all copy:angular copy:angular-route copy:angular-cache copy:lodash",
     "copy:angular": "cp node_modules/angular/angular.min.js dist/angular.min.js && cp node_modules/angular/angular.min.js.map dist/angular.min.js.map",
     "copy:angular-route": "cp node_modules/angular-route/angular-route.min.js dist/angular-route.min.js && cp node_modules/angular-route/angular-route.min.js.map dist/angular-route.min.js.map",
-    "copy:angular-cache": "cp node_modules/angular-cache/dist/angular-cache.min.js dist/angular-cache.min.js && cp node_modules/angular-cache/dist/angular-cache.min.map dist/angular-cache.min.js.map",
+    "copy:angular-cache": "cp node_modules/angular-cache/dist/angular-cache.min.js dist/angular-cache.min.js && cp node_modules/angular-cache/dist/angular-cache.min.map dist/angular-cache.min.map",
     "copy:lodash": "cp node_modules/lodash/lodash.min.js dist/lodash.min.js",
     "svg:build": "svgo -f _symbols/ && svgshelf -p symbol- _symbols/\\*.svg src/symbols.svg",
     "jekyll:build": "jekyll build",

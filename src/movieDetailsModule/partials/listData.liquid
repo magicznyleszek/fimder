@@ -1,0 +1,8 @@
+{% comment %}
+listData displays a list of given angular array items
+{% endcomment %}
+<ul>
+    <li ng-repeat="item in {{ include.array }}">
+        [[ item ]]
+    </li>
+</ul>
