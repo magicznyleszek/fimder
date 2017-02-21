@@ -5,8 +5,6 @@ variables - all global and pallete variables for project
 :root {
     /* colors palette */
     --c-amaranth: hwb(348deg, 12%, 2%);
-    --c-purple: hwb(328deg, 12%, 24%);
-    --c-violet: hwb(276deg, 14%, 42%);
     --c-white: hwb(0deg, 100%, 0%);
     --c-silver: hwb(0deg, 80%, 20%);
     --c-charcoal: hwb(0deg, 20%, 80%);

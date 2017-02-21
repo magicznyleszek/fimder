@@ -20,7 +20,8 @@ timezone: Europe/Warsaw
 
 # excludes
 exclude:
-    - src
+    # disabled src, as it breaks --watch (see includes_dir below)
+    # - src
     - test
     - node_modules
     - _symbols

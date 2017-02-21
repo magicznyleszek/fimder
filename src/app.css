@@ -13,6 +13,7 @@ app styles aggregation
 
 /* all import rules */
 @import "common/area.css";
+@import "common/card.css";
 @import "common/icon.css";
 @import "common/input.css";
 @import "common/text.css";

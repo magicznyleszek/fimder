@@ -1,0 +1,54 @@
+/*******************************************************************************
+card module
+*******************************************************************************/
+
+:root {
+    --c-card-default: var(--c-charcoal);
+    --card-shadow-default:
+        0 0.25rem 0.75rem -0.125rem color(var(--c-card-default) alpha(10%)),
+        0 0 0.0625rem 0.0625rem color(var(--c-card-default) alpha(10%));
+    --card-shadow-default-hover:
+        0 0.25rem 1rem -0.125rem color(var(--c-card-default) alpha(12%)),
+        0 0 0.125rem 0.125rem color(var(--c-card-default) alpha(12%));
+
+    --c-card-error: var(--c-amaranth);
+    --card-shadow-error:
+        0 0.25rem 0.75rem -0.125rem color(var(--c-card-error) alpha(10%)),
+        0 0 0.0625rem 0.0625rem color(var(--c-card-error) alpha(10%));
+    --card-shadow-error-hover:
+        0 0.25rem 1rem -0.125rem color(var(--c-card-error) alpha(12%)),
+        0 0 0.125rem 0.125rem color(var(--c-card-error) alpha(12%));
+}
+
+[i-card] {
+    display: block;
+    position: relative;
+    margin: calc(var(--s-leading) * 0.5) auto;
+    border-radius: var(--s-global-br);
+    padding: calc(var(--s-leading) * 0.5);
+    width: auto;
+    box-shadow: var(--card-shadow-default);
+    background-color: var(--c-white);
+    color: var(--c-card-default);
+}
+
+[i-card~="error"] {
+    box-shadow: var(--card-shadow-error);
+    color: var(--c-card-error);
+}
+
+/*******************************************************************************
+clickable styles (detected by having ngClick)
+*******************************************************************************/
+
+[i-card][ng-click] {
+    cursor: pointer;
+}
+
+[i-card][ng-click]:not([disabled]):hover {
+    box-shadow: var(--card-shadow-default-hover);
+}
+
+[i-card][ng-click]:not([disabled]):active {
+    left: 0.25rem;
+}

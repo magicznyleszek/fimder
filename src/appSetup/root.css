@@ -9,6 +9,8 @@ as they tend to add unwanted pixels, thus braking the flow.
 
 html {
     box-sizing: border-box;
+    /* we want to avoid content jumping when scrollbar appears */
+    overflow-y: scroll;
     min-height: 100%;
     background-color: var(--c-root-bg);
     color: var(--c-root-txt);
