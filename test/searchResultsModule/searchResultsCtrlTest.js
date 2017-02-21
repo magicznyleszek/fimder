@@ -1,30 +1,7 @@
 describe('searchResultsCtrl', () => {
+    let testData = null;
     let searchResultsCtrl = null;
     let $rootScope = null;
-
-    const omdbApiResponseTooMany = {
-        Response: 'False',
-        Error: 'Too many results.'
-    };
-
-    const omdbApiResponseNotFound = {
-        Response: 'False',
-        Error: 'Movie not found!'
-    };
-
-    const omdbApiResponseFound = {
-        Search: [
-            {
-                Title: 'Conan the Barbarian',
-                Year: '1982',
-                imdbID: 'tt0082198',
-                Type: 'movie',
-                Poster: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMWIxMzQxZjAtMGFkNC00NzYwLWFiMGEtNzZhZjE5MmFiMmMyL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'
-            }
-        ],
-        totalResults: '1',
-        Response: 'True'
-    };
 
     const resolvePromises = () => {
         // Digesting to resolve async promises
@@ -38,6 +15,7 @@ describe('searchResultsCtrl', () => {
         module('moviesFetcherModule');
         module('searchResultsModule');
         inject(($injector, $controller) => {
+            testData = $injector.get('testData');
             $rootScope = $injector.get('$rootScope');
             searchResultsCtrl = $controller('searchResultsCtrl', {
                 SearchResult: $injector.get('SearchResult'),
@@ -77,21 +55,21 @@ describe('searchResultsCtrl', () => {
 
     it('should show message for too many found', () => {
         searchResultsCtrl._fetchMoviesSuccess({
-            data: omdbApiResponseTooMany
+            data: testData.responses.searchErrorTooMany
         });
         expect(searchResultsCtrl.isMessageVisible).toBeTruthy();
     });
 
     it('should show message for not found', () => {
         searchResultsCtrl._fetchMoviesSuccess({
-            data: omdbApiResponseNotFound
+            data: testData.responses.searchErrorNotFound
         });
         expect(searchResultsCtrl.isMessageVisible).toBeTruthy();
     });
 
     it('should show list for found', () => {
         searchResultsCtrl._fetchMoviesSuccess({
-            data: omdbApiResponseFound
+            data: testData.responses.searchSuccess
         });
         expect(searchResultsCtrl.isListVisible).toBeTruthy();
     });
