@@ -3,12 +3,14 @@
 Movie info displayer.
 
 Requirements:
+
 1. [Jekyll](http://jekyllrb.com/)
 2. [Node](https://nodejs.org)
 
 ## Building
 
 To preview the project, you need to do three things:
+
 1. `npm install`
 2. `npm run serve`
 3. open [127.0.0.1:4000](http://127.0.0.1:4000/) in the browser
@@ -16,19 +18,24 @@ To preview the project, you need to do three things:
 ## Development
 
 What you want is to basically have two terminals:
+
 1. `npm run serve` -- this is providing the [127.0.0.1:4000](http://127.0.0.1:4000/) "server" and watching changes on Jekyll
 2. `npm run watch` -- this is watching all source files and producing dist ones
 
 ## TODO
 
 Mandatory:
-    - some global styles for whole app?
-    - movieDetails styles
-    - styles for searchBox
-    - styles for searchResults
-    - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
+
+- when movie data is "N/A" (some needs to be required) leave it null or undefined an use ng-show="movie.propertyName" to not display it (so remove hasPoater boolean?)
+- when preloading poster image, handle errors as they will be and are happening
+- padding around whole app for small screen
+- movieDetails styles
+- styles for searchBox
+- styles for searchResults
+- add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
 
 Improvements:
-    - add smartly loading poster to searchResult
-    - write smart tests for httpRetrierModule
-    - errorNotifier module?
+
+- add smartly loading poster to searchResult
+- write smart tests for httpRetrierModule
+- errorNotifier module?
