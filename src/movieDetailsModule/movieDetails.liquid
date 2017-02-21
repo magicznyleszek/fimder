@@ -1,4 +1,8 @@
-<div ng-controller="movieDetailsCtrl as movieDetails" i-movieDetails>
+<div
+    ng-controller="movieDetailsCtrl as movieDetails"
+    i-movieDetails
+    i-area="half"
+>
     <button ng-click="movieDetails.openSearch()">&larr; search again</button>
 
     {% include movieDetailsModule/partials/details.liquid %}
