@@ -4,5 +4,6 @@
 
 angular.module('movieDetailsModule', [
     'assertModule',
+    'routesModule',
     'moviesFetcherModule'
 ]);

@@ -44,6 +44,7 @@ describe('searchResultsCtrl', () => {
                 currentRoute: $injector.get('currentRoute'),
                 routesConfig: $injector.get('routesConfig'),
                 moviesFetcher: $injector.get('moviesFetcher'),
+                moviesFetcherConfig: $injector.get('moviesFetcherConfig'),
                 assert: $injector.get('assert')
             });
         });

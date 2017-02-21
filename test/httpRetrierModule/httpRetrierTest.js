@@ -56,4 +56,13 @@ describe('httpRetrier', () => {
 
         expect(spiedObject.errorCallback).toHaveBeenCalled();
     });
+
+    it('should pacify limit when creating retrier', () => {
+        const httpConfig = {url: testUrl, method: 'get'};
+        const badLimits = [0, -1, -42, 17, 19, 99, 168];
+        for (const badLimit of badLimits) {
+            const retrier = httpRetrier._createRetrier(httpConfig, badLimit);
+            expect(retrier.limit).toBe(httpRetrier.constructor.defaultLimit);
+        }
+    });
 });

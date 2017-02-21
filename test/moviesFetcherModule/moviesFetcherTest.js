@@ -4,7 +4,7 @@ describe('moviesFetcher', () => {
     const conanPhrase = 'Conan the Barbarian';
     const conanSearchUrl = 'http://www.omdbapi.com/?r=json&type=movie&s=Conan%20the%20Barbarian';
     const conanMovieId = 'tt0082198';
-    const conanMovieUrl = 'http://www.omdbapi.com/?r=json&type=movie&i=tt0082198';
+    const conanMovieUrl = 'http://www.omdbapi.com/?r=json&type=movie&plot=full&i=tt0082198';
 
     beforeEach(() => {
         module('testApp');

@@ -27,13 +27,6 @@ class HttpRetrierService {
     runGet(url, limit = HttpRetrierService.defaultLimit) {
         this._assert.isString(url);
         this._assert.isInteger(limit);
-
-        // we don't want to ddos anyone, so we will keep the limit in sane range
-        if (limit <= 0 || limit >= 16) {
-            console.warn(`You want limit to be ${limit}, really? Lmftfy.`);
-            limit = HttpRetrierService.defaultLimit;
-        }
-
         return this._run('get', url, limit);
     }
 
@@ -57,6 +50,12 @@ class HttpRetrierService {
     // @param {object} httpConfig - a http config object:
     // https://docs.angularjs.org/api/ng/service/$http#usage
     _createRetrier(httpConfig, limit) {
+        // we don't want to ddos anyone, so we will keep the limit in sane range
+        if (limit <= 0 || limit >= 16) {
+            console.warn(`You want limit to be ${limit}, really? Lmftfy.`);
+            limit = HttpRetrierService.defaultLimit;
+        }
+
         const retrierId = Math.floor((Math.random()) * 0x1000000).toString(16);
         this._retriers[retrierId] = {
             id: retrierId,

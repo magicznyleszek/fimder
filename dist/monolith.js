@@ -220,13 +220,6 @@ var HttpRetrierService = function () {
 
             this._assert.isString(url);
             this._assert.isInteger(limit);
-
-            // we don't want to ddos anyone, so we will keep the limit in sane range
-            if (limit <= 0 || limit >= 16) {
-                console.warn('You want limit to be ' + limit + ', really? Lmftfy.');
-                limit = HttpRetrierService.defaultLimit;
-            }
-
             return this._run('get', url, limit);
         }
     }, {
@@ -256,6 +249,12 @@ var HttpRetrierService = function () {
     }, {
         key: '_createRetrier',
         value: function _createRetrier(httpConfig, limit) {
+            // we don't want to ddos anyone, so we will keep the limit in sane range
+            if (limit <= 0 || limit >= 16) {
+                console.warn('You want limit to be ' + limit + ', really? Lmftfy.');
+                limit = HttpRetrierService.defaultLimit;
+            }
+
             var retrierId = Math.floor(Math.random() * 0x1000000).toString(16);
             this._retriers[retrierId] = {
                 id: retrierId,
@@ -521,7 +520,7 @@ angular.module('listenersManagerModule').factory('listenersManager', function ()
 // movieDetailsModule display details of given movie
 // -----------------------------------------------------------------------------
 
-angular.module('movieDetailsModule', ['assertModule', 'moviesFetcherModule']);
+angular.module('movieDetailsModule', ['assertModule', 'routesModule', 'moviesFetcherModule']);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();

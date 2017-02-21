@@ -27,8 +27,8 @@ Mandatory:
     - movieDetails styles
     - styles for searchBox
     - styles for searchResults
+    - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
 
 Improvements:
-    - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
     - write smart tests for httpRetrierModule
     - errorNotifier module?
