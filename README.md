@@ -22,7 +22,6 @@ What you want is to basically have two terminals:
 ## TODO
 
 Mandatory:
-    - movieDetailsModule
     - some global styles for whole app?
     - movieDetails styles
     - styles for searchBox

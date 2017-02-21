@@ -1,6 +1,8 @@
 /* all import rules */
 
 @import "searchBoxModule/searchBox.css";
+@import "searchResultsModule/searchResults.css";
+@import "movieDetailsModule/movieDetails.css";
 
 [ng-cloak] {
     display: none !important;
