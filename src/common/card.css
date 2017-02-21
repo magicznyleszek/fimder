@@ -50,5 +50,5 @@ clickable styles (detected by having ngClick)
 }
 
 [i-card][ng-click]:not([disabled]):active {
-    left: 0.25rem;
+    left: calc(var(--s-leading) * 0.5);
 }

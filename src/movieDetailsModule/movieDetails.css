@@ -3,8 +3,16 @@
     --s-movieDetails-poster-h: 450px;
 }
 
-[i-movieDetails] {
+[i-movieDetails-title] {
+    display: inline;
+}
 
+[i-movieDetails-releaseDate]::before {
+    content: "(";
+}
+
+[i-movieDetails-releaseDate]::after {
+    content: ")";
 }
 
 [i-movieDetails-poster] {

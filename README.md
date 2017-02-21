@@ -29,5 +29,6 @@ Mandatory:
     - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
 
 Improvements:
+    - add smartly loading poster to searchResult
     - write smart tests for httpRetrierModule
     - errorNotifier module?

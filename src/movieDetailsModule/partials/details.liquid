@@ -1,7 +1,18 @@
 <div i-card ng-show="movieDetails.isDetailsVisible">
-    <h1 ng-bind="movieDetails.movie.title"></h1>
+    <header>
+        <h1
+            i-movieDetails-title
+            ng-bind="movieDetails.movie.title"
+        ></h1>
 
-    <time datetime="[[movieDetails.movie.releaseDateFull]]" ng-bind="movieDetails.movie.releaseDate"></time>
+        <time
+            i-movieDetails-releaseDate
+            datetime="[[movieDetails.movie.releaseDateFull]]"
+            ng-bind="movieDetails.movie.releaseDate"
+        ></time>
+    </header>
+
+    <div ng-bind="movieDetails.movie.runtime"></div>
 
     <img
         ng-if="movieDetails.movie.hasPoster"
@@ -13,10 +24,8 @@
     <div ng-bind="movieDetails.movie.rating"></div>
     <div ng-bind="movieDetails.movie.ratingVotes"></div>
 
-    <div ng-bind="movieDetails.movie.plot"></div>
-    <div ng-bind="movieDetails.movie.awards"></div>
-
-    <div ng-bind="movieDetails.movie.runtime"></div>
+    <p ng-bind="movieDetails.movie.plot"></p>
+    <p ng-bind="movieDetails.movie.awards"></p>
 
     {% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.genres" %}
     {% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.directors" %}
