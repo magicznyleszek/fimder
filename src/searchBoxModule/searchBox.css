@@ -1,11 +1,5 @@
-/* TODO */
-
-:root {
-    --c-green: rgb(0, 128, 0);
-}
-
 [i-searchBox] {
-    background: darkcyan;
+
 }
 
 [i-searchBox-icon] {
