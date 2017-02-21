@@ -1,3 +1,14 @@
+:root {
+    --s-movieDetails-poster-w: 300px;
+    --s-movieDetails-poster-h: 450px;
+}
+
 [i-movieDetails] {
     background: darkorchid;
+}
+
+[i-movieDetails-poster] {
+    /* we make it half the original size, so it will look good on retina */
+    width: calc(var(--s-movieDetails-poster-w) * 0.5);
+    height: calc(var(--s-movieDetails-poster-h) * 0.5);
 }

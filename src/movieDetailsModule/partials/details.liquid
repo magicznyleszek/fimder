@@ -3,7 +3,11 @@
 
     <time datetime="[[movieDetails.movie.releaseDateFull]]" ng-bind="movieDetails.movie.releaseDate"></time>
 
-    <img ng-src="[[movieDetails.movie.poster]]"></img>
+    <img
+        i-movieDetails-poster
+        ng-src="[[movieDetails.movie.poster]]"
+        alt="[[movieDetails.movie.title]] poster"
+    >
 
     <div ng-bind="movieDetails.movie.rating"></div>
     <div ng-bind="movieDetails.movie.ratingVotes"></div>
