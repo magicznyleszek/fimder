@@ -3,21 +3,21 @@ card module
 *******************************************************************************/
 
 :root {
+    --card-sh-a-sizes: 0 0 0 0.0625rem;
+    --card-sh-b-sizes: 0 0.2rem 0.3rem 0;
+
     --c-card-default: var(--c-charcoal);
-    --card-shadow-default:
-        0 0.25rem 0.75rem -0.125rem color(var(--c-card-default) alpha(10%)),
-        0 0 0.0625rem 0.0625rem color(var(--c-card-default) alpha(10%));
-    --card-shadow-default-hover:
-        0 0.25rem 1rem -0.125rem color(var(--c-card-default) alpha(12%)),
-        0 0 0.125rem 0.125rem color(var(--c-card-default) alpha(12%));
+    --card-sh-default:
+        var(--card-sh-a-sizes) color(var(--c-card-default) alpha(15%)),
+        var(--card-sh-b-sizes) color(var(--c-card-default) alpha(10%));
+    --card-sh-default-hover:
+        var(--card-sh-a-sizes) color(var(--c-card-default) alpha(25%)),
+        var(--card-sh-b-sizes) color(var(--c-card-default) alpha(15%));
 
     --c-card-error: var(--c-amaranth);
-    --card-shadow-error:
-        0 0.25rem 0.75rem -0.125rem color(var(--c-card-error) alpha(10%)),
-        0 0 0.0625rem 0.0625rem color(var(--c-card-error) alpha(10%));
-    --card-shadow-error-hover:
-        0 0.25rem 1rem -0.125rem color(var(--c-card-error) alpha(12%)),
-        0 0 0.125rem 0.125rem color(var(--c-card-error) alpha(12%));
+    --card-sh-error:
+        var(--card-sh-a-sizes) color(var(--c-card-error) alpha(15%)),
+        var(--card-sh-b-sizes) color(var(--c-card-error) alpha(10%));
 }
 
 [i-card] {
@@ -27,13 +27,13 @@ card module
     border-radius: var(--s-global-br);
     padding: calc(var(--s-leading) * 0.5);
     width: auto;
-    box-shadow: var(--card-shadow-default);
+    box-shadow: var(--card-sh-default);
     background-color: var(--c-white);
     color: var(--c-card-default);
 }
 
 [i-card~="error"] {
-    box-shadow: var(--card-shadow-error);
+    box-shadow: var(--card-sh-error);
     color: var(--c-card-error);
 }
 
@@ -46,7 +46,7 @@ clickable styles (detected by having ngClick)
 }
 
 [i-card][ng-click]:not([disabled]):hover {
-    box-shadow: var(--card-shadow-default-hover);
+    box-shadow: var(--card-sh-default-hover);
 }
 
 [i-card][ng-click]:not([disabled]):active {
