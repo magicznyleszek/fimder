@@ -1,0 +1,41 @@
+/*******************************************************************************
+icon config
+*******************************************************************************/
+
+[i-icon] {
+    display: inline-block;
+    vertical-align: bottom;
+    width: var(--s-leading);
+    height: var(--s-leading);
+    color: inherit;
+    shape-rendering: geometricPrecision;
+    fill: currentColor;
+}
+
+/* bugfix for click target SVGElementInstance */
+[i-icon] > * { pointer-events: none; }
+
+[i-icon~="middle"] { vertical-align: middle; }
+
+/*******************************************************************************
+icon sizes
+*******************************************************************************/
+
+[i-icon~="double"] {
+    width: calc(var(--s-leading) * 2);
+    height: calc(var(--s-leading) * 2);
+}
+
+[i-icon~="triple"] {
+    width: calc(var(--s-leading) * 3);
+    height: calc(var(--s-leading) * 3);
+}
+/*******************************************************************************
+icon colors
+*******************************************************************************/
+
+[i-icon~="amaranth"] { fill: var(--c-amaranth); }
+[i-icon~="purple"] { fill: var(--c-purple); }
+[i-icon~="violet"] { fill: var(--c-violet); }
+[i-icon~="white"] { fill: var(--c-white); }
+[i-icon~="silver"] { fill: var(--c-silver); }

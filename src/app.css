@@ -12,6 +12,10 @@ app styles aggregation
 @import "appSetup/typography.css";
 
 /* all import rules */
+@import "common/area.css";
+@import "common/icon.css";
+@import "common/input.css";
+@import "common/text.css";
 @import "searchBoxModule/searchBox.css";
 @import "searchResultsModule/searchResults.css";
 @import "movieDetailsModule/movieDetails.css";

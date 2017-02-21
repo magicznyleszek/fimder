@@ -531,6 +531,7 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', function (asser
         _createClass(MovieModel, null, [{
             key: 'initClass',
             value: function initClass() {
+                MovieModel.notAvailableProprety = 'N/A';
                 MovieModel.requiredType = 'movie';
                 MovieModel.requiredProperties = ['imdbID', 'Title', 'Released', 'Runtime', 'Genre', 'Director', 'Writer', 'Actors', 'Plot', 'Awards', 'Language', 'Country', 'Poster', 'imdbRating', 'imdbVotes'];
             }
@@ -554,6 +555,7 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', function (asser
             this.languages = movieData.Language.split(', ');
             this.countries = movieData.Country.split(', ');
             this.poster = movieData.Poster;
+            this.hasPoster = movieData.Poster !== MovieModel.notAvailableProprety;
             this.rating = movieData.imdbRating;
             this.ratingVotes = movieData.imdbVotes;
         }
