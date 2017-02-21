@@ -1,9 +1,17 @@
-/* all import rules */
+/*******************************************************************************
+app styles aggregation
+*******************************************************************************/
 
+/* variables palette */
+@import "variables.css";
+
+/* basics */
+@import "appSetup/reset.css";
+@import "appSetup/root.css";
+@import "appSetup/states.css";
+@import "appSetup/typography.css";
+
+/* all import rules */
 @import "searchBoxModule/searchBox.css";
 @import "searchResultsModule/searchResults.css";
 @import "movieDetailsModule/movieDetails.css";
-
-[ng-cloak] {
-    display: none !important;
-}

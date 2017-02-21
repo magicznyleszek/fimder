@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------------
 
 angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule', 'searchResultsModule', 'movieDetailsModule', 'cachingModule']);
+'use strict';
 
 // -----------------------------------------------------------------------------
 // tweak default angular configuration
@@ -20,12 +21,6 @@ angular.module('akabuskAppModule').config(['$interpolateProvider', '$compileProv
     // Don't look for directives in comments and classes (~10% boost)
     $compileProvider.commentDirectivesEnabled(false);
     $compileProvider.cssClassDirectivesEnabled(false);
-}]);
-
-angular.module('akabuskAppModule').run([
-// '',
-function () {
-    console.debug('app initialized');
 }]);
 'use strict';
 

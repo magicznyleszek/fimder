@@ -7,7 +7,7 @@
     "input": "src/app.css",
     "output": "dist/monolith.css",
     "postcss-cssnext": {
-        "browsers": "last 2 versions"
+        "browsers": "> 5%"
     },
     "cssnano": {
         "autoprefixer": false

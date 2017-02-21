@@ -34,7 +34,8 @@ module.exports = function (config) {
             'test/**/*Test.js'
         ],
         exclude: [
-            'src/app.js'
+            'src/app.js',
+            'src/appSetup/appInit.js'
         ],
 
         // preprocess matching files before serving them to the browser
