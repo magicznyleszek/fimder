@@ -1,15 +1,7 @@
-[i-searchBox] {
+/*******************************************************************************
+searchBox module
+*******************************************************************************/
 
-}
-
-[i-searchBox-icon] {
-
-}
-
-[i-searchBox-input] {
-
-}
-
-[i-searchBox-clearButton] {
-
+[i-searchBox-lens] {
+    pointer-events: none;
 }

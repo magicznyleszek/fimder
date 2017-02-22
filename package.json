@@ -29,7 +29,7 @@
     "copy:angular-route": "cp node_modules/angular-route/angular-route.min.js dist/angular-route.min.js && cp node_modules/angular-route/angular-route.min.js.map dist/angular-route.min.js.map",
     "copy:angular-cache": "cp node_modules/angular-cache/dist/angular-cache.min.js dist/angular-cache.min.js && cp node_modules/angular-cache/dist/angular-cache.min.map dist/angular-cache.min.map",
     "copy:lodash": "cp node_modules/lodash/lodash.min.js dist/lodash.min.js",
-    "svg:build": "svgo -f _symbols/ && svgshelf -p symbol- _symbols/\\*.svg src/symbols.svg",
+    "svg:build": "svgo -f src/symbols/ && svgshelf -p symbol- src/symbols/\\*.svg src/_symbolsMerged.svg",
     "jekyll:build": "jekyll build",
     "jekyll:serve": "jekyll serve --watch --baseurl ''"
   },

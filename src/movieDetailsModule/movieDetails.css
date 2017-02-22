@@ -1,6 +1,19 @@
+/*******************************************************************************
+movieDetails config
+*******************************************************************************/
+
 :root {
     --s-movieDetails-poster-w: 300px;
     --s-movieDetails-poster-h: 450px;
+}
+
+/*******************************************************************************
+movieDetails content
+*******************************************************************************/
+
+[i-movieDetails-content] {
+    margin-top: var(--s-leading);
+    margin-bottom: var(--s-leading);
 }
 
 [i-movieDetails-title] {
@@ -16,7 +29,9 @@
 }
 
 [i-movieDetails-poster] {
+    border-radius: var(--s-global-br);
     /* we make it half the original size, so it will look good on retina */
     width: calc(var(--s-movieDetails-poster-w) * 0.5);
     height: calc(var(--s-movieDetails-poster-h) * 0.5);
+    background: var(--c-silver);
 }

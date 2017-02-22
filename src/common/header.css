@@ -1,0 +1,106 @@
+/*******************************************************************************
+header
+*******************************************************************************/
+
+:root {
+    --s-header-padding: calc(var(--s-leading) * 0.5);
+    --s-header-h: calc(var(--s-leading) + var(--s-header-padding) * 2);
+    --c-header-txt: var(--c-charcoal);
+    --c-header-bg: color(var(--c-header-txt) alpha(5%));
+    --c-header-input-bg-hover: color(var(--c-header-txt) alpha(10%));
+    --c-header-input-bg-active: color(var(--c-header-txt) alpha(15%));
+    --z-header-input: 1;
+    --z-header-floater: 2;
+    --z-header-button: 3;
+}
+
+[i-header] {
+    display: block;
+    position: relative;
+    margin: calc(var(--s-leading) * 0.5) auto;
+    border-radius: var(--s-global-br);
+    padding: var(--s-header-padding);
+    width: 100%;
+    height: var(--s-header-h);
+    background-color: var(--c-header-bg);
+    color: var(--c-header-txt);
+    line-height: var(--s-leading);
+}
+
+/*******************************************************************************
+header floater
+*******************************************************************************/
+
+[i-header-floater] {
+    position: absolute;
+    z-index: var(--z-header-floater);
+    top: 0;
+    left: 0;
+    padding-left: var(--s-header-padding);
+    padding-right: var(--s-header-padding);
+    height: var(--s-header-h);
+    line-height: var(--s-header-h);
+}
+
+[i-header-floater~="righted"] {
+    left: auto;
+    right: 0;
+}
+
+/*******************************************************************************
+header input
+*******************************************************************************/
+
+[i-header-input] {
+    display: block;
+    z-index: var(--z-header-input);
+    border: 0;
+    border-radius: var(--s-global-br);
+    width: 100%;
+    outline: 0;
+    cursor: text;
+}
+
+/* default input state */
+[i-header-input] {
+    background-color: transparent;
+}
+
+[i-header-input]:not([disabled]):hover {
+    background-color: var(--c-header-input-bg-hover);
+}
+
+[i-header-input]:not([disabled]):active,
+[i-header-input]:not([disabled]):focus {
+    background-color: var(--c-header-input-bg-active);
+}
+
+/*******************************************************************************
+header button
+*******************************************************************************/
+
+[i-header-button] {
+    z-index: var(--z-header-button);
+    min-width: var(--s-header-h);
+    outline: none;
+    cursor: pointer;
+    background: transparent;
+    text-align: center;
+}
+
+[i-header-button]:not([disabled]):hover {
+    color: var(--c-amaranth);
+}
+
+[i-header-button]:not([disabled]):active [i-header-icon] {
+    transform: scale(0.9);
+}
+
+/*******************************************************************************
+header icon
+*******************************************************************************/
+
+[i-header] [i-header-icon] {
+    width: calc(var(--s-leading) / 3 * 4);
+    height: calc(var(--s-leading) / 3 * 4);
+}

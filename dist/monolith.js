@@ -1102,6 +1102,7 @@ var SearchBoxController = function () {
         value: function clear() {
             this.inputValue = '';
             this._applyInputValue();
+            this._focusOnInput();
         }
     }]);
 

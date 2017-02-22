@@ -86,6 +86,7 @@ class SearchBoxController {
     clear() {
         this.inputValue = '';
         this._applyInputValue();
+        this._focusOnInput();
     }
 }
 

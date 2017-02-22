@@ -4,7 +4,7 @@ icon config
 
 [i-icon] {
     display: inline-block;
-    vertical-align: bottom;
+    vertical-align: middle;
     width: var(--s-leading);
     height: var(--s-leading);
     color: inherit;
@@ -14,8 +14,6 @@ icon config
 
 /* bugfix for click target SVGElementInstance */
 [i-icon] > * { pointer-events: none; }
-
-[i-icon~="middle"] { vertical-align: middle; }
 
 /*******************************************************************************
 icon sizes
@@ -30,6 +28,7 @@ icon sizes
     width: calc(var(--s-leading) * 3);
     height: calc(var(--s-leading) * 3);
 }
+
 /*******************************************************************************
 icon colors
 *******************************************************************************/
@@ -37,3 +36,23 @@ icon colors
 [i-icon~="amaranth"] { fill: var(--c-amaranth); }
 [i-icon~="white"] { fill: var(--c-white); }
 [i-icon~="silver"] { fill: var(--c-silver); }
+
+/*******************************************************************************
+icon animations
+*******************************************************************************/
+
+@keyframes iconSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+[i-icon~="spinning"] {
+    animation-name: iconSpin;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-delay: 0.25s;
+    animation-direction: normal;
+    animation-iteration-count: infinite;
+    animation-fill-mode: none;
+    animation-play-state: running;
+}

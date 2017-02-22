@@ -1,3 +1,5 @@
 <div i-card ng-show="searchResults.isSpinnerVisible">
-    Loading&hellip;
+    <svg i-icon="double [[searchResults.isSpinnerVisible?'spinning':'']]">
+        <use xlink:href="#symbol-hourglass">
+    </svg>
 </div>

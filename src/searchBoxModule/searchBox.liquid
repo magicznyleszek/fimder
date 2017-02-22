@@ -1,14 +1,11 @@
 <div
     ng-controller="searchBoxCtrl as searchBox"
-    i-searchBox
-    i-area="half silver"
+    i-header
 >
-    <svg i-icon i-searchBox-icon><use xlink:href="#symbol-eye"></svg>
-
     <input
         type="text"
-        i-input
-        i-searchBox-input
+        i-header-floater
+        i-header-input
         js-searchBox-input
         placeholder="Search movie titles…"
         ng-model="searchBox.inputValue"
@@ -19,9 +16,20 @@
     >
 
     <button
-        i-searchBox-clearButton
+        i-header-floater="righted"
+        i-header-button
         ng-click="searchBox.clear();"
-        ng-show="searchBox.inputValue.length > 0"
+        ng-show="searchBox.inputValue"
         ng-cloak
-    >&times;</button>
+    >
+        <svg i-icon i-header-icon><use xlink:href="#symbol-coffin"></svg>
+    </button>
+
+    <div
+        i-header-floater="righted"
+        i-searchBox-lens
+        ng-show="!searchBox.inputValue"
+    >
+        <svg i-icon i-header-icon><use xlink:href="#symbol-lens"></svg>
+    </div>
 </div>
