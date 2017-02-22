@@ -8,8 +8,8 @@ movieDetails config
     --c-movieDetails-rating: var(--c-gold);
 }
 
-@custom-media --wideEnough (min-width: 420px);
-@custom-media --notWideEnough (max-width: 419px);
+@custom-media --wideEnough (min-width: 500px);
+@custom-media --notWideEnough (max-width: 499px);
 
 /*******************************************************************************
 movieDetails base
@@ -21,6 +21,18 @@ movieDetails base
     margin-bottom: var(--s-leading);
 }
 
+@media (--notWideEnough) {
+    [i-movieDetails-wrapper] {
+        padding: calc(var(--s-leading) * 0.5);
+    }
+}
+
+@media (--wideEnough) {
+    [i-movieDetails-wrapper] {
+        padding: var(--s-leading);
+    }
+}
+
 /*******************************************************************************
 movieDetails header
 *******************************************************************************/
@@ -30,9 +42,9 @@ movieDetails header
 }
 
 [i-movieDetails-title] {
-    font-size: 200%;
+    font-size: 250%;
     font-weight: 300;
-    line-height: var(--s-leading);
+    line-height: calc(var(--s-leading) * 2);
 }
 
 [i-movieDetails-metaInfo] {
@@ -54,7 +66,8 @@ movieDetails rating
     float: right;
     margin-left: calc(var(--s-leading) * 0.5);
     border-radius: 50%;
-    padding: calc(var(--s-leading) * 0.375) 0;
+    padding-top: calc(var(--s-leading) * 0.5);
+    padding-bottom: calc(var(--s-leading) * 0.25);
     width: calc(var(--s-leading) * 2);
     height: calc(var(--s-leading) * 2);
     background-color: var(--c-movieDetails-rating);

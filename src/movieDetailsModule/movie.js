@@ -48,6 +48,8 @@ angular.module('movieDetailsModule').factory('Movie', [
                 this._setOptionalText('poster', movieData.Poster);
                 this._setOptionalText('rating', movieData.imdbRating);
                 this._setOptionalText('ratingVotes', movieData.imdbVotes);
+
+                this._pacifyRatingVotes();
             }
 
             _setOptionalText(propertyName, rawData) {
@@ -68,6 +70,17 @@ angular.module('movieDetailsModule').factory('Movie', [
                     assert.isString(movieData[propertyName]);
                 }
                 assert.isTrue(movieData.Type === MovieModel.requiredType);
+            }
+
+            _pacifyRatingVotes() {
+                if (
+                    this.ratingVotes &&
+                    this.ratingVotes.length > 3 &&
+                    this.ratingVotes[this.ratingVotes.length - 4] === ','
+                ) {
+                    this.ratingVotes = this.ratingVotes.substr(0, this.ratingVotes.length - 4);
+                    this.ratingVotes += 'k';
+                }
             }
         }
 

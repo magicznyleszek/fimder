@@ -559,6 +559,8 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', function (asser
             this._setOptionalText('poster', movieData.Poster);
             this._setOptionalText('rating', movieData.imdbRating);
             this._setOptionalText('ratingVotes', movieData.imdbVotes);
+
+            this._pacifyRatingVotes();
         }
 
         _createClass(MovieModel, [{
@@ -605,6 +607,14 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', function (asser
                 }
 
                 assert.isTrue(movieData.Type === MovieModel.requiredType);
+            }
+        }, {
+            key: '_pacifyRatingVotes',
+            value: function _pacifyRatingVotes() {
+                if (this.ratingVotes && this.ratingVotes.length > 3 && this.ratingVotes[this.ratingVotes.length - 4] === ',') {
+                    this.ratingVotes = this.ratingVotes.substr(0, this.ratingVotes.length - 4);
+                    this.ratingVotes += 'k';
+                }
             }
         }]);
 
