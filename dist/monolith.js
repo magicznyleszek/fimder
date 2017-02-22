@@ -540,29 +540,44 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', function (asser
         function MovieModel(movieData) {
             _classCallCheck(this, MovieModel);
 
-            this._verifyData(movieData);
+            this._verifyAllData(movieData);
             this.id = movieData.imdbID;
             this.title = movieData.Title;
-            this.releaseDate = movieData.Released;
-            this.releaseDateFull = new Date(movieData.Released);
-            this.runtime = movieData.Runtime;
-            this.genres = movieData.Genre.split(', ');
-            this.directors = movieData.Director.split(', ');
-            this.writers = movieData.Writer.split(', ');
-            this.actors = movieData.Actors.split(', ');
-            this.plot = movieData.Plot;
-            this.awards = movieData.Awards;
-            this.languages = movieData.Language.split(', ');
-            this.countries = movieData.Country.split(', ');
-            this.poster = movieData.Poster;
-            this.hasPoster = movieData.Poster !== MovieModel.notAvailableProprety;
-            this.rating = movieData.imdbRating;
-            this.ratingVotes = movieData.imdbVotes;
+            // we want all optional properties to be defined only if their
+            // content makes sense, i.e. no "N/A" visible for user
+            this._setOptionalText('releaseDate', movieData.Released);
+            this._setOptionalText('releaseDateFull', new Date(movieData.Released));
+            this._setOptionalText('runtime', movieData.Runtime);
+            this._setOptionalArray('genres', movieData.Genre);
+            this._setOptionalArray('directors', movieData.Director);
+            this._setOptionalArray('writers', movieData.Writer);
+            this._setOptionalArray('actors', movieData.Actors);
+            this._setOptionalText('plot', movieData.Plot);
+            this._setOptionalText('awards', movieData.Awards);
+            this._setOptionalArray('languages', movieData.Language);
+            this._setOptionalArray('countries', movieData.Country);
+            this._setOptionalText('poster', movieData.Poster);
+            this._setOptionalText('rating', movieData.imdbRating);
+            this._setOptionalText('ratingVotes', movieData.imdbVotes);
         }
 
         _createClass(MovieModel, [{
-            key: '_verifyData',
-            value: function _verifyData(movieData) {
+            key: '_setOptionalText',
+            value: function _setOptionalText(propertyName, rawData) {
+                if (rawData !== MovieModel.notAvailableProprety) {
+                    this[propertyName] = rawData;
+                }
+            }
+        }, {
+            key: '_setOptionalArray',
+            value: function _setOptionalArray(propertyName, rawData) {
+                if (rawData !== MovieModel.notAvailableProprety) {
+                    this[propertyName] = rawData.split(', ');
+                }
+            }
+        }, {
+            key: '_verifyAllData',
+            value: function _verifyAllData(movieData) {
                 // checks if all the necessary strings are there
                 var _iteratorNormalCompletion = true;
                 var _didIteratorError = false;

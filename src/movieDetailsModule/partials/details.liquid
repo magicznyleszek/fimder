@@ -1,6 +1,6 @@
 <div i-card i-movieDetails-wrapper ng-show="movieDetails.isDetailsVisible">
     <header i-movieDetails-header>
-        <figure i-movieDetails-rating>
+        <figure i-movieDetails-rating ng-if="movieDetails.movie.rating">
             <span
                 i-movieDetails-ratingScore
                 ng-bind="movieDetails.movie.rating"
@@ -34,13 +34,17 @@
     </header>
 
     <img
-        ng-if="movieDetails.movie.hasPoster"
+        ng-if="movieDetails.movie.poster"
         i-movieDetails-poster
         ng-src="[[movieDetails.movie.poster]]"
         alt="[[movieDetails.movie.title]] poster"
     >
 
-    <p i-movieDetails-paragraph ng-bind="movieDetails.movie.plot"></p>
+    <p
+        i-movieDetails-paragraph
+        ng-if="movieDetails.movie.plot"
+        ng-bind="movieDetails.movie.plot"
+    ></p>
 
     <table i-movieDetails-table>
         <tr ng-if="movieDetails.movie.awards">
