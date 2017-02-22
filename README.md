@@ -26,16 +26,11 @@ What you want is to basically have two terminals:
 
 Mandatory:
 
-- when movie data is "N/A" (some needs to be required) leave it null or undefined an use ng-show="movie.propertyName" to not display it (so remove hasPoater boolean?)
-- when preloading poster image, handle errors as they will be and are happening
-- padding around whole app for small screen
-- movieDetails styles
-- styles for searchBox
-- styles for searchResults
 - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
 
 Improvements:
 
+- preload poster image and fade it in + handle errors as they will be and are happening
 - add smartly loading poster to searchResult
 - write smart tests for httpRetrierModule
 - errorNotifier module?
