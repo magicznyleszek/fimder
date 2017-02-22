@@ -1,6 +1,6 @@
 # Akabusk
 
-Movie info displayer.
+Movie info displayer. Check [akabusk.smutnyleszek.com](https://akabusk.smutnyleszek.com) to see how it works.
 
 Requirements:
 
