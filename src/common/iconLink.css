@@ -1,19 +1,21 @@
 /*******************************************************************************
-nakedLink module
+iconLink module
 *******************************************************************************/
 
-[i-nakedLink] {
+[i-iconLink] {
     display: inline-block;
     cursor: pointer;
     background-image: none;
 }
 
-[i-nakedLink]:not([disabled]):hover {
-    opacity: 0.8;
+[i-iconLink]:not([disabled]):visited {
     color: inherit;
 }
 
-[i-nakedLink]:not([disabled]):active {
-    opacity: 0.6;
-    color: inherit;
+[i-iconLink]:not([disabled]):hover {
+    color: var(--c-amaranth);
+}
+
+[i-iconLink]:not([disabled]):active [i-iconLink-icon] {
+    transform: scale(0.9);
 }
