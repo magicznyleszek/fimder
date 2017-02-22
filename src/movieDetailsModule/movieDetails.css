@@ -99,11 +99,10 @@ movieDetails poster
 
 [i-movieDetails-poster] {
     display: block;
-    border-radius: var(--s-global-br);
-    /* we make it half the original size, so it will look good on retina */
-    width: calc(var(--s-movieDetails-poster-w) * 0.5);
-    height: calc(var(--s-movieDetails-poster-h) * 0.5);
-    box-shadow: 0 0 0 0.0625rem color(var(--c-charcoal) alpha(5%));
+    border-radius: calc(var(--s-global-br) * 5);
+    width: var(--s-movieDetails-poster-w);
+    height: var(--s-movieDetails-poster-h);
+    box-shadow: 0 0 0 0.0625rem color(var(--c-charcoal) alpha(15%));
     background: var(--c-silver);
 }
 
