@@ -1,18 +1,37 @@
-<div i-card i-movieDetails-content ng-show="movieDetails.isDetailsVisible">
-    <header>
+<div i-card i-movieDetails-wrapper ng-show="movieDetails.isDetailsVisible">
+    <header i-movieDetails-header>
+        <figure i-movieDetails-rating>
+            <span
+                i-movieDetails-ratingScore
+                ng-bind="movieDetails.movie.rating"
+            ></span>
+
+            <span
+                i-movieDetails-ratingVotesCount
+                ng-bind="movieDetails.movie.ratingVotes"
+            ></span>
+        </figure>
+
         <h1
             i-movieDetails-title
             ng-bind="movieDetails.movie.title"
         ></h1>
 
-        <time
-            i-movieDetails-releaseDate
-            datetime="[[movieDetails.movie.releaseDateFull]]"
-            ng-bind="movieDetails.movie.releaseDate"
-        ></time>
-    </header>
+        <div>
+            <time
+                i-movieDetails-metaInfo
+                datetime="[[movieDetails.movie.releaseDateFull]]"
+                ng-bind="movieDetails.movie.releaseDate"
+                ng-if="movieDetails.movie.releaseDate"
+            ></time>
 
-    <div ng-bind="movieDetails.movie.runtime"></div>
+            <span
+                i-movieDetails-metaInfo
+                ng-if="movieDetails.movie.runtime"
+                ng-bind="movieDetails.movie.runtime"
+            ></span>
+        </div>
+    </header>
 
     <img
         ng-if="movieDetails.movie.hasPoster"
@@ -21,17 +40,42 @@
         alt="[[movieDetails.movie.title]] poster"
     >
 
-    <div ng-bind="movieDetails.movie.rating"></div>
-    <div ng-bind="movieDetails.movie.ratingVotes"></div>
+    <p i-movieDetails-paragraph ng-bind="movieDetails.movie.plot"></p>
 
-    <p ng-bind="movieDetails.movie.plot"></p>
-    <p ng-bind="movieDetails.movie.awards"></p>
+    <table i-movieDetails-table>
+        <tr ng-if="movieDetails.movie.awards">
+            <th>Awards</th>
+            <td ng-bind="movieDetails.movie.awards"></td>
+        </tr>
 
-    {% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.genres" %}
-    {% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.directors" %}
-    {% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.writers" %}
-    {% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.actors" %}
+        <tr ng-if="movieDetails.movie.genres">
+            <th>Genres</th>
+            <td>{% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.genres" %}</td>
+        </tr>
 
-    {% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.languages" %}
-    {% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.countries" %}
+        <tr ng-if="movieDetails.movie.languages">
+            <th>Languages</th>
+            <td>{% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.languages" %}</td>
+        </tr>
+
+        <tr ng-if="movieDetails.movie.countries">
+            <th>Countries</th>
+            <td>{% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.countries" %}</td>
+        </tr>
+
+        <tr ng-if="movieDetails.movie.directors">
+            <th>Directors</th>
+            <td>{% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.directors" %}</td>
+        </tr>
+
+        <tr ng-if="movieDetails.movie.writers">
+            <th>Writers</th>
+            <td>{% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.writers" %}</td>
+        </tr>
+
+        <tr ng-if="movieDetails.movie.actors">
+            <th>Actors</th>
+            <td>{% include movieDetailsModule/partials/_detailsList.liquid array="movieDetails.movie.actors" %}</td>
+        </tr>
+    </table>
 </div>

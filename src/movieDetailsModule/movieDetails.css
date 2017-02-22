@@ -5,33 +5,188 @@ movieDetails config
 :root {
     --s-movieDetails-poster-w: 300px;
     --s-movieDetails-poster-h: 450px;
+    --c-movieDetails-rating: var(--c-gold);
 }
 
+@custom-media --wideEnough (min-width: 420px);
+@custom-media --notWideEnough (max-width: 419px);
+
 /*******************************************************************************
-movieDetails content
+movieDetails base
 *******************************************************************************/
 
-[i-movieDetails-content] {
+[i-movieDetails-wrapper] {
+    position: relative;
     margin-top: var(--s-leading);
     margin-bottom: var(--s-leading);
 }
 
+/*******************************************************************************
+movieDetails header
+*******************************************************************************/
+
+[i-movieDetails-header] {
+    margin-bottom: var(--s-leading);
+}
+
 [i-movieDetails-title] {
-    display: inline;
+    font-size: 200%;
+    font-weight: 300;
+    line-height: var(--s-leading);
 }
 
-[i-movieDetails-releaseDate]::before {
-    content: "(";
+[i-movieDetails-metaInfo] {
+    color: var(--c-silver);
 }
 
-[i-movieDetails-releaseDate]::after {
-    content: ")";
+[i-movieDetails-metaInfo]:not(:last-child)::after {
+    content: " \2022";
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
 }
+
+/*******************************************************************************
+movieDetails rating
+*******************************************************************************/
+
+[i-movieDetails-rating] {
+    display: inline-block;
+    float: right;
+    margin-left: calc(var(--s-leading) * 0.5);
+    border-radius: 50%;
+    padding: calc(var(--s-leading) * 0.375) 0;
+    width: calc(var(--s-leading) * 2);
+    height: calc(var(--s-leading) * 2);
+    background-color: var(--c-movieDetails-rating);
+    color: color(var(--c-movieDetails-rating) shade(50%) saturation(+50%));
+    line-height: calc(var(--s-leading) * 0.5);
+    text-align: center;
+}
+
+[i-movieDetails-ratingScore],
+[i-movieDetails-ratingVotesCount] {
+    display: block;
+}
+
+[i-movieDetails-ratingScore] {
+    font-size: 125%;
+    font-weight: 700;
+    line-height: calc(var(--s-leading) * 0.75);
+}
+
+[i-movieDetails-ratingVotesCount] {
+    font-size: 60%;
+    font-weight: 300;
+    line-height: calc(var(--s-leading) * 0.5);
+}
+
+/*******************************************************************************
+movieDetails poster
+*******************************************************************************/
 
 [i-movieDetails-poster] {
+    display: block;
     border-radius: var(--s-global-br);
     /* we make it half the original size, so it will look good on retina */
     width: calc(var(--s-movieDetails-poster-w) * 0.5);
     height: calc(var(--s-movieDetails-poster-h) * 0.5);
+    box-shadow: 0 0 0 0.0625rem color(var(--c-charcoal) alpha(5%));
     background: var(--c-silver);
+}
+
+/* display as whole row */
+@media (--notWideEnough) {
+    [i-movieDetails-poster] {
+        margin-bottom: var(--s-leading);
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* display floated to right */
+@media (--wideEnough) {
+    [i-movieDetails-poster] {
+        float: right;
+        margin-left: calc(var(--s-leading) * 0.5);
+        margin-bottom: calc(var(--s-leading) * 0.5);
+    }
+}
+
+/*******************************************************************************
+movieDetails paragraph
+*******************************************************************************/
+
+[i-movieDetails-paragraph] {
+    margin-bottom: var(--s-leading);
+}
+
+/*******************************************************************************
+movieDetails table
+*******************************************************************************/
+
+[i-movieDetails-table] {
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+
+[i-movieDetails-table] th {
+    font-weight: 700;
+    text-align: inherit;
+}
+
+/* display as block-rows */
+@media (--notWideEnough) {
+    [i-movieDetails-table] tr,
+    [i-movieDetails-table] td,
+    [i-movieDetails-table] th {
+        display: block;
+    }
+
+    [i-movieDetails-table] tr:not(:last-of-type) {
+        margin-bottom: var(--s-leading);
+    }
+}
+
+/* display as table */
+@media (--wideEnough) {
+    [i-movieDetails-table] td,
+    [i-movieDetails-table] th {
+        word-wrap: break-word;
+    }
+
+    [i-movieDetails-table] th {
+        width: 6rem;
+    }
+}
+
+/*******************************************************************************
+movieDetails list
+*******************************************************************************/
+
+[i-movieDetails-list] {
+    display: block;
+    list-style: none;
+}
+
+[i-movieDetails-listItem] {
+    display: inline;
+}
+
+[i-movieDetails-listItem]::after {
+    content: ", ";
+}
+
+[i-movieDetails-listItem]:last-child::after {
+    display: none;
+}
+
+[i-movieDetails-listItem]:nth-last-child(2)::after {
+    content: " & ";
+}
+
+/* oxford comma */
+[i-movieDetails-listItem]:nth-last-child(3) + [i-movieDetails-listItem]::after {
+    content: ", & ";
 }

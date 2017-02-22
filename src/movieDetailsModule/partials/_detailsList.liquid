@@ -1,8 +1,10 @@
 {% comment %}
 listData displays a list of given angular array items
 {% endcomment %}
-<ul>
-    <li ng-repeat="item in {{ include.array }}">
-        [[ item ]]
-    </li>
+<ul i-movieDetails-list>
+    <li
+        i-movieDetails-listItem
+        ng-repeat="item in {{ include.array }}"
+        ng-bind="item"
+    ></li>
 </ul>
