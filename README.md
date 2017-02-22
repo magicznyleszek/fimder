@@ -1,4 +1,4 @@
-# Akabusk
+# akabusk
 
 Movie info displayer. Check [akabusk.smutnyleszek.com](https://akabusk.smutnyleszek.com) to see how it works.
 
@@ -38,3 +38,24 @@ Improvements:
 - add smartly loading poster to searchResult
 - write smart tests for httpRetrierModule
 - errorNotifier module?
+- some helpful links in the movie details that open urls using title:
+    - opensubtitles
+    - filmweb
+    - torrents? :-o
+
+looking for name:
+flick
+jumpcut
+slowmo
+flashback
+cameo
+talkie
+movie finder
+movie search
+movier
+video
+mov
+vid
+movvy
+viddy
+vidi --- latin "to see"
