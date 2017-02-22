@@ -6,9 +6,6 @@ header
     --s-header-padding: calc(var(--s-leading) * 0.5);
     --s-header-h: calc(var(--s-leading) + var(--s-header-padding) * 2);
     --c-header-txt: var(--c-charcoal);
-    --c-header-bg: color(var(--c-header-txt) alpha(5%));
-    --c-header-input-bg-hover: color(var(--c-header-txt) alpha(10%));
-    --c-header-input-bg-active: color(var(--c-header-txt) alpha(15%));
     --z-header-input: 1;
     --z-header-floater: 2;
     --z-header-button: 3;
@@ -22,7 +19,7 @@ header
     padding: var(--s-header-padding);
     width: 100%;
     height: var(--s-header-h);
-    background-color: var(--c-header-bg);
+    background-color: color(var(--c-header-txt) alpha(5%));
     color: var(--c-header-txt);
     line-height: var(--s-leading);
 }
@@ -67,12 +64,11 @@ header input
 }
 
 [i-header-input]:not([disabled]):hover {
-    background-color: var(--c-header-input-bg-hover);
+    background-color: color(var(--c-header-txt) alpha(4%));
 }
 
-[i-header-input]:not([disabled]):active,
-[i-header-input]:not([disabled]):focus {
-    background-color: var(--c-header-input-bg-active);
+[i-header-input]:not([disabled]):active {
+    background-color: color(var(--c-header-txt) alpha(8%));
 }
 
 /*******************************************************************************
