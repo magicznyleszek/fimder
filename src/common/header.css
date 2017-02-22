@@ -58,6 +58,19 @@ header input
     cursor: text;
 }
 
+/* placeholder colors */
+[i-header-input]::-moz-placeholder {
+    color: color(var(--c-header-txt) alpha(50%));
+}
+
+[i-header-input]::-ms-input-placeholder {
+    color: color(var(--c-header-txt) alpha(50%));
+}
+
+[i-header-input]::-webkit-input-placeholder {
+    color: color(var(--c-header-txt) alpha(50%));
+}
+
 /* default input state */
 [i-header-input] {
     background-color: transparent;
@@ -69,6 +82,10 @@ header input
 
 [i-header-input]:not([disabled]):active {
     background-color: color(var(--c-header-txt) alpha(8%));
+}
+
+[i-header-input]:not([disabled]):focus {
+    background-color: var(--c-gold);
 }
 
 /*******************************************************************************

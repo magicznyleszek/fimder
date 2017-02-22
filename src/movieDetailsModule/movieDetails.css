@@ -5,7 +5,6 @@ movieDetails config
 :root {
     --s-movieDetails-poster-w: 300px;
     --s-movieDetails-poster-h: 450px;
-    --c-movieDetails-rating: var(--c-gold);
 }
 
 @custom-media --wideEnough (min-width: 500px);
@@ -70,8 +69,7 @@ movieDetails rating
     padding-bottom: calc(var(--s-leading) * 0.25);
     width: calc(var(--s-leading) * 2);
     height: calc(var(--s-leading) * 2);
-    background-color: var(--c-movieDetails-rating);
-    color: color(var(--c-movieDetails-rating) shade(50%) saturation(+50%));
+    background-color: var(--c-gold);
     line-height: calc(var(--s-leading) * 0.5);
     text-align: center;
 }
