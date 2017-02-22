@@ -26,6 +26,10 @@ What you want is to basically have two terminals:
 
 Mandatory:
 
+- change name to something meaningful:
+    - in project
+    - github repo
+    - domain
 - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
 
 Improvements:
