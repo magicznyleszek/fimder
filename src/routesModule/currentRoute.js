@@ -30,12 +30,38 @@ class CurrentRouteService {
         $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
     }
 
+    // -------------------------------------------------------------------------
+    // handling listeners
+    // -------------------------------------------------------------------------
+
     _onRouteChange() {
         this._RouteListenersManager.callListeners();
     }
 
     registerRouteListener(listener) {
         return this._RouteListenersManager.addListener(listener);
+    }
+
+    // -------------------------------------------------------------------------
+    // public methods for setting and getting route
+    // -------------------------------------------------------------------------
+
+    setToMovie(movieId) {
+        this._assert.isString(movieId);
+        this._$location.path(
+            `${this._routesConfig.routes.movie}/${movieId}`
+        );
+    }
+
+    setToSearch(searchPhrase = '') {
+        this._assert.isString(searchPhrase);
+        this._$location.path(
+            `${this._routesConfig.routes.search}/${searchPhrase}`
+        );
+    }
+
+    get() {
+        return this._getRouteFromRouteData(this._$route.current);
     }
 
     _getRouteFromRouteData(routeData) {
@@ -51,24 +77,6 @@ class CurrentRouteService {
                 params: routeData.params
             };
         }
-    }
-
-    get() {
-        return this._getRouteFromRouteData(this._$route.current);
-    }
-
-    setToMovie(movieId) {
-        this._assert.isString(movieId);
-        this._$location.path(
-            `${this._routesConfig.routes.movie}/${movieId}`
-        );
-    }
-
-    setToSearch(searchPhrase = '') {
-        this._assert.isString(searchPhrase);
-        this._$location.path(
-            `${this._routesConfig.routes.search}/${searchPhrase}`
-        );
     }
 }
 

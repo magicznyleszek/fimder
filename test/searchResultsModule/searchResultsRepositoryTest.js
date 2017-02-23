@@ -31,14 +31,14 @@ describe('searchResultsRepository', () => {
     });
 
     it('should not start new search for empty search phrase', () => {
-        spyOn(searchResultsRepository, '_fetchNewData').and.callThrough();
+        spyOn(searchResultsRepository, '_fetchNewData');
         searchResultsRepository._currentRoute.setToSearch('');
         resolvePromises();
         expect(searchResultsRepository._fetchNewData).not.toHaveBeenCalled();
     });
 
     it('should not start new search for too short search phrase', () => {
-        spyOn(searchResultsRepository, '_fetchNewData').and.callThrough();
+        spyOn(searchResultsRepository, '_fetchNewData');
         searchResultsRepository._currentRoute.setToSearch('sa');
         resolvePromises();
         expect(searchResultsRepository._fetchNewData).not.toHaveBeenCalled();
@@ -48,9 +48,9 @@ describe('searchResultsRepository', () => {
         // set initial search param value
         searchResultsRepository._currentRoute.setToSearch('salem');
         resolvePromises();
-        searchResultsRepository._interpretResults(
-            testData.responses.searchSuccess
-        );
+        searchResultsRepository._fetchMoviesSuccess({
+            data: testData.responses.searchSuccess
+        });
 
         // change route
         searchResultsRepository._currentRoute.setToSearch('jesus');
@@ -60,6 +60,15 @@ describe('searchResultsRepository', () => {
         expect(searchResultsRepository._totalResults).toBe(null);
         expect(searchResultsRepository._error).toBe(null);
         expect(searchResultsRepository._isFetchPending).toBe(false);
+    });
+
+    it('should notify listeners with error on false success', () => {
+        spyOn(searchResultsRepository, '_notifyDataChange');
+        searchResultsRepository._fetchMoviesSuccess({
+            data: testData.responses.searchErrorNotFound
+        });
+        expect(searchResultsRepository._notifyDataChange).toHaveBeenCalled();
+        expect(searchResultsRepository._error).not.toBe(null);
     });
 
     it('should notify listeners on fetch success', () => {

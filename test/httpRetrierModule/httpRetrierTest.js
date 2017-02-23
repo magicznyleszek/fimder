@@ -5,6 +5,7 @@ describe('httpRetrier', () => {
     let $httpBackend = null;
     let $rootScope = null;
     const testUrl = 'http://foo.api/bar?q=fum+baz';
+    const httpConfig = {url: testUrl, method: 'get'};
 
     const resolvePromises = () => {
         // Digesting to resolve async promises
@@ -58,11 +59,19 @@ describe('httpRetrier', () => {
     });
 
     it('should pacify limit when creating retrier', () => {
-        const httpConfig = {url: testUrl, method: 'get'};
         const badLimits = [0, -1, -42, 17, 19, 99, 168];
         for (const badLimit of badLimits) {
             const retrier = httpRetrier._createRetrier(httpConfig, badLimit);
             expect(retrier.limit).toBe(httpRetrier.constructor.defaultLimit);
         }
+    });
+
+    it('should not retry when canceled', () => {
+        spyOn(httpRetrier, '_retry');
+        const retrier = httpRetrier.runGet(testUrl);
+        retrier.promise.then(angular.noop, angular.noop, angular.noop);
+        retrier.cancel();
+        httpRetrier._onHttpRequestError(retrier, null);
+        expect(httpRetrier._retry.calls.count()).toBe(1);
     });
 });

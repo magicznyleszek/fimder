@@ -1031,6 +1031,10 @@ var CurrentRouteService = function () {
         $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
     }
 
+    // -------------------------------------------------------------------------
+    // handling listeners
+    // -------------------------------------------------------------------------
+
     _createClass(CurrentRouteService, [{
         key: '_onRouteChange',
         value: function _onRouteChange() {
@@ -1040,6 +1044,30 @@ var CurrentRouteService = function () {
         key: 'registerRouteListener',
         value: function registerRouteListener(listener) {
             return this._RouteListenersManager.addListener(listener);
+        }
+
+        // -------------------------------------------------------------------------
+        // public methods for setting and getting route
+        // -------------------------------------------------------------------------
+
+    }, {
+        key: 'setToMovie',
+        value: function setToMovie(movieId) {
+            this._assert.isString(movieId);
+            this._$location.path(this._routesConfig.routes.movie + '/' + movieId);
+        }
+    }, {
+        key: 'setToSearch',
+        value: function setToSearch() {
+            var searchPhrase = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+            this._assert.isString(searchPhrase);
+            this._$location.path(this._routesConfig.routes.search + '/' + searchPhrase);
+        }
+    }, {
+        key: 'get',
+        value: function get() {
+            return this._getRouteFromRouteData(this._$route.current);
         }
     }, {
         key: '_getRouteFromRouteData',
@@ -1056,25 +1084,6 @@ var CurrentRouteService = function () {
                     params: routeData.params
                 };
             }
-        }
-    }, {
-        key: 'get',
-        value: function get() {
-            return this._getRouteFromRouteData(this._$route.current);
-        }
-    }, {
-        key: 'setToMovie',
-        value: function setToMovie(movieId) {
-            this._assert.isString(movieId);
-            this._$location.path(this._routesConfig.routes.movie + '/' + movieId);
-        }
-    }, {
-        key: 'setToSearch',
-        value: function setToSearch() {
-            var searchPhrase = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
-            this._assert.isString(searchPhrase);
-            this._$location.path(this._routesConfig.routes.search + '/' + searchPhrase);
         }
     }]);
 
