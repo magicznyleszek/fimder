@@ -11,6 +11,7 @@ class SearchBoxController {
         SearchBoxController.$inject = [
             '$scope',
             '$element',
+            '$timeout',
             'currentRoute',
             'routesConfig'
         ];
@@ -19,10 +20,12 @@ class SearchBoxController {
     constructor(
         $scope,
         $element,
+        $timeout,
         currentRoute,
         routesConfig
     ) {
         this._$scope = $scope;
+        this._$timeout = $timeout;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this._inputEl = $element[0].querySelector(
@@ -30,6 +33,7 @@ class SearchBoxController {
         );
         this.inputValue = '';
         this._lastAppliedInputValue = null;
+        this._isVirgin = true;
 
         this._applyInputValueDebounced = _.debounce(
             this._applyInputValue.bind(this),
@@ -42,18 +46,21 @@ class SearchBoxController {
     }
 
     _onRouteChange() {
-        // cancel listener after initial route is set
-        this._cancelRouteListener();
-
         const route = this._currentRoute.get();
         if (route.routeId === this._routesConfig.routes.search) {
-            this.inputValue = route.params.searchPhrase;
-        } else {
-            this.inputValue = '';
+            // first time we want to apply route parameter to input value
+            if (this._isVirgin) {
+                this.inputValue = route.params.searchPhrase;
+            }
+
+            // we want to focus on input
+            this._focusOnInput();
         }
 
-        // we want to start with input focused
-        this._focusOnInput();
+        // wheter we used it or not, we no longer care
+        if (this._isVirgin) {
+            this._isVirgin = false;
+        }
     }
 
     _applyInputValue() {
@@ -70,7 +77,9 @@ class SearchBoxController {
     }
 
     _focusOnInput() {
-        this._inputEl.focus();
+        // sorry this is so ugly, but we need timeout to make sure it will apply
+        // when switching routes already happened
+        this._$timeout(() => {this._inputEl.focus();}, 1, false);
     }
 
     onInputValueChange() {

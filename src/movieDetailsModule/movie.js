@@ -42,19 +42,21 @@ angular.module('movieDetailsModule').factory('Movie', [
                 }
             }
 
-            _isUsefulData(rawData) {
-                return rawData && rawData !== MovieModel.notAvailableProprety;
+            _isUsefulData(data) {
+                return data && data !== MovieModel.notAvailableProprety;
             }
 
-            _setOptionalText(propertyName, rawData) {
-                if (this._isUsefulData(rawData)) {
-                    this[propertyName] = rawData;
+            _setOptionalText(propertyName, data) {
+                if (this._isUsefulData(data)) {
+                    this[propertyName] = data;
                 }
             }
 
-            _setOptionalArray(propertyName, rawData) {
-                if (this._isUsefulData(rawData)) {
-                    this[propertyName] = rawData.split(', ');
+            _setOptionalArray(propertyName, data) {
+                if (this._isUsefulData(data)) {
+                    // we split string with commas to array, but we also want to
+                    // make sure we avoid duplicates, so we go through Set
+                    this[propertyName] = Array.from(new Set(data.split(', ')));
                 }
             }
 

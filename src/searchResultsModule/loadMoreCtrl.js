@@ -18,11 +18,14 @@ class LoadMoreController {
     }
 
     trigger() {
-        console.log('load more');
+        this._searchResultsRepository.loadMoreResults();
     }
 
     _onSearchResultsDataChange(data) {
-        this.isVisible = data.totalResults > data.results.length;
+        this.isVisible = (
+            data.totalResults > data.results.length &&
+            !data.isFetchPending
+        );
     }
 }
 

@@ -598,21 +598,23 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', 'votesHumanizer
 
         _createClass(MovieModel, [{
             key: '_isUsefulData',
-            value: function _isUsefulData(rawData) {
-                return rawData && rawData !== MovieModel.notAvailableProprety;
+            value: function _isUsefulData(data) {
+                return data && data !== MovieModel.notAvailableProprety;
             }
         }, {
             key: '_setOptionalText',
-            value: function _setOptionalText(propertyName, rawData) {
-                if (this._isUsefulData(rawData)) {
-                    this[propertyName] = rawData;
+            value: function _setOptionalText(propertyName, data) {
+                if (this._isUsefulData(data)) {
+                    this[propertyName] = data;
                 }
             }
         }, {
             key: '_setOptionalArray',
-            value: function _setOptionalArray(propertyName, rawData) {
-                if (this._isUsefulData(rawData)) {
-                    this[propertyName] = rawData.split(', ');
+            value: function _setOptionalArray(propertyName, data) {
+                if (this._isUsefulData(data)) {
+                    // we split string with commas to array, but we also want to
+                    // make sure we avoid duplicates, so we go through Set
+                    this[propertyName] = Array.from(new Set(data.split(', ')));
                 }
             }
         }, {
@@ -943,15 +945,17 @@ var MoviesFetcherService = function () {
     _createClass(MoviesFetcherService, [{
         key: 'fetchMoviesBySearch',
         value: function fetchMoviesBySearch(searchPhrase) {
+            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
             this._assert.isString(searchPhrase);
-            return this._httpRetrier.runGet(this._getSearchUrl(searchPhrase), MoviesFetcherService.retryLimit);
+            return this._httpRetrier.runGet(this._getSearchUrl(searchPhrase, page), MoviesFetcherService.retryLimit);
         }
     }, {
         key: '_getSearchUrl',
-        value: function _getSearchUrl(searchPhrase) {
+        value: function _getSearchUrl(searchPhrase, page) {
             var searchUrl = MoviesFetcherService.apiUrl;
-            searchUrl += '&s=';
-            searchUrl += this._$window.encodeURIComponent(searchPhrase);
+            searchUrl += '&s=' + this._$window.encodeURIComponent(searchPhrase);
+            searchUrl += '&page=' + page;
             return searchUrl;
         }
 
@@ -1156,19 +1160,21 @@ var SearchBoxController = function () {
             SearchBoxController.debounceTime = 500;
             SearchBoxController.enterKey = 13;
             SearchBoxController.inputSelector = '[js-searchBox-input]';
-            SearchBoxController.$inject = ['$scope', '$element', 'currentRoute', 'routesConfig'];
+            SearchBoxController.$inject = ['$scope', '$element', '$timeout', 'currentRoute', 'routesConfig'];
         }
     }]);
 
-    function SearchBoxController($scope, $element, currentRoute, routesConfig) {
+    function SearchBoxController($scope, $element, $timeout, currentRoute, routesConfig) {
         _classCallCheck(this, SearchBoxController);
 
         this._$scope = $scope;
+        this._$timeout = $timeout;
         this._currentRoute = currentRoute;
         this._routesConfig = routesConfig;
         this._inputEl = $element[0].querySelector(SearchBoxController.inputSelector);
         this.inputValue = '';
         this._lastAppliedInputValue = null;
+        this._isVirgin = true;
 
         this._applyInputValueDebounced = _.debounce(this._applyInputValue.bind(this), SearchBoxController.debounceTime);
 
@@ -1178,18 +1184,21 @@ var SearchBoxController = function () {
     _createClass(SearchBoxController, [{
         key: '_onRouteChange',
         value: function _onRouteChange() {
-            // cancel listener after initial route is set
-            this._cancelRouteListener();
-
             var route = this._currentRoute.get();
             if (route.routeId === this._routesConfig.routes.search) {
-                this.inputValue = route.params.searchPhrase;
-            } else {
-                this.inputValue = '';
+                // first time we want to apply route parameter to input value
+                if (this._isVirgin) {
+                    this.inputValue = route.params.searchPhrase;
+                }
+
+                // we want to focus on input
+                this._focusOnInput();
             }
 
-            // we want to start with input focused
-            this._focusOnInput();
+            // wheter we used it or not, we no longer care
+            if (this._isVirgin) {
+                this._isVirgin = false;
+            }
         }
     }, {
         key: '_applyInputValue',
@@ -1203,7 +1212,13 @@ var SearchBoxController = function () {
     }, {
         key: '_focusOnInput',
         value: function _focusOnInput() {
-            this._inputEl.focus();
+            var _this = this;
+
+            // sorry this is so ugly, but we need timeout to make sure it will apply
+            // when switching routes already happened
+            this._$timeout(function () {
+                _this._inputEl.focus();
+            }, 1, false);
         }
     }, {
         key: 'onInputValueChange',
@@ -1272,12 +1287,12 @@ var LoadMoreController = function () {
     _createClass(LoadMoreController, [{
         key: 'trigger',
         value: function trigger() {
-            console.log('load more');
+            this._searchResultsRepository.loadMoreResults();
         }
     }, {
         key: '_onSearchResultsDataChange',
         value: function _onSearchResultsDataChange(data) {
-            this.isVisible = data.totalResults > data.results.length;
+            this.isVisible = data.totalResults > data.results.length && !data.isFetchPending;
         }
     }]);
 
@@ -1401,6 +1416,7 @@ var SearchResultsRepositoryService = function () {
         key: 'initClass',
         value: function initClass() {
             SearchResultsRepositoryService.minSearchChars = 3;
+            SearchResultsRepositoryService.resultsPerPage = 10;
 
             SearchResultsRepositoryService.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher', 'moviesFetcherConfig', 'assert', 'listenersManager'];
         }
@@ -1416,9 +1432,9 @@ var SearchResultsRepositoryService = function () {
         this._moviesFetcherConfig = moviesFetcherConfig;
         this._assert = assert;
 
-        this._searchPhrase = null;
+        this._currentSearchPhrase = null;
         this._results = [];
-        this._totalResults = null;
+        this._totalResults = 0;
         this._error = null;
         this._isFetchPending = false;
 
@@ -1428,10 +1444,20 @@ var SearchResultsRepositoryService = function () {
     }
 
     // -------------------------------------------------------------------------
-    // notifying listeners
+    // getting more data
     // -------------------------------------------------------------------------
 
     _createClass(SearchResultsRepositoryService, [{
+        key: 'loadMoreResults',
+        value: function loadMoreResults() {
+            this._fetchNextPageData();
+        }
+
+        // -------------------------------------------------------------------------
+        // notifying listeners
+        // -------------------------------------------------------------------------
+
+    }, {
         key: '_notifyDataChange',
         value: function _notifyDataChange() {
             this._dataListenersManager.callListeners({
@@ -1455,24 +1481,20 @@ var SearchResultsRepositoryService = function () {
         key: '_onRouteChange',
         value: function _onRouteChange() {
             var route = this._currentRoute.get();
-            this._stopAndResetData();
             if (route.routeId === this._routesConfig.routes.search) {
-                if (this._isSearchPhraseValid(route.params.searchPhrase)) {
-                    this._searchPhrase = route.params.searchPhrase;
-                    this._fetchNewData(this._searchPhrase);
+                // make sure it exists and is different than previous one
+                if (typeof route.params.searchPhrase === 'string' && this._currentSearchPhrase !== route.params.searchPhrase) {
+                    // memorize current search phrase
+                    this._currentSearchPhrase = route.params.searchPhrase;
+
+                    // clear obsolete data
+                    this._stopAndResetData();
+
+                    // we don't want to star search for short strings
+                    if (this._currentSearchPhrase.length >= SearchResultsRepositoryService.minSearchChars) {
+                        this._fetchNextPageData();
+                    }
                 }
-            }
-        }
-    }, {
-        key: '_isSearchPhraseValid',
-        value: function _isSearchPhraseValid(searchPhrase) {
-            if (typeof searchPhrase !== 'string') {
-                return false;
-                // we don't want to star search for small amount of characters
-            } else if (searchPhrase.length >= SearchResultsRepositoryService.minSearchChars) {
-                return true;
-            } else {
-                return false;
             }
         }
 
@@ -1481,20 +1503,20 @@ var SearchResultsRepositoryService = function () {
         // -------------------------------------------------------------------------
 
     }, {
-        key: '_fetchNewData',
-        value: function _fetchNewData(searchPhrase) {
-            this._isFetchPending = true;
-            this._retrier = this._moviesFetcher.fetchMoviesBySearch(searchPhrase);
-            this._retrier.promise.then(this._fetchMoviesSuccess.bind(this), this._fetchMoviesError.bind(this), this._fetchMoviesNotify.bind(this));
-            this._notifyDataChange();
-        }
-    }, {
         key: '_stopAndResetData',
         value: function _stopAndResetData() {
             this._results = [];
-            this._totalResults = null;
+            this._totalResults = 0;
             this._removeError();
             this._cancelPendingFetch();
+            this._notifyDataChange();
+        }
+    }, {
+        key: '_fetchNextPageData',
+        value: function _fetchNextPageData() {
+            this._isFetchPending = true;
+            this._retrier = this._moviesFetcher.fetchMoviesBySearch(this._currentSearchPhrase, this._getCurrentSearchPage());
+            this._retrier.promise.then(this._fetchMoviesSuccess.bind(this), this._fetchMoviesError.bind(this), this._fetchMoviesNotify.bind(this));
             this._notifyDataChange();
         }
     }, {
@@ -1527,6 +1549,12 @@ var SearchResultsRepositoryService = function () {
         value: function _fetchMoviesNotify() {
             console.warn(this._moviesFetcherConfig.messages.retrying);
         }
+    }, {
+        key: '_getCurrentSearchPage',
+        value: function _getCurrentSearchPage() {
+            var currentPage = this._results.length / SearchResultsRepositoryService.resultsPerPage;
+            return currentPage + 1;
+        }
 
         // -------------------------------------------------------------------------
         // interpreting fetched data
@@ -1538,7 +1566,7 @@ var SearchResultsRepositoryService = function () {
             switch (resultsData.Response) {
                 // True means we have responses
                 case 'True':
-                    this._buildList(resultsData.Search, resultsData.totalResults);
+                    this._addMoreResults(resultsData.Search, resultsData.totalResults);
                     this._removeError();
                     break;
                 // False means that API was not able to return movies
@@ -1550,8 +1578,8 @@ var SearchResultsRepositoryService = function () {
             }
         }
     }, {
-        key: '_buildList',
-        value: function _buildList(moviesArray, totalResults) {
+        key: '_addMoreResults',
+        value: function _addMoreResults(moviesArray, totalResults) {
             this._assert.isArray(moviesArray);
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;

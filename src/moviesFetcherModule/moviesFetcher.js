@@ -24,18 +24,18 @@ class MoviesFetcherService {
     // getting a list of movies
     // -------------------------------------------------------------------------
 
-    fetchMoviesBySearch(searchPhrase) {
+    fetchMoviesBySearch(searchPhrase, page = 1) {
         this._assert.isString(searchPhrase);
         return this._httpRetrier.runGet(
-            this._getSearchUrl(searchPhrase),
+            this._getSearchUrl(searchPhrase, page),
             MoviesFetcherService.retryLimit
         );
     }
 
-    _getSearchUrl(searchPhrase) {
+    _getSearchUrl(searchPhrase, page) {
         let searchUrl = MoviesFetcherService.apiUrl;
-        searchUrl += '&s=';
-        searchUrl += this._$window.encodeURIComponent(searchPhrase);
+        searchUrl += `&s=${this._$window.encodeURIComponent(searchPhrase)}`;
+        searchUrl += `&page=${page}`;
         return searchUrl;
     }
 

@@ -7,6 +7,7 @@
 class SearchResultsRepositoryService {
     static initClass() {
         SearchResultsRepositoryService.minSearchChars = 3;
+        SearchResultsRepositoryService.resultsPerPage = 10;
 
         SearchResultsRepositoryService.$inject = [
             'SearchResult',
@@ -35,9 +36,9 @@ class SearchResultsRepositoryService {
         this._moviesFetcherConfig = moviesFetcherConfig;
         this._assert = assert;
 
-        this._searchPhrase = null;
+        this._currentSearchPhrase = null;
         this._results = [];
-        this._totalResults = null;
+        this._totalResults = 0;
         this._error = null;
         this._isFetchPending = false;
 
@@ -46,6 +47,14 @@ class SearchResultsRepositoryService {
         );
 
         this._dataListenersManager = listenersManager.getManager();
+    }
+
+    // -------------------------------------------------------------------------
+    // getting more data
+    // -------------------------------------------------------------------------
+
+    loadMoreResults() {
+        this._fetchNextPageData();
     }
 
     // -------------------------------------------------------------------------
@@ -71,23 +80,26 @@ class SearchResultsRepositoryService {
 
     _onRouteChange() {
         const route = this._currentRoute.get();
-        this._stopAndResetData();
         if (route.routeId === this._routesConfig.routes.search) {
-            if (this._isSearchPhraseValid(route.params.searchPhrase)) {
-                this._searchPhrase = route.params.searchPhrase;
-                this._fetchNewData(this._searchPhrase);
-            }
-        }
-    }
+            // make sure it exists and is different than previous one
+            if (
+                typeof route.params.searchPhrase === 'string' &&
+                this._currentSearchPhrase !== route.params.searchPhrase
+            ) {
+                // memorize current search phrase
+                this._currentSearchPhrase = route.params.searchPhrase;
 
-    _isSearchPhraseValid(searchPhrase) {
-        if (typeof searchPhrase !== 'string') {
-            return false;
-        // we don't want to star search for small amount of characters
-        } else if (searchPhrase.length >= SearchResultsRepositoryService.minSearchChars) {
-            return true;
-        } else {
-            return false;
+                // clear obsolete data
+                this._stopAndResetData();
+
+                // we don't want to star search for short strings
+                if (
+                    this._currentSearchPhrase.length >=
+                    SearchResultsRepositoryService.minSearchChars
+                ) {
+                    this._fetchNextPageData();
+                }
+            }
         }
     }
 
@@ -95,22 +107,25 @@ class SearchResultsRepositoryService {
     // handle fetching data from API
     // -------------------------------------------------------------------------
 
-    _fetchNewData(searchPhrase) {
+    _stopAndResetData() {
+        this._results = [];
+        this._totalResults = 0;
+        this._removeError();
+        this._cancelPendingFetch();
+        this._notifyDataChange();
+    }
+
+    _fetchNextPageData() {
         this._isFetchPending = true;
-        this._retrier = this._moviesFetcher.fetchMoviesBySearch(searchPhrase);
+        this._retrier = this._moviesFetcher.fetchMoviesBySearch(
+            this._currentSearchPhrase,
+            this._getCurrentSearchPage()
+        );
         this._retrier.promise.then(
             this._fetchMoviesSuccess.bind(this),
             this._fetchMoviesError.bind(this),
             this._fetchMoviesNotify.bind(this)
         );
-        this._notifyDataChange();
-    }
-
-    _stopAndResetData() {
-        this._results = [];
-        this._totalResults = null;
-        this._removeError();
-        this._cancelPendingFetch();
         this._notifyDataChange();
     }
 
@@ -140,6 +155,11 @@ class SearchResultsRepositoryService {
         console.warn(this._moviesFetcherConfig.messages.retrying);
     }
 
+    _getCurrentSearchPage() {
+        const currentPage = this._results.length / SearchResultsRepositoryService.resultsPerPage;
+        return currentPage + 1;
+    }
+
     // -------------------------------------------------------------------------
     // interpreting fetched data
     // -------------------------------------------------------------------------
@@ -148,7 +168,7 @@ class SearchResultsRepositoryService {
         switch (resultsData.Response) {
             // True means we have responses
             case 'True':
-                this._buildList(resultsData.Search, resultsData.totalResults);
+                this._addMoreResults(resultsData.Search, resultsData.totalResults);
                 this._removeError();
                 break;
             // False means that API was not able to return movies
@@ -160,7 +180,7 @@ class SearchResultsRepositoryService {
         }
     }
 
-    _buildList(moviesArray, totalResults) {
+    _addMoreResults(moviesArray, totalResults) {
         this._assert.isArray(moviesArray);
         for (const movie of moviesArray) {
             this._results.push(new this._SearchResult(movie));
