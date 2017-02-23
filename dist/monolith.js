@@ -338,7 +338,7 @@ var HttpRetrierService = function () {
             });
 
             // do not try too many times, just give up
-            if (retrier.count > HttpRetrierService.defaultLimit) {
+            if (retrier.count >= retrier.limit) {
                 retrier.deferred.reject(this.rejectReasons.overLimit);
                 this._destroyRetrier(retrier.id);
             } else {
@@ -756,13 +756,13 @@ var MovieDetailsController = function () {
         key: '_fetchMoviesError',
         value: function _fetchMoviesError(errorReason) {
             if (errorReason === 1) {
-                this._showMessage(MovieDetailsController.messages.overLimit);
+                this._showMessage(this._moviesFetcherConfig.messages.overLimit);
             }
         }
     }, {
         key: '_fetchMoviesNotify',
         value: function _fetchMoviesNotify() {
-            console.warn(MovieDetailsController.messages.retrying);
+            console.warn(this._moviesFetcherConfig.messages.retrying);
         }
     }, {
         key: '_cancelRetrierIfNecessary',
@@ -791,7 +791,7 @@ var MovieDetailsController = function () {
                     this._showMessage(movieData.Error);
                     break;
                 default:
-                    this._showMessage(MovieDetailsController.messages.unknownApiResponse);
+                    this._showMessage(this._moviesFetcherConfig.unknownApiResponse);
             }
         }
     }, {

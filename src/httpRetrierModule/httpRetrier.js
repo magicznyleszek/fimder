@@ -116,7 +116,7 @@ class HttpRetrierService {
         });
 
         // do not try too many times, just give up
-        if (retrier.count > HttpRetrierService.defaultLimit) {
+        if (retrier.count >= retrier.limit) {
             retrier.deferred.reject(this.rejectReasons.overLimit);
             this._destroyRetrier(retrier.id);
         } else {

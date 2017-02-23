@@ -100,12 +100,12 @@ class MovieDetailsController {
 
     _fetchMoviesError(errorReason) {
         if (errorReason === 1) {
-            this._showMessage(MovieDetailsController.messages.overLimit);
+            this._showMessage(this._moviesFetcherConfig.messages.overLimit);
         }
     }
 
     _fetchMoviesNotify() {
-        console.warn(MovieDetailsController.messages.retrying);
+        console.warn(this._moviesFetcherConfig.messages.retrying);
     }
 
     _cancelRetrierIfNecessary() {
@@ -132,7 +132,7 @@ class MovieDetailsController {
                 break;
             default:
                 this._showMessage(
-                    MovieDetailsController.messages.unknownApiResponse
+                    this._moviesFetcherConfig.unknownApiResponse
                 );
         }
     }
