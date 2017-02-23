@@ -7,6 +7,7 @@ describe('SearchResult', () => {
         module('assertModule');
         module('routesModule');
         module('moviesFetcherModule');
+        module('listenersManagerModule');
         module('searchResultsModule');
         inject(($injector) => {
             testData = $injector.get('testData');

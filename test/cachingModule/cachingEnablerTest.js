@@ -9,7 +9,7 @@ describe('caching', () => {
         });
     });
 
-    it('should not throw for true', () => {
+    it('should be enabled on start', () => {
         expect(cachingEnabler.isEnabled).toBeTruthy();
     });
 });

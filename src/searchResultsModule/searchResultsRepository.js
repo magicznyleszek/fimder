@@ -55,9 +55,9 @@ class SearchResultsRepositoryService {
     _notifyDataChange() {
         this._dataListenersManager.callListeners({
             results: this._results,
-            error: this._error,
+            totalResults: this._totalResults,
             isFetchPending: this._isFetchPending,
-            hasMoreDataToLoad: this._totalResults > this._results.length
+            error: this._error
         });
     }
 

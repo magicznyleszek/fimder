@@ -7,14 +7,10 @@ class SearchResultsController {
     static initClass() {
         SearchResultsController.emptyMessage = 'Hi! Please type movie title above :-)';
 
-        SearchResultsController.$inject = [
-            'searchResultsRepository'
-        ];
+        SearchResultsController.$inject = ['searchResultsRepository'];
     }
 
-    constructor(
-        searchResultsRepository
-    ) {
+    constructor(searchResultsRepository) {
         this._searchResultsRepository = searchResultsRepository;
 
         this.results = [];
