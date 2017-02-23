@@ -8,7 +8,7 @@ describe('viewsCtrl', () => {
     };
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('routesModule');
         module('viewsModule');
         inject(($injector, $controller) => {

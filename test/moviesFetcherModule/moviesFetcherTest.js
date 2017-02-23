@@ -7,7 +7,7 @@ describe('moviesFetcher', () => {
     const conanMovieUrl = 'http://www.omdbapi.com/?r=json&type=movie&plot=full&i=tt0082198';
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('assertModule');
         module('httpRetrierModule');
         module('moviesFetcherModule');

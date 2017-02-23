@@ -29,7 +29,8 @@ module.exports = function (config) {
             // source code
             'src/**/*.js',
             // test environment preparations
-            'test/testApp.js',
+            'test/_testAppModule.js',
+            'test/testData.js',
             // test code
             'test/**/*Test.js'
         ],

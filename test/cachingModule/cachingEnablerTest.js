@@ -2,7 +2,7 @@ describe('caching', () => {
     let cachingEnabler = null;
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('cachingModule');
         inject(($injector) => {
             cachingEnabler = $injector.get('cachingEnabler');

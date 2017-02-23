@@ -9,7 +9,7 @@ describe('searchBoxCtrl', () => {
     };
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('routesModule');
         module('searchBoxModule');
         inject(($injector, $controller) => {
@@ -46,10 +46,9 @@ describe('searchBoxCtrl', () => {
         const secondSearchParam = 'jesus';
         searchBoxCtrl.inputValue = secondSearchParam;
         searchBoxCtrl.onInputKeypress({which: 13});
-
         resolvePromises();
-        const currentRoute = searchBoxCtrl._currentRoute.get();
 
+        const currentRoute = searchBoxCtrl._currentRoute.get();
         expect(currentRoute.params.searchPhrase).toBe(secondSearchParam);
     });
 });

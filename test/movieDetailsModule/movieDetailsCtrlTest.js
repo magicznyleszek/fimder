@@ -9,7 +9,7 @@ describe('movieDetailsCtrl', () => {
     };
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('assertModule');
         module('routesModule');
         module('moviesFetcherModule');

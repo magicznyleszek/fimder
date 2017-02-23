@@ -12,7 +12,7 @@ describe('httpRetrier', () => {
     };
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('httpRetrierModule');
         inject(($injector) => {
             httpRetrier = $injector.get('httpRetrier');

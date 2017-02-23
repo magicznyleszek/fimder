@@ -15,7 +15,7 @@ describe('currentRoute', () => {
     };
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('assertModule');
         module('listenersManagerModule');
         module('routesModule');

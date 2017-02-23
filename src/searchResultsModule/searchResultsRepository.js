@@ -108,6 +108,7 @@ class SearchResultsRepositoryService {
 
     _stopAndResetData() {
         this._results = [];
+        this._totalResults = null;
         this._removeError();
         this._cancelPendingFetch();
         this._notifyDataChange();

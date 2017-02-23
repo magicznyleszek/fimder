@@ -2,7 +2,7 @@ describe('assert', () => {
     let assert = null;
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('assertModule');
         inject(($injector) => {
             assert = $injector.get('assert');

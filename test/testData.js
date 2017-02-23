@@ -1,9 +1,4 @@
-angular.module('testApp', [
-    'ng',
-    'ngMock'
-]);
-
-angular.module('testApp').constant('testData', {
+angular.module('testAppModule').constant('testData', {
     responses: {
         movieSuccessMinimum: {
             Title: 'Phase IV',

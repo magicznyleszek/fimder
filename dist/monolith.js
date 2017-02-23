@@ -1437,6 +1437,7 @@ var SearchResultsRepositoryService = function () {
         key: '_stopAndResetData',
         value: function _stopAndResetData() {
             this._results = [];
+            this._totalResults = null;
             this._removeError();
             this._cancelPendingFetch();
             this._notifyDataChange();

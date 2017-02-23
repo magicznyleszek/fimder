@@ -2,7 +2,7 @@ describe('listenersManager', () => {
     let listenersManager = null;
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('listenersManagerModule');
         inject(($injector) => {
             listenersManager = $injector.get('listenersManager');

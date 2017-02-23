@@ -2,7 +2,7 @@ describe('votesHumanizer', () => {
     let votesHumanizer = null;
 
     beforeEach(() => {
-        module('testApp');
+        module('testAppModule');
         module('assertModule');
         module('routesModule');
         module('moviesFetcherModule');
