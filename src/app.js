@@ -1,8 +1,8 @@
 // -----------------------------------------------------------------------------
-// akabuskAppModule is our single ngApp module for whole web application
+// fimderAppModule is our single ngApp module for whole web application
 // -----------------------------------------------------------------------------
 
-angular.module('akabuskAppModule', [
+angular.module('fimderAppModule', [
     'viewsModule',
     'searchBoxModule',
     'searchResultsModule',

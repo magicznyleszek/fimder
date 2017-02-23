@@ -2,7 +2,7 @@
 // tweak default angular configuration
 // -----------------------------------------------------------------------------
 
-angular.module('akabuskAppModule').config([
+angular.module('fimderAppModule').config([
     '$interpolateProvider',
     '$compileProvider',
     (

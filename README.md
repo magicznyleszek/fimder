@@ -1,8 +1,8 @@
 ![coverage-shield-badge-1](https://img.shields.io/badge/coverage-92.95%25-brightgreen.svg)
 
-# akabusk
+# fimder
 
-Movie info displayer. Check [akabusk.smutnyleszek.com](https://akabusk.smutnyleszek.com) to see how it works.
+Simple OMDb movie finder. Check [fimder.smutnyleszek.com](https://fimder.smutnyleszek.com) to see how it works.
 
 Requirements:
 
@@ -28,10 +28,6 @@ What you want is to basically have two terminals:
 
 Mandatory:
 
-- change name to something meaningful:
-    - in project
-    - github repo
-    - domain
 - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
 
 Improvements:
@@ -43,14 +39,4 @@ Improvements:
 - some helpful links in the movie details that open urls using title:
     - opensubtitles
     - filmweb
-    - torrents? :-o
-
-looking for name:
-
-fimder - simple movie finder, 18400, 4 + 2
-humter - simple movie hunter, 77500, 4 + 2
-meeker - simple movie seeker, 7810000, 3 + 3
-
-http://fimder.smutnyleszek.com
-http://humter.smutnyleszek.com
-http://meeker.smutnyleszek.com
+    - torrents? :-o #criminal

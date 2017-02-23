@@ -1,18 +1,18 @@
 {
-  "name": "akabusk",
+  "name": "fimder",
   "private": true,
   "description": "Movie info displayer",
   "repository": {
     "type": "git",
-    "url": "https://github.com/smutnyleszek/akabusk.git"
+    "url": "https://github.com/smutnyleszek/fimder.git"
   },
   "author": "Leszek Pietrzak",
   "license": "CC-BY-4.0",
   "bugs": {
-    "url": "https://github.com/smutnyleszek/akabusk/issues",
+    "url": "https://github.com/smutnyleszek/fimder/issues",
     "email": "smutnyleszek@gmail.com"
   },
-  "homepage": "https://akabusk.smutnyleszek.com",
+  "homepage": "https://fimder.smutnyleszek.com",
   "scripts": {
     "build": "npm-run-all test dist:rebuild svg:build styles:build scripts:build scripts:uglify scripts:copydeps",
     "watch": "npm-watch",

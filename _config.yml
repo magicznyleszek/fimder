@@ -1,11 +1,11 @@
 # description
-name: "akabusk"
-description: "Movie info displayer"
+name: "fimder"
+description: "Simple OMDb movie finder"
 keywords: "movies"
 author: "Leszek Pietrzak"
 
 # address settings
-baseurl: "http://akabusk.smutnyleszek.com"
+baseurl: "http://fimder.smutnyleszek.com"
 rootSiteUrl: "http://smutnyleszek.com"
 
 # site configuration

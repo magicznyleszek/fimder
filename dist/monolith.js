@@ -1,17 +1,17 @@
 'use strict';
 
 // -----------------------------------------------------------------------------
-// akabuskAppModule is our single ngApp module for whole web application
+// fimderAppModule is our single ngApp module for whole web application
 // -----------------------------------------------------------------------------
 
-angular.module('akabuskAppModule', ['viewsModule', 'searchBoxModule', 'searchResultsModule', 'movieDetailsModule', 'cachingModule']);
+angular.module('fimderAppModule', ['viewsModule', 'searchBoxModule', 'searchResultsModule', 'movieDetailsModule', 'cachingModule']);
 'use strict';
 
 // -----------------------------------------------------------------------------
 // tweak default angular configuration
 // -----------------------------------------------------------------------------
 
-angular.module('akabuskAppModule').config(['$interpolateProvider', '$compileProvider', function ($interpolateProvider, $compileProvider) {
+angular.module('fimderAppModule').config(['$interpolateProvider', '$compileProvider', function ($interpolateProvider, $compileProvider) {
     // unfortunately we can't use "{{ symbols }}" because Jekyll uses them
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
@@ -181,7 +181,7 @@ var CachingEnablerService = function () {
         $http.defaults.cache = CacheFactory('defaultCache', {
             deleteOnExpire: 'passive',
             storageMode: 'localStorage',
-            storagePrefix: 'akabusk.',
+            storagePrefix: 'fimder.',
             // 1 hour
             maxAge: 1 * 60 * 60 * 1000
         });

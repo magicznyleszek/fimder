@@ -11,7 +11,7 @@ class CachingEnablerService {
         $http.defaults.cache = CacheFactory('defaultCache', {
             deleteOnExpire: 'passive',
             storageMode: 'localStorage',
-            storagePrefix: 'akabusk.',
+            storagePrefix: 'fimder.',
             // 1 hour
             maxAge: 1 * 60 * 60 * 1000
         });
