@@ -47,9 +47,25 @@ module.exports = function (config) {
 
         coverageReporter: {
             dir: 'test-coverage',
+            check: {
+                global: {
+                  statements: 50,
+                  branches: 50,
+                  functions: 50,
+                  lines: 50
+                }
+            },
             reporters: [
                 {
                     type: 'html',
+                    includeAllSources: true
+                },
+                {
+                    type: 'json',
+                    includeAllSources: true
+                },
+                {
+                    type: 'json-summary',
                     includeAllSources: true
                 },
                 {
@@ -57,7 +73,7 @@ module.exports = function (config) {
                     file: 'text-summary.txt',
                     includeAllSources: true
                 },
-                // prints to console for GitLab
+                // for terminal console
                 {
                     type: 'text-summary',
                     includeAllSources: true
