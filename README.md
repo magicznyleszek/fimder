@@ -26,13 +26,6 @@ What you want is to basically have two terminals:
 
 ## TODO
 
-Mandatory:
-
-- add LOAD MORE RESULTS for when there are more pages of results from API:
-    - move fetching results to searchResults service
-    - change searchResultsCtrl to a list-only
-    - create loadMoreButtonCtrl
-
 Improvements:
 
 - add some timeout for when loading happens for loooong time
