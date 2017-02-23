@@ -46,27 +46,10 @@ Improvements:
 looking for name:
 
 cinechaser
-cinehunt
-ffer
+cinehunter
 ffinder
-fimd
 fimder
-feek
-feeker
-flook
-flooker
-homage
-humt
-meek
+humter
 meeker
-mfinder
 minder
-mlook
-mlooker
-mooker
-moseeker
-movier
 iseemov
-semov
-vidi
-vivevo
