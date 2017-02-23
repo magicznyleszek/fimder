@@ -44,53 +44,29 @@ Improvements:
     - torrents? :-o
 
 looking for name:
-cameo
+
 cinechaser
 cinehunt
-cinemarch
 ffer
 ffinder
-filmder
-filmn
-filmplorer
-filook
-filooker
 fimd
 fimder
-fimner
-flashback
-fleek
-fleeker
-flick
+feek
+feeker
 flook
+flooker
 homage
 humt
-jumpcut
-looksy
 meek
 meeker
 mfinder
-mhunt
 minder
 mlook
 mlooker
 mooker
 moseeker
-mov
-movie finder
-movie search
-moviearcher
-movieek
-movieeker
 movier
-movnt
-movvy
-seemov
+iseemov
 semov
-slowmo
-talkie
-vid
-viddy
-video
-vidi --- latin "to see"
+vidi
 vivevo
