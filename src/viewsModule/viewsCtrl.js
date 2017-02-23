@@ -18,7 +18,7 @@ class ViewsController {
         this._routesConfig = routesConfig;
         this.isSearchViewVisible = false;
         this.isMovieViewVisible = false;
-        this._currentRoute.registerRouteChangeListener(
+        this._currentRoute.registerRouteListener(
             this._onRouteChange.bind(this)
         );
     }

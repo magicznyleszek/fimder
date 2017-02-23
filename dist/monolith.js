@@ -692,7 +692,7 @@ var MovieDetailsController = function () {
         this.isSpinnerVisible = false;
         this.isMessageVisible = false;
 
-        this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
+        this._currentRoute.registerRouteListener(this._onRouteChange.bind(this));
     }
 
     // -------------------------------------------------------------------------
@@ -1027,19 +1027,19 @@ var CurrentRouteService = function () {
         this._$location = $location;
         this._assert = assert;
         this._routesConfig = routesConfig;
-        this._currentRouteListenersManager = listenersManager.getManager();
+        this._RouteListenersManager = listenersManager.getManager();
         $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
     }
 
     _createClass(CurrentRouteService, [{
         key: '_onRouteChange',
         value: function _onRouteChange() {
-            this._currentRouteListenersManager.callListeners();
+            this._RouteListenersManager.callListeners();
         }
     }, {
-        key: 'registerRouteChangeListener',
-        value: function registerRouteChangeListener(listener) {
-            return this._currentRouteListenersManager.addListener(listener);
+        key: 'registerRouteListener',
+        value: function registerRouteListener(listener) {
+            return this._RouteListenersManager.addListener(listener);
         }
     }, {
         key: '_getRouteFromRouteData',
@@ -1163,7 +1163,7 @@ var SearchBoxController = function () {
 
         this._applyInputValueDebounced = _.debounce(this._applyInputValue.bind(this), SearchBoxController.debounceTime);
 
-        this._cancelRouteListener = this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
+        this._cancelRouteListener = this._currentRoute.registerRouteListener(this._onRouteChange.bind(this));
     }
 
     _createClass(SearchBoxController, [{
@@ -1229,7 +1229,9 @@ angular.module('searchBoxModule').controller('searchBoxCtrl', SearchBoxControlle
 // searchResultsModule for displaying a clickable list of search results.
 // -----------------------------------------------------------------------------
 
-angular.module('searchResultsModule', ['assertModule', 'routesModule', 'moviesFetcherModule']);
+angular.module('searchResultsModule', ['assertModule', 'routesModule', 'moviesFetcherModule', 'listenersManagerModule']);
+
+angular.module('searchResultsModule').run(['searchResultsRepository', angular.noop]);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1280,15 +1282,77 @@ var SearchResultsController = function () {
     _createClass(SearchResultsController, null, [{
         key: 'initClass',
         value: function initClass() {
-            SearchResultsController.minSearchChars = 3;
-            SearchResultsController.welcomeMessage = 'Hi! Please type at lest ' + SearchResultsController.minSearchChars + ' characters above :-)';
+            SearchResultsController.emptyMessage = 'Hi! Please type movie title above :-)';
 
-            SearchResultsController.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher', 'moviesFetcherConfig', 'assert'];
+            SearchResultsController.$inject = ['searchResultsRepository'];
         }
     }]);
 
-    function SearchResultsController(SearchResult, currentRoute, routesConfig, moviesFetcher, moviesFetcherConfig, assert) {
+    function SearchResultsController(searchResultsRepository) {
         _classCallCheck(this, SearchResultsController);
+
+        this._searchResultsRepository = searchResultsRepository;
+
+        this.results = [];
+        this.message = null;
+        this.isListVisible = false;
+        this.isSpinnerVisible = false;
+        this.isMessageVisible = false;
+
+        this._searchResultsRepository.registerDataListener(this._onSearchResultsDataChange.bind(this));
+    }
+
+    _createClass(SearchResultsController, [{
+        key: 'openMovie',
+        value: function openMovie(result) {
+            result.open();
+        }
+    }, {
+        key: '_onSearchResultsDataChange',
+        value: function _onSearchResultsDataChange(data) {
+            this.results = data.results;
+            this.isSpinnerVisible = data.isFetchPending;
+
+            if (data.error) {
+                this.message = data.error;
+            } else if (this.results.length === 0 && !data.isFetchPending) {
+                this.message = SearchResultsController.emptyMessage;
+            } else {
+                delete this.message;
+            }
+        }
+    }]);
+
+    return SearchResultsController;
+}();
+
+SearchResultsController.initClass();
+
+angular.module('searchResultsModule').controller('searchResultsCtrl', SearchResultsController);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// searchResultsRepository is a service that it fetches new search results
+// whenever a searchPhrase change. It also can load further pages from API
+// response, when a response has over 10 results.
+// -----------------------------------------------------------------------------
+
+var SearchResultsRepositoryService = function () {
+    _createClass(SearchResultsRepositoryService, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            SearchResultsRepositoryService.minSearchChars = 3;
+
+            SearchResultsRepositoryService.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher', 'moviesFetcherConfig', 'assert', 'listenersManager'];
+        }
+    }]);
+
+    function SearchResultsRepositoryService(SearchResult, currentRoute, routesConfig, moviesFetcher, moviesFetcherConfig, assert, listenersManager) {
+        _classCallCheck(this, SearchResultsRepositoryService);
 
         this._SearchResult = SearchResult;
         this._currentRoute = currentRoute;
@@ -1297,23 +1361,35 @@ var SearchResultsController = function () {
         this._moviesFetcherConfig = moviesFetcherConfig;
         this._assert = assert;
 
-        this.results = [];
-        this.message = null;
-        this.isListVisible = false;
-        this.isSpinnerVisible = false;
-        this.isMessageVisible = false;
+        this._searchPhrase = null;
+        this._results = [];
+        this._totalResults = null;
+        this._error = null;
+        this._isFetchPending = false;
 
-        this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
+        this._currentRoute.registerRouteListener(this._onRouteChange.bind(this));
+
+        this._dataListenersManager = listenersManager.getManager();
     }
 
     // -------------------------------------------------------------------------
-    // opening movies
+    // notifying listeners
     // -------------------------------------------------------------------------
 
-    _createClass(SearchResultsController, [{
-        key: 'openMovie',
-        value: function openMovie(result) {
-            result.open();
+    _createClass(SearchResultsRepositoryService, [{
+        key: '_notifyDataChange',
+        value: function _notifyDataChange() {
+            this._dataListenersManager.callListeners({
+                results: this._results,
+                error: this._error,
+                isFetchPending: this._isFetchPending,
+                hasMoreDataToLoad: this._totalResults > this._results.length
+            });
+        }
+    }, {
+        key: 'registerDataListener',
+        value: function registerDataListener(listener) {
+            return this._dataListenersManager.addListener(listener);
         }
 
         // -------------------------------------------------------------------------
@@ -1324,11 +1400,11 @@ var SearchResultsController = function () {
         key: '_onRouteChange',
         value: function _onRouteChange() {
             var route = this._currentRoute.get();
+            this._stopAndResetData();
             if (route.routeId === this._routesConfig.routes.search) {
                 if (this._isSearchPhraseValid(route.params.searchPhrase)) {
-                    this._startNewSearch(route.params.searchPhrase);
-                } else {
-                    this._showMessage(SearchResultsController.welcomeMessage);
+                    this._searchPhrase = route.params.searchPhrase;
+                    this._fetchNewData(this._searchPhrase);
                 }
             }
         }
@@ -1338,7 +1414,7 @@ var SearchResultsController = function () {
             if (typeof searchPhrase !== 'string') {
                 return false;
                 // we don't want to star search for small amount of characters
-            } else if (searchPhrase.length >= SearchResultsController.minSearchChars) {
+            } else if (searchPhrase.length >= SearchResultsRepositoryService.minSearchChars) {
                 return true;
             } else {
                 return false;
@@ -1350,37 +1426,50 @@ var SearchResultsController = function () {
         // -------------------------------------------------------------------------
 
     }, {
-        key: '_startNewSearch',
-        value: function _startNewSearch(searchPhrase) {
-            this._cancelRetrierIfNecessary();
+        key: '_fetchNewData',
+        value: function _fetchNewData(searchPhrase) {
+            this._isFetchPending = true;
             this._retrier = this._moviesFetcher.fetchMoviesBySearch(searchPhrase);
             this._retrier.promise.then(this._fetchMoviesSuccess.bind(this), this._fetchMoviesError.bind(this), this._fetchMoviesNotify.bind(this));
-            this._showSpinner();
+            this._notifyDataChange();
+        }
+    }, {
+        key: '_stopAndResetData',
+        value: function _stopAndResetData() {
+            this._results = [];
+            this._removeError();
+            this._cancelPendingFetch();
+            this._notifyDataChange();
+        }
+    }, {
+        key: '_cancelPendingFetch',
+        value: function _cancelPendingFetch() {
+            this._isFetchPending = false;
+            if (typeof this._retrier !== 'undefined') {
+                this._retrier.cancel();
+                delete this._retrier;
+            }
         }
     }, {
         key: '_fetchMoviesSuccess',
         value: function _fetchMoviesSuccess(response) {
+            this._isFetchPending = false;
             this._interpretResults(response.data);
+            this._notifyDataChange();
         }
     }, {
         key: '_fetchMoviesError',
         value: function _fetchMoviesError(errorReason) {
+            this._isFetchPending = false;
             if (errorReason === 1) {
-                this._showMessage(this._moviesFetcherConfig.messages.overLimit);
+                this._setError(this._moviesFetcherConfig.messages.overLimit);
             }
+            this._notifyDataChange();
         }
     }, {
         key: '_fetchMoviesNotify',
         value: function _fetchMoviesNotify() {
             console.warn(this._moviesFetcherConfig.messages.retrying);
-        }
-    }, {
-        key: '_cancelRetrierIfNecessary',
-        value: function _cancelRetrierIfNecessary() {
-            if (typeof this._retrier !== 'undefined') {
-                this._retrier.cancel();
-                delete this._retrier;
-            }
         }
 
         // -------------------------------------------------------------------------
@@ -1393,27 +1482,21 @@ var SearchResultsController = function () {
             switch (resultsData.Response) {
                 // True means we have responses
                 case 'True':
-                    this._buildList(resultsData.Search);
-                    this._showList();
+                    this._buildList(resultsData.Search, resultsData.totalResults);
+                    this._removeError();
                     break;
-                // True means that API was not able to return movies
+                // False means that API was not able to return movies
                 case 'False':
-                    this._showMessage(resultsData.Error);
+                    this._setError(resultsData.Error);
                     break;
                 default:
-                    this._showMessage(this._moviesFetcherConfig.messages.unknownApiResponse);
+                    this._setError(this._moviesFetcherConfig.messages.unknownApiResponse);
             }
         }
     }, {
-        key: '_clearList',
-        value: function _clearList() {
-            this.results = [];
-        }
-    }, {
         key: '_buildList',
-        value: function _buildList(moviesArray) {
+        value: function _buildList(moviesArray, totalResults) {
             this._assert.isArray(moviesArray);
-            this._clearList();
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
@@ -1422,7 +1505,7 @@ var SearchResultsController = function () {
                 for (var _iterator = moviesArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var movie = _step.value;
 
-                    this.results.push(new this._SearchResult(movie));
+                    this._results.push(new this._SearchResult(movie));
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -1438,48 +1521,29 @@ var SearchResultsController = function () {
                     }
                 }
             }
-        }
 
-        // -------------------------------------------------------------------------
-        // displaying partials
-        // -------------------------------------------------------------------------
-
-    }, {
-        key: '_hideAll',
-        value: function _hideAll() {
-            this.isListVisible = false;
-            this.isSpinnerVisible = false;
-            this.isMessageVisible = false;
-            this.message = null;
+            var totalResultsNumber = parseInt(totalResults, 10);
+            this._assert.isInteger(totalResultsNumber);
+            this._totalResults = totalResultsNumber;
         }
     }, {
-        key: '_showList',
-        value: function _showList() {
-            this._hideAll();
-            this.isListVisible = true;
+        key: '_setError',
+        value: function _setError(errorMessage) {
+            this._error = errorMessage;
         }
     }, {
-        key: '_showSpinner',
-        value: function _showSpinner() {
-            this._hideAll();
-            this.isSpinnerVisible = true;
-        }
-    }, {
-        key: '_showMessage',
-        value: function _showMessage(message) {
-            this._assert.isString(message);
-            this._hideAll();
-            this.message = message;
-            this.isMessageVisible = true;
+        key: '_removeError',
+        value: function _removeError() {
+            this._error = null;
         }
     }]);
 
-    return SearchResultsController;
+    return SearchResultsRepositoryService;
 }();
 
-SearchResultsController.initClass();
+SearchResultsRepositoryService.initClass();
 
-angular.module('searchResultsModule').controller('searchResultsCtrl', SearchResultsController);
+angular.module('searchResultsModule').service('searchResultsRepository', SearchResultsRepositoryService);
 'use strict';
 
 // -----------------------------------------------------------------------------
@@ -1512,7 +1576,7 @@ var ViewsController = function () {
         this._routesConfig = routesConfig;
         this.isSearchViewVisible = false;
         this.isMovieViewVisible = false;
-        this._currentRoute.registerRouteChangeListener(this._onRouteChange.bind(this));
+        this._currentRoute.registerRouteListener(this._onRouteChange.bind(this));
     }
 
     _createClass(ViewsController, [{

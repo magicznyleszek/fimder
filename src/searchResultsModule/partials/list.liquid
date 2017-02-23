@@ -2,7 +2,6 @@
     i-card
     ng-repeat="result in searchResults.results track by result.movieId"
     ng-click="searchResults.openMovie(result)"
-    ng-show="searchResults.isListVisible"
 >
     <span i-text="semibold">[[ result.title ]]</span>
     <span i-text="75%">([[ result.year ]])</span>

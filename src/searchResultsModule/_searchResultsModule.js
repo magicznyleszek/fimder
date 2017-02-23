@@ -5,5 +5,11 @@
 angular.module('searchResultsModule', [
     'assertModule',
     'routesModule',
-    'moviesFetcherModule'
+    'moviesFetcherModule',
+    'listenersManagerModule'
+]);
+
+angular.module('searchResultsModule').run([
+    'searchResultsRepository',
+    angular.noop
 ]);

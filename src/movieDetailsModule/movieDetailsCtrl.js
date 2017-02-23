@@ -38,7 +38,7 @@ class MovieDetailsController {
         this.isSpinnerVisible = false;
         this.isMessageVisible = false;
 
-        this._currentRoute.registerRouteChangeListener(
+        this._currentRoute.registerRouteListener(
             this._onRouteChange.bind(this)
         );
     }

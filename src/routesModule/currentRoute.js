@@ -26,16 +26,16 @@ class CurrentRouteService {
         this._$location = $location;
         this._assert = assert;
         this._routesConfig = routesConfig;
-        this._currentRouteListenersManager = listenersManager.getManager();
+        this._RouteListenersManager = listenersManager.getManager();
         $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
     }
 
     _onRouteChange() {
-        this._currentRouteListenersManager.callListeners();
+        this._RouteListenersManager.callListeners();
     }
 
-    registerRouteChangeListener(listener) {
-        return this._currentRouteListenersManager.addListener(listener);
+    registerRouteListener(listener) {
+        return this._RouteListenersManager.addListener(listener);
     }
 
     _getRouteFromRouteData(routeData) {
