@@ -4,7 +4,6 @@ movieDetails config
 
 :root {
     --s-movieDetails-poster-w: 300px;
-    --s-movieDetails-poster-h: 450px;
 }
 
 @custom-media --wideEnough (min-width: 500px);
@@ -99,7 +98,6 @@ movieDetails poster
     display: block;
     border-radius: calc(var(--s-global-br) * 5);
     width: var(--s-movieDetails-poster-w);
-    height: var(--s-movieDetails-poster-h);
     box-shadow: 0 0 0 0.0625rem color(var(--c-charcoal) alpha(15%));
     background: var(--c-silver);
 }
@@ -119,6 +117,7 @@ movieDetails poster
         float: right;
         margin-left: calc(var(--s-leading) * 0.5);
         margin-bottom: calc(var(--s-leading) * 0.5);
+        max-width: 50%;
     }
 }
 
@@ -139,11 +138,12 @@ movieDetails table
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
+    text-align: left;
 }
 
 [i-movieDetails-table] th {
     font-weight: 700;
-    text-align: left;
+    text-align: inherit;
 }
 
 /* display as block-rows */
@@ -167,7 +167,7 @@ movieDetails table
     }
 
     [i-movieDetails-table] th {
-        width: 6rem;
+        width: 7rem;
     }
 }
 
