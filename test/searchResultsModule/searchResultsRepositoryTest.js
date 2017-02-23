@@ -23,26 +23,23 @@ describe('searchResultsRepository', () => {
     });
 
     it('should start new search for valid search phrase', () => {
-        const someSearchParam = 'salem';
         spyOn(searchResultsRepository, '_fetchNewData').and.callThrough();
-        searchResultsRepository._currentRoute.setToSearch(someSearchParam);
+        searchResultsRepository._currentRoute.setToSearch('devils');
         resolvePromises();
         expect(searchResultsRepository._fetchNewData).toHaveBeenCalled();
         expect(searchResultsRepository._retrier).toBeDefined();
     });
 
     it('should not start new search for empty search phrase', () => {
-        const someSearchParam = '';
         spyOn(searchResultsRepository, '_fetchNewData').and.callThrough();
-        searchResultsRepository._currentRoute.setToSearch(someSearchParam);
+        searchResultsRepository._currentRoute.setToSearch('');
         resolvePromises();
         expect(searchResultsRepository._fetchNewData).not.toHaveBeenCalled();
     });
 
     it('should not start new search for too short search phrase', () => {
-        const someSearchParam = 'sa';
         spyOn(searchResultsRepository, '_fetchNewData').and.callThrough();
-        searchResultsRepository._currentRoute.setToSearch(someSearchParam);
+        searchResultsRepository._currentRoute.setToSearch('sa');
         resolvePromises();
         expect(searchResultsRepository._fetchNewData).not.toHaveBeenCalled();
     });
@@ -63,5 +60,23 @@ describe('searchResultsRepository', () => {
         expect(searchResultsRepository._totalResults).toBe(null);
         expect(searchResultsRepository._error).toBe(null);
         expect(searchResultsRepository._isFetchPending).toBe(false);
+    });
+
+    it('should notify listeners on fetch success', () => {
+        spyOn(searchResultsRepository, '_notifyDataChange');
+        searchResultsRepository._fetchMoviesSuccess({data: {}});
+        expect(searchResultsRepository._notifyDataChange).toHaveBeenCalled();
+    });
+
+    it('should notify listeners on fetch error', () => {
+        spyOn(searchResultsRepository, '_notifyDataChange');
+        searchResultsRepository._fetchMoviesError({data: {}});
+        expect(searchResultsRepository._notifyDataChange).toHaveBeenCalled();
+    });
+
+    it('should notify listeners on route change', () => {
+        spyOn(searchResultsRepository, '_notifyDataChange');
+        searchResultsRepository._onRouteChange();
+        expect(searchResultsRepository._notifyDataChange).toHaveBeenCalled();
     });
 });
