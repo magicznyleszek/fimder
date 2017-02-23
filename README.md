@@ -28,6 +28,7 @@ What you want is to basically have two terminals:
 
 Mandatory:
 
+- test on FF, IE, Safari, iOS Safari, iOS Chrome
 - add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
 
 Improvements:
