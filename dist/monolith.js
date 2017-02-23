@@ -526,60 +526,67 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // Movie model that expects data to follow omdbapi.com format.
 // -----------------------------------------------------------------------------
 
-angular.module('movieDetailsModule').factory('Movie', ['assert', function (assert) {
+angular.module('movieDetailsModule').factory('Movie', ['assert', 'votesHumanizer', function (assert, votesHumanizer) {
     var MovieModel = function () {
         _createClass(MovieModel, null, [{
             key: 'initClass',
             value: function initClass() {
                 MovieModel.notAvailableProprety = 'N/A';
                 MovieModel.requiredType = 'movie';
-                MovieModel.requiredProperties = ['imdbID', 'Title', 'Released', 'Runtime', 'Genre', 'Director', 'Writer', 'Actors', 'Plot', 'Awards', 'Language', 'Country', 'Poster', 'imdbRating', 'imdbVotes'];
+                MovieModel.requiredProperties = ['imdbID', 'Title'];
             }
         }]);
 
         function MovieModel(movieData) {
             _classCallCheck(this, MovieModel);
 
-            this._verifyAllData(movieData);
+            this._verifyAllRequiredProperties(movieData);
+
             this.id = movieData.imdbID;
             this.title = movieData.Title;
             // we want all optional properties to be defined only if their
             // content makes sense, i.e. no "N/A" visible for user
             this._setOptionalText('releaseDate', movieData.Released);
-            this._setOptionalText('releaseDateFull', new Date(movieData.Released));
             this._setOptionalText('runtime', movieData.Runtime);
+            this._setOptionalText('plot', movieData.Plot);
+            this._setOptionalText('awards', movieData.Awards);
+            this._setOptionalText('poster', movieData.Poster);
+            this._setOptionalText('rating', movieData.imdbRating);
+            this._setOptionalText('ratingVotes', movieData.imdbVotes);
             this._setOptionalArray('genres', movieData.Genre);
             this._setOptionalArray('directors', movieData.Director);
             this._setOptionalArray('writers', movieData.Writer);
             this._setOptionalArray('actors', movieData.Actors);
-            this._setOptionalText('plot', movieData.Plot);
-            this._setOptionalText('awards', movieData.Awards);
             this._setOptionalArray('languages', movieData.Language);
             this._setOptionalArray('countries', movieData.Country);
-            this._setOptionalText('poster', movieData.Poster);
-            this._setOptionalText('rating', movieData.imdbRating);
-            this._setOptionalText('ratingVotes', movieData.imdbVotes);
 
-            this._pacifyRatingVotes();
+            if (this.ratingVotes) {
+                this.ratingVotes = votesHumanizer.getHumanized(this.ratingVotes);
+            }
         }
 
         _createClass(MovieModel, [{
+            key: '_isUsefulData',
+            value: function _isUsefulData(rawData) {
+                return rawData && rawData !== MovieModel.notAvailableProprety;
+            }
+        }, {
             key: '_setOptionalText',
             value: function _setOptionalText(propertyName, rawData) {
-                if (rawData !== MovieModel.notAvailableProprety) {
+                if (this._isUsefulData(rawData)) {
                     this[propertyName] = rawData;
                 }
             }
         }, {
             key: '_setOptionalArray',
             value: function _setOptionalArray(propertyName, rawData) {
-                if (rawData !== MovieModel.notAvailableProprety) {
+                if (this._isUsefulData(rawData)) {
                     this[propertyName] = rawData.split(', ');
                 }
             }
         }, {
-            key: '_verifyAllData',
-            value: function _verifyAllData(movieData) {
+            key: '_verifyAllRequiredProperties',
+            value: function _verifyAllRequiredProperties(movieData) {
                 // checks if all the necessary strings are there
                 var _iteratorNormalCompletion = true;
                 var _didIteratorError = false;
@@ -607,14 +614,6 @@ angular.module('movieDetailsModule').factory('Movie', ['assert', function (asser
                 }
 
                 assert.isTrue(movieData.Type === MovieModel.requiredType);
-            }
-        }, {
-            key: '_pacifyRatingVotes',
-            value: function _pacifyRatingVotes() {
-                if (this.ratingVotes && this.ratingVotes.length > 3 && this.ratingVotes[this.ratingVotes.length - 4] === ',') {
-                    this.ratingVotes = this.ratingVotes.substr(0, this.ratingVotes.length - 4);
-                    this.ratingVotes += 'k';
-                }
             }
         }]);
 
@@ -810,6 +809,62 @@ var MovieDetailsController = function () {
 MovieDetailsController.initClass();
 
 angular.module('movieDetailsModule').controller('movieDetailsCtrl', MovieDetailsController);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// votesHumanizer is a service that turns OMDb RatingVotes strings into even
+// more human friendly ones (especially if you're into gaming)
+// -----------------------------------------------------------------------------
+
+var VotesHumanizerService = function () {
+    _createClass(VotesHumanizerService, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            VotesHumanizerService.$inject = ['assert'];
+        }
+    }]);
+
+    function VotesHumanizerService(assert) {
+        _classCallCheck(this, VotesHumanizerService);
+
+        this._assert = assert;
+    }
+
+    _createClass(VotesHumanizerService, [{
+        key: 'getHumanized',
+        value: function getHumanized(votes) {
+            // check if received a non-empty string
+            this._assert.isString(votes);
+            this._assert.isTrue(votes.length !== 0);
+
+            // check if after removing all commas it is a valid integer
+            var votesNumber = parseInt(votes.split(',').join(''), 10);
+            this._assert.isInteger(votesNumber);
+
+            // check how many thousands are there and slim down the marginal data
+            var kCount = 0;
+            while (votesNumber >= 1000) {
+                votesNumber /= 1000;
+                kCount++;
+            }
+
+            // create and return a final string
+            var votesString = parseFloat(votesNumber.toFixed(1)).toString();
+            votesString += 'k'.repeat(kCount);
+            return votesString;
+        }
+    }]);
+
+    return VotesHumanizerService;
+}();
+
+VotesHumanizerService.initClass();
+
+angular.module('movieDetailsModule').service('votesHumanizer', VotesHumanizerService);
 'use strict';
 
 // -----------------------------------------------------------------------------

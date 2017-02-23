@@ -44,18 +44,53 @@ Improvements:
     - torrents? :-o
 
 looking for name:
-flick
-jumpcut
-slowmo
-flashback
 cameo
-talkie
+cinechaser
+cinehunt
+cinemarch
+ffer
+ffinder
+filmder
+filmn
+filmplorer
+filook
+filooker
+fimd
+fimder
+fimner
+flashback
+fleek
+fleeker
+flick
+flook
+homage
+humt
+jumpcut
+looksy
+meek
+meeker
+mfinder
+mhunt
+minder
+mlook
+mlooker
+mooker
+moseeker
+mov
 movie finder
 movie search
+moviearcher
+movieek
+movieeker
 movier
-video
-mov
-vid
+movnt
 movvy
+seemov
+semov
+slowmo
+talkie
+vid
 viddy
+video
 vidi --- latin "to see"
+vivevo

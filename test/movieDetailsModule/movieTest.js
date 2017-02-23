@@ -20,7 +20,14 @@ describe('Movie', () => {
         expect(() => {return new Movie({Title: 'Conan'});}).toThrow();
     });
 
-    it('should work for valid input data', () => {
+    it('should work for minimum valid input data', () => {
+        const testFn = () => {
+            return new Movie(testData.responses.movieSuccessMinimum);
+        };
+        expect(testFn).not.toThrow();
+    });
+
+    it('should work for full valid input data', () => {
         const testFn = () => {
             return new Movie(testData.responses.movieSuccess);
         };

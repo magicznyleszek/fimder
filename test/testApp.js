@@ -5,6 +5,12 @@ angular.module('testApp', [
 
 angular.module('testApp').constant('testData', {
     responses: {
+        movieSuccessMinimum: {
+            Title: 'Phase IV',
+            imdbID: 'tt0070531',
+            Type: 'movie',
+            Response: 'True'
+        },
         movieSuccess: {
             Title: 'Phase IV',
             Year: '1974',
