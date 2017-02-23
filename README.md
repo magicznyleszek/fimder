@@ -28,12 +28,10 @@ What you want is to basically have two terminals:
 
 Mandatory:
 
-- test on FF, IE, Safari, iOS Safari, iOS Chrome
 - add LOAD MORE RESULTS for when there are more pages of results from API:
     - move fetching results to searchResults service
     - change searchResultsCtrl to a list-only
     - create loadMoreButtonCtrl
-- handle lost internet
 
 Improvements:
 
