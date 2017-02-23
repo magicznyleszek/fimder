@@ -1248,6 +1248,52 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // -----------------------------------------------------------------------------
+// loadMoreCtrl -- displays a button for loading more results
+// -----------------------------------------------------------------------------
+
+var LoadMoreController = function () {
+    _createClass(LoadMoreController, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            LoadMoreController.$inject = ['searchResultsRepository'];
+        }
+    }]);
+
+    function LoadMoreController(searchResultsRepository) {
+        _classCallCheck(this, LoadMoreController);
+
+        this._searchResultsRepository = searchResultsRepository;
+
+        this.isVisible = false;
+
+        this._searchResultsRepository.registerDataListener(this._onSearchResultsDataChange.bind(this));
+    }
+
+    _createClass(LoadMoreController, [{
+        key: 'trigger',
+        value: function trigger() {
+            console.log('load more');
+        }
+    }, {
+        key: '_onSearchResultsDataChange',
+        value: function _onSearchResultsDataChange(data) {
+            this.isVisible = data.totalResults > data.results.length;
+        }
+    }]);
+
+    return LoadMoreController;
+}();
+
+LoadMoreController.initClass();
+
+angular.module('searchResultsModule').controller('loadMoreCtrl', LoadMoreController);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
 // SearchResult model that expects data to follow omdbapi.com format.
 // -----------------------------------------------------------------------------
 
@@ -1345,9 +1391,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // -----------------------------------------------------------------------------
-// searchResultsRepository is a service that it fetches new search results
-// whenever a searchPhrase change. It also can load further pages from API
-// response, when a response has over 10 results.
+// searchResultsRepository is a service that fetches new search results whenever
+// searchPhrase change. It also can load further response pages from API, when
+// a response has over 10 results.
 // -----------------------------------------------------------------------------
 
 var SearchResultsRepositoryService = function () {

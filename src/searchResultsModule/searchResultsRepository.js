@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
-// searchResultsRepository is a service that it fetches new search results
-// whenever a searchPhrase change. It also can load further pages from API
-// response, when a response has over 10 results.
+// searchResultsRepository is a service that fetches new search results whenever
+// searchPhrase change. It also can load further response pages from API, when
+// a response has over 10 results.
 // -----------------------------------------------------------------------------
 
 class SearchResultsRepositoryService {
