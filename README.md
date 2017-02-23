@@ -1,4 +1,4 @@
-![coverage-shield-badge-1](https://img.shields.io/badge/coverage-92.6%25-brightgreen.svg)
+![coverage-shield-badge-1](https://img.shields.io/badge/coverage-92.95%25-brightgreen.svg)
 
 # akabusk
 
@@ -47,7 +47,10 @@ Improvements:
 
 looking for name:
 
-fimder - simple movie finder, 18400
-humter - simple movie hunter, 77500
-meeker - simple movie seeker, 7810000, meaningful
-minder - simple movie finder, 94400000, meaningful
+fimder - simple movie finder, 18400, 4 + 2
+humter - simple movie hunter, 77500, 4 + 2
+meeker - simple movie seeker, 7810000, 3 + 3
+
+http://fimder.smutnyleszek.com
+http://humter.smutnyleszek.com
+http://meeker.smutnyleszek.com

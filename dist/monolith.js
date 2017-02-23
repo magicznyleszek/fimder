@@ -154,16 +154,47 @@ angular.module('assertModule').service('assert', AssertService);
 
 angular.module('cachingModule', ['angular-cache']);
 
-angular.module('cachingModule').run(['$http', 'CacheFactory', function ($http, CacheFactory) {
-    // we apply caching to all $http calls with {cache: true} option
-    $http.defaults.cache = CacheFactory('defaultCache', {
-        deleteOnExpire: 'passive',
-        storageMode: 'localStorage',
-        storagePrefix: 'akabusk.',
-        // 1 hour
-        maxAge: 1 * 60 * 60 * 1000
-    });
-}]);
+angular.module('cachingModule').run([
+// we only need to initialize it
+'cachingEnabler', angular.noop]);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// cachingEnabler is a service that enables caching for all $http requests
+// -----------------------------------------------------------------------------
+
+var CachingEnablerService = function () {
+    _createClass(CachingEnablerService, null, [{
+        key: 'initClass',
+        value: function initClass() {
+            CachingEnablerService.$inject = ['$http', 'CacheFactory'];
+        }
+    }]);
+
+    function CachingEnablerService($http, CacheFactory) {
+        _classCallCheck(this, CachingEnablerService);
+
+        $http.defaults.cache = CacheFactory('defaultCache', {
+            deleteOnExpire: 'passive',
+            storageMode: 'localStorage',
+            storagePrefix: 'akabusk.',
+            // 1 hour
+            maxAge: 1 * 60 * 60 * 1000
+        });
+        console.info('localStorage cache enabled');
+        this.isEnabled = true;
+    }
+
+    return CachingEnablerService;
+}();
+
+CachingEnablerService.initClass();
+
+angular.module('cachingModule').service('cachingEnabler', CachingEnablerService);
 'use strict';
 
 // -----------------------------------------------------------------------------
