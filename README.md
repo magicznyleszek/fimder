@@ -45,11 +45,7 @@ Improvements:
 
 looking for name:
 
-cinechaser
-cinehunter
-ffinder
-fimder
-humter
-meeker
-minder
-iseemov
+fimder - simple movie finder, 18400
+humter - simple movie hunter, 77500
+meeker - simple movie seeker, 7810000, meaningful
+minder - simple movie finder, 94400000, meaningful
