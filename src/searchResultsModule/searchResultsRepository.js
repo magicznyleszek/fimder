@@ -54,7 +54,7 @@ class SearchResultsRepositoryService {
     // -------------------------------------------------------------------------
 
     loadMoreResults() {
-        this._fetchNextPageData();
+        this._fetchMoreData();
     }
 
     // -------------------------------------------------------------------------
@@ -97,7 +97,7 @@ class SearchResultsRepositoryService {
                     this._currentSearchPhrase.length >=
                     SearchResultsRepositoryService.minSearchChars
                 ) {
-                    this._fetchNextPageData();
+                    this._fetchMoreData();
                 }
             }
         }
@@ -115,7 +115,7 @@ class SearchResultsRepositoryService {
         this._notifyDataChange();
     }
 
-    _fetchNextPageData() {
+    _fetchMoreData() {
         this._isFetchPending = true;
         this._retrier = this._moviesFetcher.fetchMoviesBySearch(
             this._currentSearchPhrase,

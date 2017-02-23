@@ -1,4 +1,4 @@
-![coverage-shield-badge-1](https://img.shields.io/badge/coverage-94.52%25-brightgreen.svg)
+![coverage-shield-badge-1](https://img.shields.io/badge/coverage-93.5%25-brightgreen.svg)
 
 # fimder
 

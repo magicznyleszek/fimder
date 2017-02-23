@@ -2,7 +2,7 @@ describe('moviesFetcher', () => {
     let moviesFetcher = null;
 
     const conanPhrase = 'Conan the Barbarian';
-    const conanSearchUrl = 'http://www.omdbapi.com/?r=json&type=movie&s=Conan%20the%20Barbarian';
+    const conanSearchUrl = 'http://www.omdbapi.com/?r=json&type=movie&s=Conan%20the%20Barbarian&page=1';
     const conanMovieId = 'tt0082198';
     const conanMovieUrl = 'http://www.omdbapi.com/?r=json&type=movie&plot=full&i=tt0082198';
 
@@ -29,7 +29,7 @@ describe('moviesFetcher', () => {
     });
 
     it('should create proper search url for OMDb API', () => {
-        const url = moviesFetcher._getSearchUrl(conanPhrase);
+        const url = moviesFetcher._getSearchUrl(conanPhrase, 1);
         expect(url).toBe(conanSearchUrl);
     });
 

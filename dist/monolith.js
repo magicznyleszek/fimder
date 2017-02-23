@@ -1450,7 +1450,7 @@ var SearchResultsRepositoryService = function () {
     _createClass(SearchResultsRepositoryService, [{
         key: 'loadMoreResults',
         value: function loadMoreResults() {
-            this._fetchNextPageData();
+            this._fetchMoreData();
         }
 
         // -------------------------------------------------------------------------
@@ -1492,7 +1492,7 @@ var SearchResultsRepositoryService = function () {
 
                     // we don't want to star search for short strings
                     if (this._currentSearchPhrase.length >= SearchResultsRepositoryService.minSearchChars) {
-                        this._fetchNextPageData();
+                        this._fetchMoreData();
                     }
                 }
             }
@@ -1512,8 +1512,8 @@ var SearchResultsRepositoryService = function () {
             this._notifyDataChange();
         }
     }, {
-        key: '_fetchNextPageData',
-        value: function _fetchNextPageData() {
+        key: '_fetchMoreData',
+        value: function _fetchMoreData() {
             this._isFetchPending = true;
             this._retrier = this._moviesFetcher.fetchMoviesBySearch(this._currentSearchPhrase, this._getCurrentSearchPage());
             this._retrier.promise.then(this._fetchMoviesSuccess.bind(this), this._fetchMoviesError.bind(this), this._fetchMoviesNotify.bind(this));
