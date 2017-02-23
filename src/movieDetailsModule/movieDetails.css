@@ -96,24 +96,19 @@ movieDetails poster
 
 [i-movieDetails-poster] {
     display: block;
+    margin-bottom: var(--s-leading);
+    margin-left: auto;
+    margin-right: auto;
     border-radius: calc(var(--s-global-br) * 5);
     width: var(--s-movieDetails-poster-w);
+    min-height: var(--s-leading);
     box-shadow: 0 0 0 0.0625rem color(var(--c-charcoal) alpha(15%));
     background: var(--c-silver);
 }
 
-/* display as whole row */
-@media (--notWideEnough) {
-    [i-movieDetails-poster] {
-        margin-bottom: var(--s-leading);
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-
-/* display floated to right */
+/* display floated to right if there is a description next to it */
 @media (--wideEnough) {
-    [i-movieDetails-poster] {
+    [i-movieDetails~="hasPlot"] [i-movieDetails-poster] {
         float: right;
         margin-left: calc(var(--s-leading) * 0.5);
         margin-bottom: calc(var(--s-leading) * 0.5);

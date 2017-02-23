@@ -29,11 +29,16 @@ What you want is to basically have two terminals:
 Mandatory:
 
 - test on FF, IE, Safari, iOS Safari, iOS Chrome
-- add LOAD MORE RESULTS button to searchResultsCtrl for when there are more pages of results from API
+- add LOAD MORE RESULTS for when there are more pages of results from API:
+    - move fetching results to searchResults service
+    - change searchResultsCtrl to a list-only
+    - create loadMoreButtonCtrl
+- handle lost internet
 
 Improvements:
 
-- preload poster image and fade it in + handle errors as they will be and are happening
+- add some timeout for when loading happens for loooong time
+- preload poster image and fade it in + handle errors nicely as they will be and are happening
 - add smartly loading poster to searchResult
 - write smart tests for httpRetrierModule
 - errorNotifier module?

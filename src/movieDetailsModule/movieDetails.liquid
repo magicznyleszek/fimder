@@ -1,6 +1,6 @@
 <div
     ng-controller="movieDetailsCtrl as movieDetails"
-    i-movieDetails
+    i-movieDetails="[[movieDetails.movie.plot?'hasPlot':'']]"
 >
     {% include movieDetailsModule/partials/header.liquid %}
     {% include movieDetailsModule/partials/details.liquid %}
