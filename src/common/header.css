@@ -14,7 +14,8 @@ header
 [i-header] {
     display: block;
     position: relative;
-    margin: calc(var(--s-leading) * 0.5) auto;
+    margin-top: calc(var(--s-leading) * 0.5);
+    margin-bottom: var(--s-leading);
     border-radius: var(--s-global-br);
     padding: var(--s-header-padding);
     width: 100%;
