@@ -1,3 +1,5 @@
+![coverage-shield-badge-1](https://img.shields.io/badge/coverage-92.6%25-brightgreen.svg)
+
 # akabusk
 
 Movie info displayer. Check [akabusk.smutnyleszek.com](https://akabusk.smutnyleszek.com) to see how it works.

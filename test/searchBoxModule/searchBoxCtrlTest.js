@@ -35,4 +35,21 @@ describe('searchBoxCtrl', () => {
         searchBoxCtrl.clear();
         expect(searchBoxCtrl.inputValue).toBe('');
     });
+
+    it('should apply input value on ENTER key', () => {
+        // set initial search param value
+        const firstSearchParam = 'salem';
+        searchBoxCtrl._currentRoute.setToSearch(firstSearchParam);
+        resolvePromises();
+
+        // change input and mimick ENTER key
+        const secondSearchParam = 'jesus';
+        searchBoxCtrl.inputValue = secondSearchParam;
+        searchBoxCtrl.onInputKeypress({which: 13});
+
+        resolvePromises();
+        const currentRoute = searchBoxCtrl._currentRoute.get();
+
+        expect(currentRoute.params.searchPhrase).toBe(secondSearchParam);
+    });
 });

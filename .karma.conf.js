@@ -49,10 +49,10 @@ module.exports = function (config) {
             dir: 'test-coverage',
             check: {
                 global: {
-                  statements: 50,
-                  branches: 50,
-                  functions: 50,
-                  lines: 50
+                  statements: 75,
+                  branches: 75,
+                  functions: 75,
+                  lines: 75
                 }
             },
             reporters: [
@@ -61,16 +61,22 @@ module.exports = function (config) {
                     includeAllSources: true
                 },
                 {
-                    type: 'json',
-                    includeAllSources: true
-                },
-                {
-                    type: 'json-summary',
-                    includeAllSources: true
-                },
-                {
                     type: 'text-summary',
                     file: 'text-summary.txt',
+                    includeAllSources: true
+                },
+                // for generating readme badges
+                {
+                    type: function () {
+                        var shieldBadgeReporter = require('istanbul-reporter-shield-badge')
+                        var istanbul = require('istanbul')
+                        istanbul.Report.register(shieldBadgeReporter)
+                        return 'shield-badge'
+                    }(),
+                    range: [75, 90],
+                    subject: 'coverage',
+                    readmeFilename: 'README.md',
+                    readmeDir: __dirname,
                     includeAllSources: true
                 },
                 // for terminal console
