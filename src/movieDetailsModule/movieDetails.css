@@ -143,7 +143,7 @@ movieDetails table
 
 [i-movieDetails-table] th {
     font-weight: 700;
-    text-align: inherit;
+    text-align: left;
 }
 
 /* display as block-rows */
