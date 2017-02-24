@@ -4,6 +4,18 @@
 
 Simple OMDb movie finder. Check [fimder.smutnyleszek.com](https://fimder.smutnyleszek.com) to see how it works.
 
+Features:
+
+- ES6 (with Babel)
+- Angular 1.6
+- Karma tests
+- Routing (you can copy urls!)
+- SVG icons
+- MADCSS
+- HTTP requests auto-retrying and caching
+- Responsive design
+- Linters
+
 Requirements:
 
 1. [Jekyll](http://jekyllrb.com/)
@@ -32,7 +44,7 @@ Improvements:
 - preload poster image and fade it in + handle errors nicely as they will be and are happening
 - add smartly loading poster to searchResult
 - write smart tests for httpRetrierModule
-- errorNotifier module?
+- errorNotifier module for errors?
 - some helpful links in the movie details that open urls using title:
     - opensubtitles
     - filmweb
