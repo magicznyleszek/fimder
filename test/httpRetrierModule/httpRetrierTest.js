@@ -81,4 +81,14 @@ describe('httpRetrier', () => {
         httpRetrier._onHttpRequestError(retrier, null);
         expect(httpRetrier._retry.calls.count()).toBe(1);
     });
+
+    it('should create unique ids', () => {
+        const idsArray = [];
+        // one million operations :-D
+        for (let i = 0; i < 1000000; i++) {
+            idsArray.push(httpRetrier._getUniqueId());
+        }
+        const arrayWithoutDupes = Array.from(new Set(idsArray));
+        expect(idsArray.length).toBe(arrayWithoutDupes.length);
+    });
 });
