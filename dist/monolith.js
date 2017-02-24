@@ -237,6 +237,7 @@ var HttpRetrierService = function () {
             cancel: 0,
             overLimit: 1
         });
+        this._uniqueIdCounter = 0;
     }
 
     _createClass(HttpRetrierService, [{
@@ -281,7 +282,7 @@ var HttpRetrierService = function () {
                 limit = HttpRetrierService.defaultLimit;
             }
 
-            var retrierId = Math.floor(Math.random() * 0x1000000).toString(16);
+            var retrierId = this._getUniqueId();
             this._retriers[retrierId] = {
                 id: retrierId,
                 httpConfig: httpConfig,
@@ -299,6 +300,16 @@ var HttpRetrierService = function () {
                 this._retriers[retrierId].deferred.reject(this.rejectReasons.cancel);
                 this._destroyRetrier(retrierId);
             }
+        }
+
+        // generates unique id (a non-numerical string) for retrier
+        // call me crazy, but I don't like numbers or stringified numbers as ids
+
+    }, {
+        key: '_getUniqueId',
+        value: function _getUniqueId() {
+            this._uniqueIdCounter++;
+            return 'rtrr-' + this._uniqueIdCounter.toString(36);
         }
 
         // -------------------------------------------------------------------------
