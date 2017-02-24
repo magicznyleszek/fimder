@@ -1,4 +1,11 @@
-// TODO: test nested promises somehow: $q -> $timeout -> $http
+// TODO: test nested promises somehow -- try:
+// $httpBackend.expectGET().respond()
+// // resolve $timeout
+// $timeout.flush()
+// // resolve $http
+// $httpBackend.flush()
+// // resolve $q
+// $rootScope.$apply()
 
 describe('httpRetrier', () => {
     let httpRetrier = null;
