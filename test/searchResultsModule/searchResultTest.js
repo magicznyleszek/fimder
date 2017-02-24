@@ -15,7 +15,7 @@ describe('SearchResult', () => {
         module('assertModule');
         module('routesModule');
         module('moviesFetcherModule');
-        module('listenersManagerModule');
+        module('observableModule');
         module('searchResultsModule');
         inject(($injector) => {
             testData = $injector.get('testData');

@@ -40,7 +40,7 @@ class SearchBoxController {
             SearchBoxController.debounceTime
         );
 
-        this._cancelRouteListener = this._currentRoute.registerRouteListener(
+        this._currentRoute.registerRouteObserver(
             this._onRouteChange.bind(this)
         );
     }

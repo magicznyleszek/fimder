@@ -356,193 +356,6 @@ angular.module('httpRetrierModule').service('httpRetrier', HttpRetrierService);
 'use strict';
 
 // -----------------------------------------------------------------------------
-// listenersManagerModule is for managing a list of listeners.
-// -----------------------------------------------------------------------------
-
-angular.module('listenersManagerModule', []);
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// -----------------------------------------------------------------------------
-// listenersManager is a factory that creates new instance of listeners manager.
-// A listener manager object is an implementation of logic pattern that manages
-// list of listeners. It handles adding listeners, running them and removing.
-// Any service that would like to keep list of listeners of some kind, can
-// easily use this object for handling common logic of keeping and controlling
-// sets of callback (listeners) functions.
-// -----------------------------------------------------------------------------
-
-var ListenerManager = function () {
-    function ListenerManager() {
-        _classCallCheck(this, ListenerManager);
-
-        this._listeners = [];
-        this._amountOfListeners = 0;
-        this._listenersToRemove = [];
-        this._amountToRemove = 0;
-        this._stateListeners = [];
-        this._isActive = false;
-    }
-
-    _createClass(ListenerManager, [{
-        key: '_createCancelFunction',
-        value: function _createCancelFunction(listenerToCancel, afterCancelCallback) {
-            return function () {
-                afterCancelCallback(listenerToCancel);
-                listenerToCancel = null;
-                afterCancelCallback = null;
-            };
-        }
-    }, {
-        key: '_afterCancel',
-        value: function _afterCancel(listenerToRemove) {
-            this._amountToRemove = this._listenersToRemove.push(listenerToRemove);
-        }
-    }, {
-        key: '_cleanRemovedListeners',
-        value: function _cleanRemovedListeners() {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = this._listenersToRemove[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var listenerToRemove = _step.value;
-
-                    var indexOf = this._listeners.indexOf(listenerToRemove);
-                    if (indexOf !== -1) {
-                        this._listeners.splice(indexOf, 1);
-                    }
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            this._amountOfListeners = this._listeners.length;
-            this._amountToRemove = 0;
-            this._listenersToRemove.length = 0;
-            this._updateState(this._amountOfListeners > 0);
-        }
-    }, {
-        key: '_updateState',
-        value: function _updateState(newActiveState) {
-            if (this._isActive === newActiveState) {
-                return;
-            }
-
-            this._isActive = newActiveState;
-
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-                for (var _iterator2 = this._stateListeners[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var stateListener = _step2.value;
-
-                    stateListener(this._isActive);
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-        }
-    }, {
-        key: 'addListener',
-        value: function addListener(newListener) {
-            this._amountOfListeners = this._listeners.push(newListener);
-            this._updateState(true);
-            return this._createCancelFunction(newListener, this._afterCancel.bind(this));
-        }
-    }, {
-        key: 'callListeners',
-        value: function callListeners() {
-            if (this._amountToRemove !== 0) {
-                this._cleanRemovedListeners();
-            }
-
-            if (!this._isActive) {
-                return;
-            }
-
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
-
-            if (this._amountOfListeners === 1) {
-                this._listeners[0].apply(null, args);
-                return;
-            }
-
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = this._listeners[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var listener = _step3.value;
-
-                    listener.apply(null, args);
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-        }
-    }, {
-        key: 'onStateChange',
-        value: function onStateChange(stateListener) {
-            return this._stateListeners.push(stateListener);
-        }
-    }]);
-
-    return ListenerManager;
-}();
-
-angular.module('listenersManagerModule').factory('listenersManager', function () {
-    return {
-        getManager: function getManager() {
-            return new ListenerManager();
-        }
-    };
-});
-'use strict';
-
-// -----------------------------------------------------------------------------
 // movieDetailsModule display details of given movie
 // -----------------------------------------------------------------------------
 
@@ -694,7 +507,7 @@ var MovieDetailsController = function () {
         this.isSpinnerVisible = false;
         this.isMessageVisible = false;
 
-        this._currentRoute.registerRouteListener(this._onRouteChange.bind(this));
+        this._currentRoute.registerRouteObserver(this._onRouteChange.bind(this));
     }
 
     // -------------------------------------------------------------------------
@@ -1001,11 +814,193 @@ angular.module('moviesFetcherModule').constant('moviesFetcherConfig', {
 'use strict';
 
 // -----------------------------------------------------------------------------
+// observableModule is for managing a list of observers.
+// -----------------------------------------------------------------------------
+
+angular.module('observableModule', []);
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// -----------------------------------------------------------------------------
+// observable is a factory that creates a new instance of observer pattern.
+// It handles adding observers, running them and removing.
+// Any service that would like to keep a list of observers of some kind, can
+// easily use this object for handling common logic of keeping and controlling
+// sets of callback (observers) functions.
+// -----------------------------------------------------------------------------
+
+var ObservableModel = function () {
+    function ObservableModel() {
+        _classCallCheck(this, ObservableModel);
+
+        this._observers = [];
+        this._amountOfObservers = 0;
+        this._observersToRemove = [];
+        this._amountToRemove = 0;
+        this._stateObservers = [];
+        this._isActive = false;
+    }
+
+    _createClass(ObservableModel, [{
+        key: '_createCancelFunction',
+        value: function _createCancelFunction(observerToCancel, afterCancelCallback) {
+            return function () {
+                afterCancelCallback(observerToCancel);
+                observerToCancel = null;
+                afterCancelCallback = null;
+            };
+        }
+    }, {
+        key: '_afterCancel',
+        value: function _afterCancel(observerToRemove) {
+            this._amountToRemove = this._observersToRemove.push(observerToRemove);
+        }
+    }, {
+        key: '_cleanRemovedObservers',
+        value: function _cleanRemovedObservers() {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this._observersToRemove[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var observerToRemove = _step.value;
+
+                    var indexOf = this._observers.indexOf(observerToRemove);
+                    if (indexOf !== -1) {
+                        this._observers.splice(indexOf, 1);
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            this._amountOfObservers = this._observers.length;
+            this._amountToRemove = 0;
+            this._observersToRemove.length = 0;
+            this._updateState(this._amountOfObservers > 0);
+        }
+    }, {
+        key: '_updateState',
+        value: function _updateState(newActiveState) {
+            if (this._isActive === newActiveState) {
+                return;
+            }
+
+            this._isActive = newActiveState;
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = this._stateObservers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var stateObserver = _step2.value;
+
+                    stateObserver(this._isActive);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
+    }, {
+        key: 'register',
+        value: function register(newObserver) {
+            this._amountOfObservers = this._observers.push(newObserver);
+            this._updateState(true);
+            return this._createCancelFunction(newObserver, this._afterCancel.bind(this));
+        }
+    }, {
+        key: 'notify',
+        value: function notify() {
+            if (this._amountToRemove !== 0) {
+                this._cleanRemovedObservers();
+            }
+
+            if (!this._isActive) {
+                return;
+            }
+
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+            }
+
+            if (this._amountOfObservers === 1) {
+                this._observers[0].apply(null, args);
+                return;
+            }
+
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = this._observers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var observer = _step3.value;
+
+                    observer.apply(null, args);
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+        }
+    }, {
+        key: 'onStateChange',
+        value: function onStateChange(stateObserver) {
+            return this._stateObservers.push(stateObserver);
+        }
+    }]);
+
+    return ObservableModel;
+}();
+
+angular.module('observableModule').factory('Observable', function () {
+    return ObservableModel;
+});
+'use strict';
+
+// -----------------------------------------------------------------------------
 // routesModule for reading location parameters on load and allowing setting
 // them during application lifetime (so user actions will reflect in url).
 // -----------------------------------------------------------------------------
 
-angular.module('routesModule', ['ngRoute', 'assertModule', 'listenersManagerModule']);
+angular.module('routesModule', ['ngRoute', 'assertModule', 'observableModule']);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1020,34 +1015,34 @@ var CurrentRouteService = function () {
     _createClass(CurrentRouteService, null, [{
         key: 'initClass',
         value: function initClass() {
-            CurrentRouteService.$inject = ['$rootScope', '$route', '$location', 'assert', 'routesConfig', 'listenersManager'];
+            CurrentRouteService.$inject = ['$rootScope', '$route', '$location', 'assert', 'routesConfig', 'Observable'];
         }
     }]);
 
-    function CurrentRouteService($rootScope, $route, $location, assert, routesConfig, listenersManager) {
+    function CurrentRouteService($rootScope, $route, $location, assert, routesConfig, Observable) {
         _classCallCheck(this, CurrentRouteService);
 
         this._$route = $route;
         this._$location = $location;
         this._assert = assert;
         this._routesConfig = routesConfig;
-        this._RouteListenersManager = listenersManager.getManager();
+        this._routeObservable = new Observable();
         $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
     }
 
     // -------------------------------------------------------------------------
-    // handling listeners
+    // handling observers
     // -------------------------------------------------------------------------
 
     _createClass(CurrentRouteService, [{
         key: '_onRouteChange',
         value: function _onRouteChange() {
-            this._RouteListenersManager.callListeners();
+            this._routeObservable.notify();
         }
     }, {
-        key: 'registerRouteListener',
-        value: function registerRouteListener(listener) {
-            return this._RouteListenersManager.addListener(listener);
+        key: 'registerRouteObserver',
+        value: function registerRouteObserver(observer) {
+            return this._routeObservable.register(observer);
         }
 
         // -------------------------------------------------------------------------
@@ -1141,7 +1136,7 @@ angular.module('routesModule').config(['$routeProvider', '$locationProvider', 'r
 // address bar.
 // -----------------------------------------------------------------------------
 
-angular.module('searchBoxModule', ['listenersManagerModule', 'routesModule']);
+angular.module('searchBoxModule', ['observableModule', 'routesModule']);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1178,7 +1173,7 @@ var SearchBoxController = function () {
 
         this._applyInputValueDebounced = _.debounce(this._applyInputValue.bind(this), SearchBoxController.debounceTime);
 
-        this._cancelRouteListener = this._currentRoute.registerRouteListener(this._onRouteChange.bind(this));
+        this._currentRoute.registerRouteObserver(this._onRouteChange.bind(this));
     }
 
     _createClass(SearchBoxController, [{
@@ -1253,7 +1248,7 @@ angular.module('searchBoxModule').controller('searchBoxCtrl', SearchBoxControlle
 // searchResultsModule for displaying a clickable list of search results.
 // -----------------------------------------------------------------------------
 
-angular.module('searchResultsModule', ['assertModule', 'routesModule', 'moviesFetcherModule', 'listenersManagerModule']);
+angular.module('searchResultsModule', ['assertModule', 'routesModule', 'moviesFetcherModule', 'observableModule']);
 
 angular.module('searchResultsModule').run(['searchResultsRepository', angular.noop]);
 'use strict';
@@ -1281,7 +1276,7 @@ var LoadMoreController = function () {
 
         this.isVisible = false;
 
-        this._searchResultsRepository.registerDataListener(this._onSearchResultsDataChange.bind(this));
+        this._searchResultsRepository.registerDataObserver(this._onSearchResultsDataChange.bind(this));
     }
 
     _createClass(LoadMoreController, [{
@@ -1369,7 +1364,7 @@ var SearchResultsController = function () {
         this.isSpinnerVisible = false;
         this.isMessageVisible = false;
 
-        this._searchResultsRepository.registerDataListener(this._onSearchResultsDataChange.bind(this));
+        this._searchResultsRepository.registerDataObserver(this._onSearchResultsDataChange.bind(this));
     }
 
     _createClass(SearchResultsController, [{
@@ -1418,11 +1413,11 @@ var SearchResultsRepositoryService = function () {
             SearchResultsRepositoryService.minSearchChars = 3;
             SearchResultsRepositoryService.resultsPerPage = 10;
 
-            SearchResultsRepositoryService.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher', 'moviesFetcherConfig', 'assert', 'listenersManager'];
+            SearchResultsRepositoryService.$inject = ['SearchResult', 'currentRoute', 'routesConfig', 'moviesFetcher', 'moviesFetcherConfig', 'assert', 'Observable'];
         }
     }]);
 
-    function SearchResultsRepositoryService(SearchResult, currentRoute, routesConfig, moviesFetcher, moviesFetcherConfig, assert, listenersManager) {
+    function SearchResultsRepositoryService(SearchResult, currentRoute, routesConfig, moviesFetcher, moviesFetcherConfig, assert, Observable) {
         _classCallCheck(this, SearchResultsRepositoryService);
 
         this._SearchResult = SearchResult;
@@ -1438,9 +1433,9 @@ var SearchResultsRepositoryService = function () {
         this._error = null;
         this._isFetchPending = false;
 
-        this._currentRoute.registerRouteListener(this._onRouteChange.bind(this));
+        this._currentRoute.registerRouteObserver(this._onRouteChange.bind(this));
 
-        this._dataListenersManager = listenersManager.getManager();
+        this._dataObservable = new Observable();
     }
 
     // -------------------------------------------------------------------------
@@ -1454,13 +1449,13 @@ var SearchResultsRepositoryService = function () {
         }
 
         // -------------------------------------------------------------------------
-        // notifying listeners
+        // notifying observers
         // -------------------------------------------------------------------------
 
     }, {
         key: '_notifyDataChange',
         value: function _notifyDataChange() {
-            this._dataListenersManager.callListeners({
+            this._dataObservable.notify({
                 results: this._results,
                 totalResults: this._totalResults,
                 isFetchPending: this._isFetchPending,
@@ -1468,9 +1463,9 @@ var SearchResultsRepositoryService = function () {
             });
         }
     }, {
-        key: 'registerDataListener',
-        value: function registerDataListener(listener) {
-            return this._dataListenersManager.addListener(listener);
+        key: 'registerDataObserver',
+        value: function registerDataObserver(observer) {
+            return this._dataObservable.register(observer);
         }
 
         // -------------------------------------------------------------------------
@@ -1660,7 +1655,7 @@ var ViewsController = function () {
         this._routesConfig = routesConfig;
         this.isSearchViewVisible = false;
         this.isMovieViewVisible = false;
-        this._currentRoute.registerRouteListener(this._onRouteChange.bind(this));
+        this._currentRoute.registerRouteObserver(this._onRouteChange.bind(this));
     }
 
     _createClass(ViewsController, [{

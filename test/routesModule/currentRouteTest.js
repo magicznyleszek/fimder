@@ -17,7 +17,7 @@ describe('currentRoute', () => {
     beforeEach(() => {
         module('testAppModule');
         module('assertModule');
-        module('listenersManagerModule');
+        module('observableModule');
         module('routesModule');
         inject(($injector) => {
             currentRoute = $injector.get('currentRoute');

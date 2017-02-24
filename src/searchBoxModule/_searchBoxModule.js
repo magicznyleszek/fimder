@@ -4,6 +4,6 @@
 // -----------------------------------------------------------------------------
 
 angular.module('searchBoxModule', [
-    'listenersManagerModule',
+    'observableModule',
     'routesModule'
 ]);

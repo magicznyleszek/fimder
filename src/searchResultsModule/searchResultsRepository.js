@@ -16,7 +16,7 @@ class SearchResultsRepositoryService {
             'moviesFetcher',
             'moviesFetcherConfig',
             'assert',
-            'listenersManager'
+            'Observable'
         ];
     }
 
@@ -27,7 +27,7 @@ class SearchResultsRepositoryService {
         moviesFetcher,
         moviesFetcherConfig,
         assert,
-        listenersManager
+        Observable
     ) {
         this._SearchResult = SearchResult;
         this._currentRoute = currentRoute;
@@ -42,11 +42,11 @@ class SearchResultsRepositoryService {
         this._error = null;
         this._isFetchPending = false;
 
-        this._currentRoute.registerRouteListener(
+        this._currentRoute.registerRouteObserver(
             this._onRouteChange.bind(this)
         );
 
-        this._dataListenersManager = listenersManager.getManager();
+        this._dataObservable = new Observable();
     }
 
     // -------------------------------------------------------------------------
@@ -58,11 +58,11 @@ class SearchResultsRepositoryService {
     }
 
     // -------------------------------------------------------------------------
-    // notifying listeners
+    // notifying observers
     // -------------------------------------------------------------------------
 
     _notifyDataChange() {
-        this._dataListenersManager.callListeners({
+        this._dataObservable.notify({
             results: this._results,
             totalResults: this._totalResults,
             isFetchPending: this._isFetchPending,
@@ -70,8 +70,8 @@ class SearchResultsRepositoryService {
         });
     }
 
-    registerDataListener(listener) {
-        return this._dataListenersManager.addListener(listener);
+    registerDataObserver(observer) {
+        return this._dataObservable.register(observer);
     }
 
     // -------------------------------------------------------------------------

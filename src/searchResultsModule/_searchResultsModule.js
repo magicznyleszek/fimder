@@ -6,7 +6,7 @@ angular.module('searchResultsModule', [
     'assertModule',
     'routesModule',
     'moviesFetcherModule',
-    'listenersManagerModule'
+    'observableModule'
 ]);
 
 angular.module('searchResultsModule').run([

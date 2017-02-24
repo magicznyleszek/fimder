@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// listenersManagerModule is for managing a list of listeners.
+// observableModule is for managing a list of observers.
 // -----------------------------------------------------------------------------
 
-angular.module('listenersManagerModule', []);
+angular.module('observableModule', []);

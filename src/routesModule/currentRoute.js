@@ -10,7 +10,7 @@ class CurrentRouteService {
             '$location',
             'assert',
             'routesConfig',
-            'listenersManager'
+            'Observable'
         ];
     }
 
@@ -20,26 +20,26 @@ class CurrentRouteService {
         $location,
         assert,
         routesConfig,
-        listenersManager
+        Observable
     ) {
         this._$route = $route;
         this._$location = $location;
         this._assert = assert;
         this._routesConfig = routesConfig;
-        this._RouteListenersManager = listenersManager.getManager();
+        this._routeObservable = new Observable();
         $rootScope.$on('$routeChangeSuccess', this._onRouteChange.bind(this));
     }
 
     // -------------------------------------------------------------------------
-    // handling listeners
+    // handling observers
     // -------------------------------------------------------------------------
 
     _onRouteChange() {
-        this._RouteListenersManager.callListeners();
+        this._routeObservable.notify();
     }
 
-    registerRouteListener(listener) {
-        return this._RouteListenersManager.addListener(listener);
+    registerRouteObserver(observer) {
+        return this._routeObservable.register(observer);
     }
 
     // -------------------------------------------------------------------------

@@ -13,7 +13,7 @@ describe('searchResultsRepository', () => {
         module('assertModule');
         module('routesModule');
         module('moviesFetcherModule');
-        module('listenersManagerModule');
+        module('observableModule');
         module('searchResultsModule');
         inject(($injector) => {
             testData = $injector.get('testData');
@@ -62,7 +62,7 @@ describe('searchResultsRepository', () => {
         expect(searchResultsRepository._isFetchPending).toBe(false);
     });
 
-    it('should notify listeners with error on false success', () => {
+    it('should notify observers with error on false success', () => {
         spyOn(searchResultsRepository, '_notifyDataChange');
         searchResultsRepository._fetchMoviesSuccess({
             data: testData.responses.searchErrorNotFound
@@ -71,13 +71,13 @@ describe('searchResultsRepository', () => {
         expect(searchResultsRepository._error).not.toBe(null);
     });
 
-    it('should notify listeners on fetch success', () => {
+    it('should notify observers on fetch success', () => {
         spyOn(searchResultsRepository, '_notifyDataChange');
         searchResultsRepository._fetchMoviesSuccess({data: {}});
         expect(searchResultsRepository._notifyDataChange).toHaveBeenCalled();
     });
 
-    it('should notify listeners on fetch error', () => {
+    it('should notify observers on fetch error', () => {
         spyOn(searchResultsRepository, '_notifyDataChange');
         searchResultsRepository._fetchMoviesError({data: {}});
         expect(searchResultsRepository._notifyDataChange).toHaveBeenCalled();

@@ -12,7 +12,7 @@ class LoadMoreController {
 
         this.isVisible = false;
 
-        this._searchResultsRepository.registerDataListener(
+        this._searchResultsRepository.registerDataObserver(
             this._onSearchResultsDataChange.bind(this)
         );
     }
