@@ -40,12 +40,16 @@ What you want is to basically have two terminals:
 
 Improvements:
 
+- wrap each file in IIFE while babeling
+- consider infinite scroll instead of load more button
+- use RequireJS
 - add some timeout for when loading happens for loooong time
 - preload poster image and fade it in + handle errors nicely as they will be and are happening
 - add smartly loading poster to searchResult
 - write smart tests for httpRetrierModule
 - errorNotifier module for errors?
-- some helpful links in the movie details that open urls using title:
+- some helpful "Search this movie in:" links in the movie details that open urls (_blank target) using title:
     - opensubtitles
+    - google
     - filmweb
     - torrents? :-o #criminal
