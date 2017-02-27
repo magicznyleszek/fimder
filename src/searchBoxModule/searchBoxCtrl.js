@@ -47,14 +47,18 @@ class SearchBoxController {
 
     _onRouteChange() {
         const route = this._currentRoute.get();
-        if (route.routeId === this._routesConfig.routes.search) {
-            // first time we want to apply route parameter to input value
-            if (this._isVirgin) {
-                this.inputValue = route.params.searchPhrase;
-            }
 
-            // we want to focus on input
+        // first time we want to apply route parameter to input value
+        // and focus on input
+        if (route.routeId === this._routesConfig.routes.search) {
+            if (this._isVirgin) {this.inputValue = route.params.searchPhrase;}
             this._focusOnInput();
+        }
+
+        // when route changes to movie, we need to cancel any debounced input
+        // applying, as it will result in route reset
+        if (route.routeId === this._routesConfig.routes.movie) {
+            this._applyInputValueDebounced.cancel();
         }
 
         // wheter we used it or not, we no longer care
