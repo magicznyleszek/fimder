@@ -81,21 +81,19 @@ class SearchResultsRepositoryService {
     _onRouteChange() {
         const route = this._currentRoute.get();
         if (route.routeId === this._routesConfig.routes.search) {
-            // make sure it exists and is different than previous one
-            if (
-                typeof route.params.searchPhrase === 'string' &&
-                this._currentSearchPhrase !== route.params.searchPhrase
-            ) {
+            if (this._currentSearchPhrase !== route.params.searchPhrase) {
                 // memorize current search phrase
                 this._currentSearchPhrase = route.params.searchPhrase;
 
                 // clear obsolete data
                 this._stopAndResetData();
 
-                // we don't want to star search for short strings
+                // we want to start a new search, but only for actual search
+                // phrases that are not too short (as this would end up in
+                // getting "too many results" message from API)
                 if (
-                    this._currentSearchPhrase.length >=
-                    SearchResultsRepositoryService.minSearchChars
+                    typeof route.params.searchPhrase === 'string' &&
+                    this._currentSearchPhrase.length >= SearchResultsRepositoryService.minSearchChars
                 ) {
                     this._fetchMoreData();
                 }
