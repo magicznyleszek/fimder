@@ -1,3 +1,4 @@
+;(function () {
 'use strict';
 
 // -----------------------------------------------------------------------------
@@ -1706,3 +1707,4 @@ var ViewsController = function () {
 ViewsController.initClass();
 
 angular.module('viewsModule').controller('viewsCtrl', ViewsController);
+})();

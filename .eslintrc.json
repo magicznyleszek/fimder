@@ -8,7 +8,8 @@
         "angular": true,
         "module": true,
         "inject": true,
-        "_": true
+        "_": true,
+        "require": true
     },
     "parserOptions": {
         "ecmaVersion": 6,
