@@ -35,21 +35,3 @@ What you want is to basically have two terminals:
 
 1. `npm run serve` -- this is providing the [127.0.0.1:4000](http://127.0.0.1:4000/) "server" and watching changes on Jekyll
 2. `npm run watch` -- this is watching all source files and producing dist ones
-
-## TODO
-
-Improvements:
-
-- wrap each file in IIFE while babeling
-- consider infinite scroll instead of load more button
-- use RequireJS
-- add some timeout for when loading happens for loooong time
-- preload poster image and fade it in + handle errors nicely as they will be and are happening
-- add smartly loading poster to searchResult
-- write smart tests for httpRetrierModule
-- errorNotifier module for errors?
-- some helpful "Search this movie in:" links in the movie details that open urls (_blank target) using title:
-    - opensubtitles
-    - google
-    - filmweb
-    - torrents? :-o #criminal
