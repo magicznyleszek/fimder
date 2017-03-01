@@ -10,7 +10,7 @@ app styles aggregation
 @import "appSetup/root.css";
 @import "appSetup/states.css";
 
-/* all import rules */
+/* modules */
 @import "common/area.css";
 @import "common/card.css";
 @import "common/header.css";
