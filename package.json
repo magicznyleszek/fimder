@@ -24,7 +24,7 @@
     "scripts:build": "babel src --out-file dist/monolith.js && npm run scripts:iife",
     "scripts:iife": "node ./bin/iife.js dist/monolith.js",
     "scripts:uglify": "uglifyjs dist/monolith.js --output dist/monolith.min.js --compress --keep-fnames --mangle-props 0",
-    "scripts:test": "karma start .karma.conf.js",
+    "scripts:test": "karma start .karma.config.js",
     "scripts:copydeps": "npm-run-all copy:angular copy:angular-route copy:angular-cache copy:lodash",
     "copy:angular": "cp node_modules/angular/angular.min.js dist/angular.min.js && cp node_modules/angular/angular.min.js.map dist/angular.min.js.map",
     "copy:angular-route": "cp node_modules/angular-route/angular-route.min.js dist/angular-route.min.js && cp node_modules/angular-route/angular-route.min.js.map dist/angular-route.min.js.map",
