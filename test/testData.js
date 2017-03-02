@@ -52,6 +52,26 @@ angular.module('testAppModule').constant('testData', {
             totalResults: '2',
             Response: 'True'
         },
+        searchSuccessDupes: {
+            Search: [
+                {
+                    Title: 'Aladdin',
+                    Year: '1992',
+                    imdbID: 'tt0103639',
+                    Type: 'movie',
+                    Poster: 'N/A'
+                },
+                {
+                    Title: 'Aladdin',
+                    Year: '1992',
+                    imdbID: 'tt0103639',
+                    Type: 'movie',
+                    Poster: 'N/A'
+                }
+            ],
+            totalResults: '2',
+            Response: 'True'
+        },
         searchErrorTooMany: {
             Response: 'False',
             Error: 'Too many results.'

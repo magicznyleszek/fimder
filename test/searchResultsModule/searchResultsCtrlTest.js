@@ -28,4 +28,11 @@ describe('searchResultsCtrl', () => {
             searchResultsCtrl.constructor.emptyMessage
         );
     });
+
+    it('should not display duplicate entries', () => {
+        searchResultsCtrl._searchResultsRepository._fetchMoviesSuccess({
+            data: testData.responses.searchSuccessDupes
+        });
+        expect(searchResultsCtrl.results.length).toBe(1);
+    });
 });

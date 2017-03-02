@@ -29,7 +29,7 @@ class SearchResultsController {
     }
 
     _onSearchResultsDataChange(data) {
-        this.results = data.results;
+        this.results = _.uniqBy(data.results, 'movieId');
         this.isSpinnerVisible = data.isFetchPending;
 
         if (data.error) {
