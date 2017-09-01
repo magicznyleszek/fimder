@@ -2,6 +2,8 @@
 
 # fimder
 
+**NOTE: OMDb API is no longer free to use, so this is no longer working, sorry :,-(**
+
 Simple OMDb movie finder. Check [fimder.smutnyleszek.com](https://fimder.smutnyleszek.com) to see how it works.
 
 Features:
